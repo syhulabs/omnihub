@@ -10,6 +10,7 @@ import com.getcapacitor.WebViewListener;
 import com.syhuinc.omnihub.alarm.AlarmPlugin;
 import com.syhuinc.omnihub.devicestats.DeviceStatsPlugin;
 import com.syhuinc.omnihub.flashalert.FlashAlertPlugin;
+import com.syhuinc.omnihub.keepawake.KeepAwakePlugin;
 import com.syhuinc.omnihub.ringtone.RingtonePlugin;
 import com.syhuinc.omnihub.sleepmode.SleepModePlugin;
 
@@ -21,6 +22,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(SleepModePlugin.class);
         registerPlugin(DeviceStatsPlugin.class);
         registerPlugin(RingtonePlugin.class);
+        registerPlugin(KeepAwakePlugin.class);
         super.onCreate(savedInstanceState);
 
         // The app's CSS relies on the WebView drawing edge-to-edge under the status bar

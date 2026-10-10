@@ -10,6 +10,7 @@ import { hapticSelect, hapticTap, hapticWarning } from '../../haptics';
 import { useCloudSync } from '../../cloud/useCloudSync';
 import { NoteEditor } from './NoteEditor';
 import type { Note } from './types';
+import { formatClockDate } from '../../settings/formats';
 import './Notes.css';
 
 type Tab = 'all' | 'pinned' | 'favorites' | 'trash';
@@ -249,10 +250,7 @@ export function Notes() {
                       </span>
                       {note.body && <span className="notes__card-preview">{preview(note.body)}</span>}
                       <span className="notes__card-time">
-                        {new Date(tab === 'trash' ? note.trashedAt ?? note.updatedAt : note.updatedAt).toLocaleTimeString([], {
-                          hour: 'numeric',
-                          minute: '2-digit',
-                        })}
+                        {formatClockDate(new Date(tab === 'trash' ? note.trashedAt ?? note.updatedAt : note.updatedAt))}
                       </span>
                     </span>
                   </button>

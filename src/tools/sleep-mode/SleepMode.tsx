@@ -16,12 +16,11 @@ import { SleepInsights } from './SleepInsights';
 import { SleepModeAiTab } from './SleepModeAiTab';
 import { SleepTabBar, type SleepTab } from './SleepTabBar';
 import { heroBanner } from '../../assets/sleep-mode';
+import { formatClock } from '../../settings/formats';
 import './SleepMode.css';
 
 function formatTime(hour: number, minute: number): string {
-  const period = hour >= 12 ? 'PM' : 'AM';
-  const h12 = hour % 12 === 0 ? 12 : hour % 12;
-  return `${h12}:${minute.toString().padStart(2, '0')} ${period}`;
+  return formatClock(hour, minute);
 }
 
 function formatTimeOfDay(ms: number): string {

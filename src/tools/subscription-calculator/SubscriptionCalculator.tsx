@@ -6,7 +6,7 @@ import { useRouter } from '../../app/Router';
 import { storageGet, storageSet, StorageKeys } from '../../storage/db';
 import { useCloudSync } from '../../cloud/useCloudSync';
 import { hapticSelect, hapticTap } from '../../haptics';
-import { CURRENCIES, DEFAULT_CURRENCY, detectDeviceCurrency, formatMoney } from '../shared/currencies';
+import { CURRENCIES, DEFAULT_CURRENCY, appDefaultCurrency, formatMoney } from '../shared/currencies';
 import type { BillingCycle, Subscription } from './types';
 import './SubscriptionCalculator.css';
 
@@ -42,7 +42,7 @@ export function SubscriptionCalculator() {
   const [subs, setSubs] = useState<Subscription[]>(() => storageGet(StorageKeys.subscriptions, []));
   const [name, setName] = useState('');
   const [amountText, setAmountText] = useState('');
-  const [currency, setCurrency] = useState(() => storageGet(StorageKeys.subscriptionDefaultCurrency, detectDeviceCurrency()));
+  const [currency, setCurrency] = useState(() => storageGet(StorageKeys.subscriptionDefaultCurrency, appDefaultCurrency()));
   const [cycle, setCycle] = useState<BillingCycle>('monthly');
   const [openSwipeId, setOpenSwipeId] = useState<string | null>(null);
   const [filterTab, setFilterTab] = useState<FilterTab>('all');

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { formatClock } from '../../settings/formats';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon } from '../../components/Icon';
 import { hapticSelect } from '../../haptics';
@@ -19,9 +20,7 @@ function minutesOfDay(ms: number): number {
 function formatTimeOfDay(minutes: number): string {
   const h24 = Math.floor(minutes / 60) % 24;
   const m = Math.round(minutes % 60);
-  const period = h24 >= 12 ? 'PM' : 'AM';
-  const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
-  return `${h12}:${m.toString().padStart(2, '0')} ${period}`;
+  return formatClock(h24, m);
 }
 
 /** Actual bedtime proxy: the last nag time if any (roughly "when you stopped scrolling"), else the scheduled bedtime. */

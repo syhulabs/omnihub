@@ -39,6 +39,18 @@ export const StorageKeys = {
   expenseDefaultCurrency: `${PREFIX}expense.defaultCurrency`,
   budgetDefaultCurrency: `${PREFIX}budget.defaultCurrency`,
   nav3dIconEnabled: `${PREFIX}nav.3dIconEnabled`,
+  hapticsEnabled: `${PREFIX}settings.hapticsEnabled`,
+  keepAwakeEnabled: `${PREFIX}settings.keepAwakeEnabled`,
+  textScale: `${PREFIX}settings.textScale`,
+  clockFormat24h: `${PREFIX}settings.clockFormat24h`,
+  dateFormat: `${PREFIX}settings.dateFormat`,
+  firstDayOfWeek: `${PREFIX}settings.firstDayOfWeek`,
+  defaultCurrency: `${PREFIX}settings.defaultCurrency`,
+  measurementSystem: `${PREFIX}settings.measurementSystem`,
+  appLockEnabled: `${PREFIX}settings.appLockEnabled`,
+  appLockPinHash: `${PREFIX}settings.appLockPinHash`,
+  appLockPinSalt: `${PREFIX}settings.appLockPinSalt`,
+  vaultAutoLockMinutes: `${PREFIX}settings.vaultAutoLockMinutes`,
 } as const;
 
 export function storageGet<T>(key: string, fallback: T): T {

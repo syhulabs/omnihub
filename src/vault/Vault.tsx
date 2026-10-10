@@ -21,6 +21,7 @@ import { VaultNoteEditor } from './VaultNoteEditor';
 import { VaultFiles } from './VaultFiles';
 import { clearAllFiles, getAllFiles, putFile } from './fileStore';
 import type { VaultNote, VaultNoteRecord } from './types';
+import { forgetVaultKey, parkVaultKey, resumeVaultKey } from './session';
 import './Vault.css';
 
 const CANARY_TEXT = 'omni-hub-vault-ok';
@@ -127,8 +128,18 @@ export function Vault() {
 
   useEffect(() => {
     const salt = storageGet<string | null>(StorageKeys.vaultSalt, null);
+    const parkedKey = salt ? resumeVaultKey() : null;
+    if (parkedKey) {
+      void openWithKey(parkedKey);
+      return;
+    }
     setStatus(salt ? 'locked' : 'setupPin');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Leaving the screen while unlocked parks the key for the auto-lock grace period (Settings >
+  // Vault Security); "Immediately" (the default) parks nothing, so this is a no-op then.
+  useEffect(() => () => parkVaultKey(keyRef.current), []);
 
   // Only ticks while an active lockout needs a live countdown -- otherwise idle.
   useEffect(() => {
@@ -165,6 +176,7 @@ export function Vault() {
     const canary = await encryptText(derivedKey, CANARY_TEXT);
     storageSet(StorageKeys.vaultSalt, salt);
     storageSet(StorageKeys.vaultCanary, canary);
+    forgetVaultKey();
     if (changingPin) {
       // Re-encrypt the existing notes and files with the new key rather than losing them.
       await persistNotes(notes, derivedKey);
@@ -224,7 +236,11 @@ export function Vault() {
     storageSet(StorageKeys.vaultFailedAttempts, 0);
     storageRemove(StorageKeys.vaultLockedUntil);
     setLockedUntil(0);
+    await openWithKey(derivedKey);
+  }
 
+  /** Decrypt the stored notes with an already-verified key and show the unlocked Vault. */
+  async function openWithKey(derivedKey: CryptoKey) {
     const records = storageGet<VaultNoteRecord[]>(StorageKeys.vaultNotes, []);
     encryptedRecordsRef.current = records;
     const decrypted = await Promise.all(
@@ -283,6 +299,7 @@ export function Vault() {
   }
 
   function lock() {
+    forgetVaultKey();
     setKey(null);
     setNotes([]);
     setDraft(null);
@@ -367,6 +384,7 @@ export function Vault() {
     storageRemove(StorageKeys.vaultFailedAttempts);
     storageRemove(StorageKeys.vaultLockedUntil);
     void clearAllFiles();
+    forgetVaultKey();
     setKey(null);
     setNotes([]);
     setDraft(null);

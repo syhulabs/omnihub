@@ -3,7 +3,26 @@ import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon } from '../../components/Icon';
 import { useRouter } from '../../app/Router';
 import { UNIT_CATEGORIES, convert } from './data';
+import { getMeasurementSystem } from '../../settings/formats';
 import './UnitConverter.css';
+
+/** Starting from/to pair per category: the user's own system first (Settings > Time & Formats),
+ *  the other one as the target, since that's the conversion people actually open the tool for. */
+const DEFAULT_PAIRS: Record<string, { metric: [string, string]; imperial: [string, string] }> = {
+  length: { metric: ['cm', 'in'], imperial: ['in', 'cm'] },
+  weight: { metric: ['kg', 'lb'], imperial: ['lb', 'kg'] },
+  temperature: { metric: ['c', 'f'], imperial: ['f', 'c'] },
+  volume: { metric: ['l', 'gal'], imperial: ['gal', 'l'] },
+  speed: { metric: ['kmh', 'mph'], imperial: ['mph', 'kmh'] },
+  area: { metric: ['m2', 'ft2'], imperial: ['ft2', 'm2'] },
+};
+
+function defaultUnits(categoryId: string): [string, string] {
+  const category = UNIT_CATEGORIES.find((c) => c.id === categoryId)!;
+  const pair = DEFAULT_PAIRS[categoryId]?.[getMeasurementSystem()];
+  if (pair && pair.every((id) => category.units.some((u) => u.id === id))) return pair;
+  return [category.units[0].id, category.units[1].id];
+}
 
 function formatNumber(value: number): string {
   if (Number.isNaN(value) || !Number.isFinite(value)) return '—';
@@ -15,15 +34,15 @@ export function UnitConverter() {
   const { back } = useRouter();
   const [categoryId, setCategoryId] = useState(UNIT_CATEGORIES[0].id);
   const category = UNIT_CATEGORIES.find((c) => c.id === categoryId)!;
-  const [fromUnitId, setFromUnitId] = useState(category.units[0].id);
-  const [toUnitId, setToUnitId] = useState(category.units[1].id);
+  const [fromUnitId, setFromUnitId] = useState(() => defaultUnits(categoryId)[0]);
+  const [toUnitId, setToUnitId] = useState(() => defaultUnits(categoryId)[1]);
   const [value, setValue] = useState('1');
 
   function selectCategory(id: string) {
-    const nextCategory = UNIT_CATEGORIES.find((c) => c.id === id)!;
+    const [from, to] = defaultUnits(id);
     setCategoryId(id);
-    setFromUnitId(nextCategory.units[0].id);
-    setToUnitId(nextCategory.units[1].id);
+    setFromUnitId(from);
+    setToUnitId(to);
   }
 
   const result = useMemo(() => {

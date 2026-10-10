@@ -15,6 +15,11 @@ import {
   ProfileDataSync,
   ProfilePrivacy,
   ProfileAbout,
+  ProfileTextSize,
+  ProfileTimeFormats,
+  ProfileNotifications,
+  ProfileAppLock,
+  ProfileVaultSecurity,
 } from '../screens/Profile/ProfileSections';
 import { ToolRoute } from '../tools/ToolRoute';
 import { PhoneCenter } from '../screens/PhoneCenter/PhoneCenter';
@@ -27,6 +32,7 @@ import { StorageErrorToast } from '../storage/StorageErrorToast';
 import { hapticTap } from '../haptics';
 import { AuthProvider } from '../cloud/AuthContext';
 import { SettingsProvider } from '../settings/SettingsContext';
+import { AppLockGate } from '../applock/AppLockGate';
 import { useIsLightTheme } from '../theme/useTheme';
 import { setStatusBarStyle, initStatusBarOverlay } from '../theme/statusBar';
 import './App.css';
@@ -43,6 +49,11 @@ function Screen() {
   if (path === '/profile') return <Profile />;
   if (path === '/profile/account') return <ProfileAccount />;
   if (path === '/profile/settings') return <ProfileSettings />;
+  if (path === '/profile/settings/text-size') return <ProfileTextSize />;
+  if (path === '/profile/settings/time-formats') return <ProfileTimeFormats />;
+  if (path === '/profile/settings/notifications') return <ProfileNotifications />;
+  if (path === '/profile/settings/app-lock') return <ProfileAppLock />;
+  if (path === '/profile/settings/vault-security') return <ProfileVaultSecurity />;
   if (path === '/profile/appearance') return <ProfileAppearance />;
   if (path === '/profile/data-sync') return <ProfileDataSync />;
   if (path === '/profile/privacy') return <ProfilePrivacy />;
@@ -114,11 +125,13 @@ function App() {
 
   return (
     <SettingsProvider>
-      <AuthProvider>
-        <RouterProvider>
-          <Shell />
-        </RouterProvider>
-      </AuthProvider>
+      <AppLockGate>
+        <AuthProvider>
+          <RouterProvider>
+            <Shell />
+          </RouterProvider>
+        </AuthProvider>
+      </AppLockGate>
     </SettingsProvider>
   );
 }

@@ -1,3 +1,5 @@
+import { storageGet, StorageKeys } from '../../storage/db';
+
 export interface CurrencyOption {
   code: string;
   flag: string;
@@ -88,6 +90,14 @@ export function detectDeviceCurrency(): string {
   } catch {
     return DEFAULT_CURRENCY;
   }
+}
+
+/** The user's chosen app-wide default currency (Settings > Time & Formats), falling back to a
+ *  device-locale guess when they've never set one. Tools use this instead of detectDeviceCurrency()
+ *  directly so setting it once in Settings changes the starting currency everywhere that hasn't
+ *  already been customized per-tool. */
+export function appDefaultCurrency(): string {
+  return storageGet<string | null>(StorageKeys.defaultCurrency, null) ?? detectDeviceCurrency();
 }
 
 export function currencyFlag(code: string | undefined): string {

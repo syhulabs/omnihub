@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { Icon } from '../../components/Icon';
 import { hapticSelect } from '../../haptics';
 import { parseISODate, toISODate } from './dateMath';
+import { getFirstDayOfWeek } from '../../settings/formats';
 
-const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const WEEKDAYS_MON = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const WEEKDAYS_SUN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
@@ -29,7 +31,10 @@ export function CalendarPicker({ selectedISO, onSelect, accentColor }: CalendarP
   const year = viewDate.getFullYear();
   const month = viewDate.getMonth();
   const firstOfMonth = new Date(year, month, 1);
-  const startWeekday = (firstOfMonth.getDay() + 6) % 7; // 0 = Monday
+  const startsMonday = getFirstDayOfWeek() === 'mon';
+  const WEEKDAYS = startsMonday ? WEEKDAYS_MON : WEEKDAYS_SUN;
+  // Offset of the 1st within the first row, counted from the chosen first day of the week.
+  const startWeekday = startsMonday ? (firstOfMonth.getDay() + 6) % 7 : firstOfMonth.getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   const cells: (number | null)[] = [

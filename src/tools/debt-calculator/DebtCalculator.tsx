@@ -6,7 +6,7 @@ import { useRouter } from '../../app/Router';
 import { storageGet, storageSet, StorageKeys } from '../../storage/db';
 import { useCloudSync } from '../../cloud/useCloudSync';
 import { hapticSelect, hapticTap } from '../../haptics';
-import { CURRENCIES, DEFAULT_CURRENCY, detectDeviceCurrency, formatMoney } from '../shared/currencies';
+import { CURRENCIES, DEFAULT_CURRENCY, appDefaultCurrency, formatMoney } from '../shared/currencies';
 import { CalendarPicker } from '../age-date/CalendarPicker';
 import { parseISODate, toISODate } from '../age-date/dateMath';
 import type { DebtDirection, DebtEntry } from './types';
@@ -37,7 +37,7 @@ export function DebtCalculator() {
   const [person, setPerson] = useState('');
   const [debtName, setDebtName] = useState('');
   const [amountText, setAmountText] = useState('');
-  const [currency, setCurrency] = useState(() => storageGet(StorageKeys.debtDefaultCurrency, detectDeviceCurrency()));
+  const [currency, setCurrency] = useState(() => storageGet(StorageKeys.debtDefaultCurrency, appDefaultCurrency()));
   const [note, setNote] = useState('');
   const [dueAt, setDueAt] = useState<number | undefined>(undefined);
   const [direction, setDirection] = useState<DebtDirection>('owed_to_me');

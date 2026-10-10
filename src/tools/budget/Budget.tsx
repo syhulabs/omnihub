@@ -8,7 +8,7 @@ import { hapticTap, hapticWarning } from '../../haptics';
 import { useCloudSync } from '../../cloud/useCloudSync';
 import { EXPENSE_CATEGORIES, getCategory } from '../expense-tracker/categories';
 import { currentMonthKey, formatMonthLabel, shiftMonthKey } from '../expense-tracker/month';
-import { CURRENCIES, DEFAULT_CURRENCY, formatMoney } from '../shared/currencies';
+import { CURRENCIES, appDefaultCurrency, formatMoney } from '../shared/currencies';
 import type { Expense } from '../expense-tracker/types';
 import type { BudgetLimit } from './types';
 import { SetBudget } from './SetBudget';
@@ -40,7 +40,7 @@ export function Budget() {
   const [showMenu, setShowMenu] = useState(false);
   const [confirmingResetAll, setConfirmingResetAll] = useState(false);
   const [showCurrencySheet, setShowCurrencySheet] = useState(false);
-  const [currency, setCurrency] = useState(() => storageGet(StorageKeys.budgetDefaultCurrency, DEFAULT_CURRENCY));
+  const [currency, setCurrency] = useState(() => storageGet(StorageKeys.budgetDefaultCurrency, appDefaultCurrency()));
 
   function selectCurrency(code: string) {
     hapticTap();

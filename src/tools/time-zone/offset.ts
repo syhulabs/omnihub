@@ -1,3 +1,5 @@
+import { formatClockDate } from '../../settings/formats';
+
 export function getOffsetMinutes(timeZone: string, date: Date): number {
   const utcDate = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }));
   const tzDate = new Date(date.toLocaleString('en-US', { timeZone }));
@@ -77,10 +79,9 @@ export function instantAtHourInZone(timeZone: string, hour: number, baseDate: Da
   return new Date(Date.UTC(y, m - 1, d, hour, 0, 0) - offsetMinutes * 60000);
 }
 
-/** "3:16 pm" — lowercase am/pm to match the reference styling. */
+/** "3:16 pm" — lowercase am/pm to match the reference styling ("15:16" with the 24-hour clock on). */
 export function formatTimeLower(date: Date, timeZone?: string): string {
-  const s = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', ...(timeZone ? { timeZone } : {}) });
-  return s.replace(/(AM|PM)/i, (m) => m.toLowerCase());
+  return formatClockDate(date, timeZone).replace(/(AM|PM)/i, (m) => m.toLowerCase());
 }
 
 /** "Wed, 23 September 2026" — day-before-month, which no built-in en-US format gives directly. */

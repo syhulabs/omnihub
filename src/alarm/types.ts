@@ -1,3 +1,5 @@
+import { formatClock } from '../settings/formats';
+
 export type RepeatMode = 'today' | 'daily' | 'weekend' | 'weekdays';
 
 export type TimeCategory = 'morning' | 'afternoon' | 'evening' | 'night';
@@ -51,7 +53,5 @@ export function repeatLabelFor(mode: RepeatMode, hour: number, minute: number): 
 }
 
 export function formatTime(hour: number, minute: number): string {
-  const period = hour >= 12 ? 'PM' : 'AM';
-  const h12 = hour % 12 === 0 ? 12 : hour % 12;
-  return `${h12}:${String(minute).padStart(2, '0')} ${period}`;
+  return formatClock(hour, minute);
 }

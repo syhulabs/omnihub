@@ -9,7 +9,7 @@ import { hapticSelect, hapticTap } from '../../haptics';
 import { AddExpense } from './AddExpense';
 import { EXPENSE_CATEGORIES, getCategory } from './categories';
 import { currentMonthKey, formatMonthLabel, shiftMonthKey } from './month';
-import { CURRENCIES, detectDeviceCurrency, currencySymbol, formatMoney } from '../shared/currencies';
+import { CURRENCIES, appDefaultCurrency, currencySymbol, formatMoney } from '../shared/currencies';
 import type { Expense } from './types';
 import './ExpenseTracker.css';
 
@@ -36,7 +36,7 @@ export function ExpenseTracker() {
   const [historyFilter, setHistoryFilter] = useState<string | null>(null);
   const [showMenu, setShowMenu] = useState(false);
   const [showCurrencySheet, setShowCurrencySheet] = useState(false);
-  const [currency, setCurrency] = useState(() => storageGet(StorageKeys.expenseDefaultCurrency, detectDeviceCurrency()));
+  const [currency, setCurrency] = useState(() => storageGet(StorageKeys.expenseDefaultCurrency, appDefaultCurrency()));
   const [toast, setToast] = useState<string | null>(null);
 
   function selectCurrency(code: string) {

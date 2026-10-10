@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { isClock24h } from '../../settings/formats';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon } from '../../components/Icon';
 import { SearchBar } from '../../components/SearchBar';
@@ -38,6 +39,7 @@ function formatDiffWords(totalMinutes: number): string {
 }
 
 function formatHour12(hour: number): string {
+  if (isClock24h()) return `${String(hour).padStart(2, '0')}:00`;
   const h = hour % 12 === 0 ? 12 : hour % 12;
   return `${h} ${hour < 12 ? 'AM' : 'PM'}`;
 }

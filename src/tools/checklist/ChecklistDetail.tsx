@@ -1,4 +1,5 @@
 import { useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import { formatClockDate } from '../../settings/formats';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon } from '../../components/Icon';
 import { hapticSelect, hapticSuccess, hapticTap, hapticWarning } from '../../haptics';
@@ -26,7 +27,7 @@ function formatDue(ts: number): string {
   const tomorrow = new Date(now);
   tomorrow.setDate(now.getDate() + 1);
   const isTomorrow = date.toDateString() === tomorrow.toDateString();
-  const time = date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  const time = formatClockDate(date);
   if (isToday) return `Today, ${time}`;
   if (isTomorrow) return `Tomorrow, ${time}`;
   return `${date.toLocaleDateString([], { month: 'short', day: 'numeric' })}, ${time}`;

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { formatClockDate, isClock24h } from '../../settings/formats';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon } from '../../components/Icon';
 import { SearchBar } from '../../components/SearchBar';
@@ -138,7 +139,7 @@ export function TimeZone() {
   function renderRow(city: City) {
     const isLocal = city.timeZone === localTimeZone;
     const isFavorite = favoriteIds.includes(city.id);
-    const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: city.timeZone });
+    const time = formatClockDate(now, city.timeZone);
     const dateLabel = formatRowDate(now, city.timeZone);
     return (
       <li key={city.id}>
@@ -184,7 +185,7 @@ export function TimeZone() {
             </span>
             <span className="tz__hero2-time">
               {formatTimeLower(now).replace(/\s?(am|pm)/i, '')}
-              <em>{now.getHours() < 12 ? 'am' : 'pm'}</em>
+              {!isClock24h() && <em>{now.getHours() < 12 ? 'am' : 'pm'}</em>}
             </span>
             <span className="tz__hero2-date">{formatHeroDate(now)}</span>
           </div>
@@ -303,7 +304,7 @@ export function TimeZone() {
             ) : (
               <ul className="tz__list">
                 {cities.map((city) => {
-                  const time = convertBase.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit', timeZone: city.timeZone });
+                  const time = formatClockDate(convertBase, city.timeZone);
                   const dayLabel = dayOffsetLabel(city.timeZone, convertBase);
                   const period = dayPeriod(city.timeZone, convertBase);
                   return (

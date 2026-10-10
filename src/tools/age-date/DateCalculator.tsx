@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { formatNumericDate } from '../../settings/formats';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon } from '../../components/Icon';
 import { useRouter } from '../../app/Router';
@@ -22,7 +23,7 @@ function formatFriendly(date: Date): string {
 function formatShort(iso: string): string {
   const d = parseISODate(iso);
   if (!d) return 'Select date';
-  return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+  return formatNumericDate(d);
 }
 
 export function DateCalculator() {

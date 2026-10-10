@@ -583,3 +583,180 @@
   color: var(--text-secondary);
   line-height: 1.5;
 }
+
+/* ---- Settings (Desk > Settings) and its sub-screens ----------------------------------------
+   Sized against design/settings-reference.jpg on the phone's 436px grid: cards inset 17px, 51px
+   rows with 35px solid icon tiles, 14.4/11.6px row text, 44x26 switches, full-width dividers. */
+
+.pf__body--settings {
+  margin-top: -2px;
+  padding: 0 16.7px 32px;
+  gap: 15px;
+}
+
+.pf__body--settings .pf__group {
+  gap: 2.5px;
+}
+
+.pf__body--settings .pf__group-label {
+  gap: 12.5px;
+  padding-left: 5px;
+  font-size: 12.4px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+  color: #c0ccf2 !important;
+}
+
+.pf__body--settings .pf__group-label svg {
+  color: var(--label-icon, var(--accent));
+}
+
+.pf__body--settings .pf__card {
+  background: #101825;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: 11px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.pf__body--settings .pf__row {
+  gap: 13px;
+  min-height: 50px;
+  padding: 7px 14px 7px 11.5px;
+}
+
+.pf__body--settings .pf__divider {
+  margin: 0;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.pf__body--settings .pf__row-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 7px;
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.pf__body--settings .pf__row-icon--haptic {
+  background: #177f34;
+  color: #f4fff7;
+}
+
+.pf__body--settings .pf__row-icon--awake {
+  background: #a04e04;
+  color: #ffcc62;
+}
+
+.pf__body--settings .pf__row-icon--nav3d {
+  background: #2f1e54;
+  color: #bd53fb;
+}
+
+.pf__body--settings .pf__row-icon--text {
+  background: #0143a3;
+  color: #71daff;
+}
+
+.pf__body--settings .pf__row-icon--lang {
+  background: #b41ba9;
+}
+
+.pf__body--settings .pf__row-icon--time {
+  background: #e67e03;
+}
+
+.pf__body--settings .pf__row-icon--notif {
+  background: #ed405c;
+}
+
+.pf__body--settings .pf__row-icon--applock {
+  background: #3425a6;
+}
+
+.pf__body--settings .pf__row-icon--vault {
+  background: #0499ad;
+}
+
+.pf__body--settings .pf__row-text {
+  gap: 3px;
+}
+
+.pf__body--settings .pf__row-text strong {
+  font-size: 14.4px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  color: #fff;
+}
+
+.pf__body--settings .pf__row-text span {
+  font-size: 11.6px;
+  line-height: 1.2;
+  color: #c3cfe9;
+}
+
+.pf__body--settings .pf__row-chevron {
+  margin-right: -5.5px;
+  color: #b2bcdf;
+}
+
+.pf__body--settings .pf__switch {
+  width: 44.5px;
+  height: 26px;
+  background: #3c4b62;
+}
+
+.pf__body--settings .pf__switch--on {
+  background: #526bfb;
+  box-shadow: 0 0 14px -1px rgba(82, 107, 251, 0.75);
+}
+
+.pf__body--settings .pf__switch-knob {
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+}
+
+.pf__body--settings .pf__switch--on .pf__switch-knob {
+  transform: translateX(18.5px);
+}
+
+:root[data-theme='light'] .pf__body--settings .pf__group-label {
+  color: #5d6b85 !important;
+}
+
+:root[data-theme='light'] .pf__body--settings .pf__card {
+  background: #fff;
+  border-color: rgba(15, 23, 42, 0.07);
+  box-shadow: 0 6px 16px -10px rgba(15, 23, 42, 0.25);
+}
+
+:root[data-theme='light'] .pf__body--settings .pf__divider {
+  background: rgba(15, 23, 42, 0.08);
+}
+
+:root[data-theme='light'] .pf__body--settings .pf__row-icon {
+  box-shadow: none;
+}
+
+:root[data-theme='light'] .pf__body--settings .pf__row-text strong {
+  color: var(--text-primary);
+}
+
+:root[data-theme='light'] .pf__body--settings .pf__row-text span {
+  color: #5d6b85;
+}
+
+:root[data-theme='light'] .pf__body--settings .pf__row-chevron {
+  color: #7d879a;
+}
+
+:root[data-theme='light'] .pf__body--settings .pf__switch {
+  background: #d4d9e6;
+}
+
+:root[data-theme='light'] .pf__body--settings .pf__switch--on {
+  background: #526bfb;
+}

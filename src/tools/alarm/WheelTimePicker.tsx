@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { hapticSelect } from '../../haptics';
+import { isClock24h } from '../../settings/formats';
 import './WheelTimePicker.css';
 
 const ROW_HEIGHT = 44;
 const HOURS_12 = Array.from({ length: 12 }, (_, i) => i + 1);
+const HOURS_24 = Array.from({ length: 24 }, (_, i) => i);
 const MINUTES = Array.from({ length: 60 }, (_, i) => i);
 
 interface WheelTimePickerProps {
@@ -13,6 +15,7 @@ interface WheelTimePickerProps {
 }
 
 export function WheelTimePicker({ hour, minute, onChange }: WheelTimePickerProps) {
+  const is24h = isClock24h();
   const isPM = hour >= 12;
   const hour12 = hour % 12 === 0 ? 12 : hour % 12;
 
@@ -38,10 +41,15 @@ export function WheelTimePicker({ hour, minute, onChange }: WheelTimePickerProps
         <span>Minute</span>
       </div>
       <div className="wtp__wheels">
-        <WheelColumn values={HOURS_12} selected={hour12} onChange={setHour12} />
+        {is24h ? (
+          <WheelColumn values={HOURS_24} selected={hour} onChange={(h) => onChange(h, minute)} pad />
+        ) : (
+          <WheelColumn values={HOURS_12} selected={hour12} onChange={setHour12} />
+        )}
         <span className="wtp__colon">:</span>
         <WheelColumn values={MINUTES} selected={minute} onChange={setMinute} pad />
       </div>
+      {!is24h && (
       <div className="wtp__period">
         <button
           type="button"
@@ -58,6 +66,7 @@ export function WheelTimePicker({ hour, minute, onChange }: WheelTimePickerProps
           PM
         </button>
       </div>
+      )}
     </div>
   );
 }

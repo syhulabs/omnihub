@@ -11,26 +11,29 @@ The owner's approved designs. Match these exactly (see CLAUDE.md). Newest refere
 | `craft-reference-font-position-notes.jpg` | Owner's red-circled notes: "I want exact font n exact position" | Applied |
 | `home-reference.jpg` | Home tab + My Phone card menu (two states) | Built and matched (Oct 8). The phone photo can't be reproduced; the app shows an icon |
 | `hub-reference-OLD-sep22.jpg` | Old "Tools" screen | **Outdated**: predates the Hub rename and the glossy 3D icon set. Ask the owner for a current Hub reference before changing Hub |
-| `settings-reference.jpg` | Settings screen (Desk → Settings) | Approved Oct 7; build in progress (see below) |
+| `settings-reference.jpg` | Settings screen (Desk → Settings) | Built and matched (Oct 10); awaiting the owner's on-device review |
 | `bottom-nav-reference.jpg` | Bottom nav bar | In use |
 | `sleep-mode-ai-tab-reference-dark.jpg` / `-light.jpg` | Sleep Mode → AI personality tab with previews | See plans |
 | `app-icon-reference.jpg` | App icon direction the owner picked | In use |
 
 # Planned features and open work
 
-## Settings screen (approved, half built)
-Mockup: `settings-reference.jpg`. Code is in `settings-screen-wip.patch` (from the old account; apply with
-`git apply design/settings-screen-wip.patch` from the repo root). It compiled but was never visually checked, built into an APK, or committed.
-- General: Haptic Feedback, Keep Screen Awake (new native `KeepAwakePlugin`), 3D Nav Icon toggles.
-- Appearance: Text Size (app-wide scale); Language row is static "English (for now)" by the owner's choice.
-- Time & Formats: 12/24-hour clock (wired into Alarm/Sleep Mode), default currency (used by Budget,
-  Expense Tracker, Subscription and Debt calculators).
-- Notifications screen.
-- Security: App Lock with a 4-digit PIN gate at launch; Vault Security links to the Vault.
-- Known gaps, not yet told to the owner: fingerprint/face unlock is shown as "Soon" (not built);
-  Vault auto-lock timing is saved but does nothing yet.
-- Before shipping: screenshot every Settings sub-screen in both themes against the mockup, test App Lock
-  (set PIN, relaunch, wrong PIN, right PIN), test 12/24h and currency, then the APK routine.
+## Settings screen (built Oct 10, not yet reviewed on device)
+Mockup: `settings-reference.jpg`. Matched on the 436px grid: 17px card inset, 50px rows, 36px solid icon
+tiles, 14.4/11.6px row text, 44x26 switches, full-width dividers (`.pf__body--settings` in `Profile.css`).
+- General: Haptic Feedback, Keep Screen Awake (native `KeepAwakePlugin`), 3D Nav Icon toggles.
+- Appearance: Text Size (app-wide `zoom`, 0.9-1.3); Language row is static "English (for now)" by the owner's choice.
+- Time & Formats (`src/settings/formats.ts`): 12/24-hour clock (Alarm list + wheel picker, Sleep Mode,
+  Time Zone, Time Difference, Notes and Checklist timestamps), date format (Date Calculator's numeric dates),
+  first day of week (calendar pickers), default currency (Budget, Expense Tracker, Subscriptions, Debt),
+  measurement system (Unit Converter's starting units). Defaults equal the app's previous behavior.
+- Notifications: shows/requests the notification and exact-alarm permissions.
+- Security: App Lock with a 4-digit PIN gate at cold start (`src/applock/`); Vault Security links to the
+  Vault and sets its auto-lock grace period (`src/vault/session.ts`, key parked in memory only).
+- Known gaps: fingerprint/face unlock is shown as "Soon" (not built); App Lock has no wrong-PIN lockout
+  (the Vault does). Not built into an APK from the cloud: the signing files aren't in the repo.
+- Before shipping: the owner's on-device check of every Settings sub-screen in both themes, App Lock
+  (set PIN, relaunch, wrong PIN, right PIN), 12/24h and currency, then the APK routine.
 
 ## SYXDI AI
 Coming-soon AI companion tab. Features promised on the page: natural conversations, learns your
