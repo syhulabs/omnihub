@@ -1,0 +1,1215 @@
+diff --git a/android/app/src/main/java/com/syhuinc/omnihub/MainActivity.java b/android/app/src/main/java/com/syhuinc/omnihub/MainActivity.java
+index a279c54..6a395f0 100644
+--- a/android/app/src/main/java/com/syhuinc/omnihub/MainActivity.java
++++ b/android/app/src/main/java/com/syhuinc/omnihub/MainActivity.java
+@@ -10,6 +10,7 @@ import com.getcapacitor.WebViewListener;
+ import com.syhuinc.omnihub.alarm.AlarmPlugin;
+ import com.syhuinc.omnihub.devicestats.DeviceStatsPlugin;
+ import com.syhuinc.omnihub.flashalert.FlashAlertPlugin;
++import com.syhuinc.omnihub.keepawake.KeepAwakePlugin;
+ import com.syhuinc.omnihub.ringtone.RingtonePlugin;
+ import com.syhuinc.omnihub.sleepmode.SleepModePlugin;
+ 
+@@ -21,6 +22,7 @@ public class MainActivity extends BridgeActivity {
+         registerPlugin(SleepModePlugin.class);
+         registerPlugin(DeviceStatsPlugin.class);
+         registerPlugin(RingtonePlugin.class);
++        registerPlugin(KeepAwakePlugin.class);
+         super.onCreate(savedInstanceState);
+ 
+         // The app's CSS relies on the WebView drawing edge-to-edge under the status bar
+diff --git a/android/app/src/main/java/com/syhuinc/omnihub/keepawake/KeepAwakePlugin.java b/android/app/src/main/java/com/syhuinc/omnihub/keepawake/KeepAwakePlugin.java
+new file mode 100644
+index 0000000..cd4eb1f
+--- /dev/null
++++ b/android/app/src/main/java/com/syhuinc/omnihub/keepawake/KeepAwakePlugin.java
+@@ -0,0 +1,32 @@
++package com.syhuinc.omnihub.keepawake;
++
++import android.view.WindowManager;
++
++import com.getcapacitor.JSObject;
++import com.getcapacitor.Plugin;
++import com.getcapacitor.PluginCall;
++import com.getcapacitor.PluginMethod;
++import com.getcapacitor.annotation.CapacitorPlugin;
++
++/**
++ * Keeps the screen on for as long as the app is in the foreground, via the standard
++ * FLAG_KEEP_SCREEN_ON window flag rather than a PowerManager wake lock -- it's released
++ * automatically when the activity goes away, no explicit release() needed, and it only
++ * keeps the *screen* on (not the CPU), which is all the Settings toggle promises.
++ */
++@CapacitorPlugin(name = "KeepAwakePlugin")
++public class KeepAwakePlugin extends Plugin {
++
++    @PluginMethod
++    public void setEnabled(PluginCall call) {
++        boolean enabled = call.getBoolean("enabled", false);
++        getActivity().runOnUiThread(() -> {
++            if (enabled) {
++                getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
++            } else {
++                getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
++            }
++        });
++        call.resolve(new JSObject());
++    }
++}
+diff --git a/src/alarm/types.ts b/src/alarm/types.ts
+index 33f1654..afdca29 100644
+--- a/src/alarm/types.ts
++++ b/src/alarm/types.ts
+@@ -1,5 +1,11 @@
++import { storageGet, StorageKeys } from '../storage/db';
++
+ export type RepeatMode = 'today' | 'daily' | 'weekend' | 'weekdays';
+ 
++function isClockFormat24h(): boolean {
++  return storageGet(StorageKeys.clockFormat24h, false);
++}
++
+ export type TimeCategory = 'morning' | 'afternoon' | 'evening' | 'night';
+ 
+ export interface AlarmPreset {
+@@ -51,6 +57,9 @@ export function repeatLabelFor(mode: RepeatMode, hour: number, minute: number):
+ }
+ 
+ export function formatTime(hour: number, minute: number): string {
++  if (isClockFormat24h()) {
++    return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
++  }
+   const period = hour >= 12 ? 'PM' : 'AM';
+   const h12 = hour % 12 === 0 ? 12 : hour % 12;
+   return `${h12}:${String(minute).padStart(2, '0')} ${period}`;
+diff --git a/src/app/App.tsx b/src/app/App.tsx
+index f7bc4d2..2c53576 100644
+--- a/src/app/App.tsx
++++ b/src/app/App.tsx
+@@ -15,6 +15,11 @@ import {
+   ProfileDataSync,
+   ProfilePrivacy,
+   ProfileAbout,
++  ProfileTextSize,
++  ProfileTimeFormats,
++  ProfileNotifications,
++  ProfileAppLock,
++  ProfileVaultSecurity,
+ } from '../screens/Profile/ProfileSections';
+ import { ToolRoute } from '../tools/ToolRoute';
+ import { PhoneCenter } from '../screens/PhoneCenter/PhoneCenter';
+@@ -27,6 +32,7 @@ import { StorageErrorToast } from '../storage/StorageErrorToast';
+ import { hapticTap } from '../haptics';
+ import { AuthProvider } from '../cloud/AuthContext';
+ import { SettingsProvider } from '../settings/SettingsContext';
++import { AppLockGate } from '../applock/AppLockGate';
+ import { useIsLightTheme } from '../theme/useTheme';
+ import { setStatusBarStyle, initStatusBarOverlay } from '../theme/statusBar';
+ import './App.css';
+@@ -43,6 +49,11 @@ function Screen() {
+   if (path === '/profile') return <Profile />;
+   if (path === '/profile/account') return <ProfileAccount />;
+   if (path === '/profile/settings') return <ProfileSettings />;
++  if (path === '/profile/settings/text-size') return <ProfileTextSize />;
++  if (path === '/profile/settings/time-formats') return <ProfileTimeFormats />;
++  if (path === '/profile/settings/notifications') return <ProfileNotifications />;
++  if (path === '/profile/settings/app-lock') return <ProfileAppLock />;
++  if (path === '/profile/settings/vault-security') return <ProfileVaultSecurity />;
+   if (path === '/profile/appearance') return <ProfileAppearance />;
+   if (path === '/profile/data-sync') return <ProfileDataSync />;
+   if (path === '/profile/privacy') return <ProfilePrivacy />;
+@@ -114,11 +125,13 @@ function App() {
+ 
+   return (
+     <SettingsProvider>
+-      <AuthProvider>
+-        <RouterProvider>
+-          <Shell />
+-        </RouterProvider>
+-      </AuthProvider>
++      <AppLockGate>
++        <AuthProvider>
++          <RouterProvider>
++            <Shell />
++          </RouterProvider>
++        </AuthProvider>
++      </AppLockGate>
+     </SettingsProvider>
+   );
+ }
+diff --git a/src/app/Router.tsx b/src/app/Router.tsx
+index 1b186b8..0706623 100644
+--- a/src/app/Router.tsx
++++ b/src/app/Router.tsx
+@@ -26,6 +26,7 @@ function parentPath(path: string): string {
+   if (path === '/health-check') return '/phone-center';
+   if (path === '/phone-center') return '/';
+   if (path === '/privacy-policy') return '/profile/privacy';
++  if (path.startsWith('/profile/settings/')) return '/profile/settings';
+   if (path.startsWith('/profile/')) return '/profile';
+   return '/';
+ }
+diff --git a/src/applock/AppLockGate.tsx b/src/applock/AppLockGate.tsx
+new file mode 100644
+index 0000000..631c3a9
+--- /dev/null
++++ b/src/applock/AppLockGate.tsx
+@@ -0,0 +1,45 @@
++import { useState, type ReactNode } from 'react';
++import { PinPad } from '../vault/PinPad';
++import { storageGet, StorageKeys } from '../storage/db';
++import { hashPin } from './crypto';
++
++/** Gates the whole app behind a PIN when App Lock is on (Settings > Security). Checked once at
++ *  mount -- the app re-renders this component fresh on every cold start/process restart, which is
++ *  the only time Android actually tears the WebView down, so there's no separate "lock on
++ *  background" timer to wire up here. */
++export function AppLockGate({ children }: { children: ReactNode }) {
++  const enabled = storageGet(StorageKeys.appLockEnabled, false);
++  const [unlocked, setUnlocked] = useState(!enabled);
++  const [pinInput, setPinInput] = useState('');
++  const [error, setError] = useState('');
++
++  async function onPinChange(value: string) {
++    setPinInput(value);
++    if (value.length !== 4) return;
++
++    const salt = storageGet<string>(StorageKeys.appLockPinSalt, '');
++    const storedHash = storageGet<string>(StorageKeys.appLockPinHash, '');
++    const hash = await hashPin(value, salt);
++
++    if (hash === storedHash) {
++      setUnlocked(true);
++    } else {
++      setError('Incorrect PIN');
++      setPinInput('');
++    }
++  }
++
++  if (unlocked) return <>{children}</>;
++
++  return (
++    <div className="screen">
++      <PinPad
++        title="Enter PIN"
++        subtitle="Unlock Omni Hub"
++        value={pinInput}
++        onChange={(v) => void onPinChange(v)}
++        error={error}
++      />
++    </div>
++  );
++}
+diff --git a/src/applock/crypto.ts b/src/applock/crypto.ts
+new file mode 100644
+index 0000000..edeab13
+--- /dev/null
++++ b/src/applock/crypto.ts
+@@ -0,0 +1,20 @@
++const SALT_BYTES = 16;
++
++function toBase64(bytes: Uint8Array): string {
++  let binary = '';
++  for (const b of bytes) binary += String.fromCharCode(b);
++  return btoa(binary);
++}
++
++export function randomSalt(): string {
++  return toBase64(crypto.getRandomValues(new Uint8Array(SALT_BYTES)));
++}
++
++/** App Lock only needs to verify a PIN, never decrypt anything with it, so a salted SHA-256
++ *  digest is enough -- unlike the Vault's PBKDF2-derived AES key, there's no ciphertext here that
++ *  the PIN itself has to reconstitute. */
++export async function hashPin(pin: string, saltB64: string): Promise<string> {
++  const data = new TextEncoder().encode(`${saltB64}:${pin}`);
++  const digest = await crypto.subtle.digest('SHA-256', data);
++  return toBase64(new Uint8Array(digest));
++}
+diff --git a/src/haptics.ts b/src/haptics.ts
+index 3483d26..ee67e2f 100644
+--- a/src/haptics.ts
++++ b/src/haptics.ts
+@@ -1,6 +1,14 @@
+ import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
+ 
++let hapticsEnabled = true;
++
++/** Set once from SettingsContext on load and whenever the user toggles Haptic Feedback. */
++export function setHapticsEnabled(enabled: boolean) {
++  hapticsEnabled = enabled;
++}
++
+ async function safe(fn: () => Promise<void>) {
++  if (!hapticsEnabled) return;
+   try {
+     await fn();
+   } catch {
+diff --git a/src/keepAwake.ts b/src/keepAwake.ts
+new file mode 100644
+index 0000000..4cc0b0c
+--- /dev/null
++++ b/src/keepAwake.ts
+@@ -0,0 +1,21 @@
++import { registerPlugin, WebPlugin } from '@capacitor/core';
++
++interface KeepAwakePluginInterface {
++  setEnabled(options: { enabled: boolean }): Promise<void>;
++}
++
++class KeepAwakePluginWeb extends WebPlugin implements KeepAwakePluginInterface {
++  async setEnabled(): Promise<void> {
++    // no-op in browser
++  }
++}
++
++const KeepAwakePlugin = registerPlugin<KeepAwakePluginInterface>('KeepAwakePlugin', {
++  web: () => new KeepAwakePluginWeb(),
++});
++
++export function setKeepAwake(enabled: boolean) {
++  void KeepAwakePlugin.setEnabled({ enabled }).catch(() => {
++    // Plugin unavailable (web, etc.) — ignore.
++  });
++}
+diff --git a/src/screens/Profile/ProfileSections.tsx b/src/screens/Profile/ProfileSections.tsx
+index 5b0253f..2b11a01 100644
+--- a/src/screens/Profile/ProfileSections.tsx
++++ b/src/screens/Profile/ProfileSections.tsx
+@@ -1,15 +1,19 @@
+-import { useRef, useState } from 'react';
++import { useEffect, useRef, useState } from 'react';
+ import { Capacitor } from '@capacitor/core';
+ import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+ import { Share } from '@capacitor/share';
+ import { ScreenHeader } from '../../components/ScreenHeader';
+ import { Icon } from '../../components/Icon';
++import { PinPad } from '../../vault/PinPad';
+ import { useRouter } from '../../app/Router';
+ import { storageGet, storageSet, StorageKeys, exportBackup, importBackup, clearAllData } from '../../storage/db';
+ import { clearAllFiles } from '../../vault/fileStore';
+-import { hapticWarning } from '../../haptics';
++import { hapticWarning, hapticSuccess } from '../../haptics';
+ import { useAuth } from '../../cloud/AuthContext';
+-import { useSettings } from '../../settings/SettingsContext';
++import { useSettings, TEXT_SCALES, type TextScale } from '../../settings/SettingsContext';
++import { AlarmPlugin } from '../../alarm/plugin';
++import { CURRENCIES, appDefaultCurrency } from '../../tools/shared/currencies';
++import { hashPin, randomSalt } from '../../applock/crypto';
+ import './Profile.css';
+ 
+ type Theme = 'dark' | 'light';
+@@ -179,15 +183,62 @@ export function ProfileAccount() {
+ }
+ 
+ export function ProfileSettings() {
+-  const { back } = useRouter();
+-  const { nav3dIconEnabled, setNav3dIconEnabled } = useSettings();
++  const { back, navigate } = useRouter();
++  const {
++    nav3dIconEnabled,
++    setNav3dIconEnabled,
++    hapticsEnabled,
++    setHapticsEnabled,
++    keepAwakeEnabled,
++    setKeepAwakeEnabled,
++  } = useSettings();
+ 
+   return (
+     <div className="screen">
+       <ScreenHeader title="Settings" subtitle="App preferences and behavior." onBack={back} />
+       <div className="pf__body">
+-        <section className="pf__section">
++        <div className="pf__group">
++          <span className="pf__group-label" style={{ color: 'var(--accent)' }}>
++            <Icon name="settings" size={14} />
++            GENERAL
++          </span>
+           <div className="pf__card">
++            <div className="pf__row">
++              <span className="pf__row-icon pf__row-icon--green">
++                <Icon name="smartphone" size={18} />
++              </span>
++              <span className="pf__row-text">
++                <strong>Haptic Feedback</strong>
++                <span>Vibrations throughout the app.</span>
++              </span>
++              <button
++                type="button"
++                className={`pf__switch${hapticsEnabled ? ' pf__switch--on' : ''}`}
++                onClick={() => setHapticsEnabled(!hapticsEnabled)}
++                aria-label="Toggle haptic feedback"
++              >
++                <span className="pf__switch-knob" />
++              </button>
++            </div>
++            <div className="pf__divider" />
++            <div className="pf__row">
++              <span className="pf__row-icon pf__row-icon--orange">
++                <Icon name="moon" size={18} />
++              </span>
++              <span className="pf__row-text">
++                <strong>Keep Screen Awake</strong>
++                <span>Prevent screen from sleeping.</span>
++              </span>
++              <button
++                type="button"
++                className={`pf__switch${keepAwakeEnabled ? ' pf__switch--on' : ''}`}
++                onClick={() => setKeepAwakeEnabled(!keepAwakeEnabled)}
++                aria-label="Toggle keep screen awake"
++              >
++                <span className="pf__switch-knob" />
++              </button>
++            </div>
++            <div className="pf__divider" />
+             <div className="pf__row">
+               <span className="pf__row-icon pf__row-icon--purple">
+                 <Icon name="zap" size={18} />
+@@ -206,7 +257,116 @@ export function ProfileSettings() {
+               </button>
+             </div>
+           </div>
+-        </section>
++        </div>
++
++        <div className="pf__group">
++          <span className="pf__group-label" style={{ color: 'var(--pink)' }}>
++            <Icon name="palette" size={14} />
++            APPEARANCE
++          </span>
++          <div className="pf__card">
++            <button type="button" className="pf__row" onClick={() => navigate('/profile/settings/text-size')}>
++              <span className="pf__row-icon pf__row-icon--blue">
++                <Icon name="text-size" size={18} />
++              </span>
++              <span className="pf__row-text">
++                <strong>Text Size</strong>
++                <span>Adjust text size across the app.</span>
++              </span>
++              <Icon name="chevron-right" size={16} className="pf__row-chevron" />
++            </button>
++            <div className="pf__divider" />
++            <div className="pf__row pf__row--static">
++              <span className="pf__row-icon pf__row-icon--pink">
++                <Icon name="globe" size={18} />
++              </span>
++              <span className="pf__row-text">
++                <strong>Language</strong>
++                <span>English (for now).</span>
++              </span>
++            </div>
++          </div>
++        </div>
++
++        <div className="pf__group">
++          <span className="pf__group-label" style={{ color: 'var(--green)' }}>
++            <Icon name="globe" size={14} />
++            TIME &amp; FORMATS
++          </span>
++          <div className="pf__card">
++            <button
++              type="button"
++              className="pf__row"
++              onClick={() => navigate('/profile/settings/time-formats')}
++            >
++              <span className="pf__row-icon pf__row-icon--orange">
++                <Icon name="clock" size={18} />
++              </span>
++              <span className="pf__row-text">
++                <strong>Time &amp; Formats</strong>
++                <span>Clock, date, first day of week, currency and units.</span>
++              </span>
++              <Icon name="chevron-right" size={16} className="pf__row-chevron" />
++            </button>
++          </div>
++        </div>
++
++        <div className="pf__group">
++          <span className="pf__group-label" style={{ color: 'var(--blue)' }}>
++            <Icon name="bell" size={14} />
++            NOTIFICATIONS
++          </span>
++          <div className="pf__card">
++            <button
++              type="button"
++              className="pf__row"
++              onClick={() => navigate('/profile/settings/notifications')}
++            >
++              <span className="pf__row-icon pf__row-icon--danger">
++                <Icon name="bell" size={18} />
++              </span>
++              <span className="pf__row-text">
++                <strong>Notifications</strong>
++                <span>App, alarm, reminders and more.</span>
++              </span>
++              <Icon name="chevron-right" size={16} className="pf__row-chevron" />
++            </button>
++          </div>
++        </div>
++
++        <div className="pf__group">
++          <span className="pf__group-label" style={{ color: 'var(--blue)' }}>
++            <Icon name="shield" size={14} />
++            SECURITY
++          </span>
++          <div className="pf__card">
++            <button type="button" className="pf__row" onClick={() => navigate('/profile/settings/app-lock')}>
++              <span className="pf__row-icon pf__row-icon--purple">
++                <Icon name="lock" size={18} />
++              </span>
++              <span className="pf__row-text">
++                <strong>App Lock &amp; Biometrics</strong>
++                <span>Lock the app with PIN, fingerprint or face unlock.</span>
++              </span>
++              <Icon name="chevron-right" size={16} className="pf__row-chevron" />
++            </button>
++            <div className="pf__divider" />
++            <button
++              type="button"
++              className="pf__row"
++              onClick={() => navigate('/profile/settings/vault-security')}
++            >
++              <span className="pf__row-icon pf__row-icon--teal">
++                <Icon name="archive" size={18} />
++              </span>
++              <span className="pf__row-text">
++                <strong>Vault Security</strong>
++                <span>Change PIN, auto-lock timing and biometric access.</span>
++              </span>
++              <Icon name="chevron-right" size={16} className="pf__row-chevron" />
++            </button>
++          </div>
++        </div>
+       </div>
+     </div>
+   );
+@@ -462,3 +622,504 @@ export function ProfileAbout() {
+     </div>
+   );
+ }
++
++const TEXT_SCALE_LABELS: Record<TextScale, string> = {
++  0.9: 'Small',
++  1: 'Default',
++  1.15: 'Large',
++  1.3: 'Extra Large',
++};
++
++export function ProfileTextSize() {
++  const { back } = useRouter();
++  const { textScale, setTextScale } = useSettings();
++
++  return (
++    <div className="screen">
++      <ScreenHeader title="Text Size" subtitle="Adjust text size across the app." onBack={back} />
++      <div className="pf__body">
++        <div className="pf__card">
++          {TEXT_SCALES.map((scale, i) => (
++            <div key={scale}>
++              <button
++                type="button"
++                className="pf__row pf__row--static"
++                onClick={() => setTextScale(scale)}
++              >
++                <span className="pf__row-text">
++                  <strong style={{ fontSize: `${14 * scale}px` }}>{TEXT_SCALE_LABELS[scale]}</strong>
++                </span>
++                {textScale === scale && <Icon name="check" size={18} style={{ color: 'var(--accent)' }} />}
++              </button>
++              {i < TEXT_SCALES.length - 1 && <div className="pf__divider" />}
++            </div>
++          ))}
++        </div>
++      </div>
++    </div>
++  );
++}
++
++type ClockFormat = '12h' | '24h';
++type DateFormat = 'MDY' | 'DMY' | 'YMD';
++type FirstDay = 'sun' | 'mon';
++type MeasurementSystem = 'metric' | 'imperial';
++
++const DATE_FORMAT_LABELS: Record<DateFormat, string> = {
++  MDY: 'MM/DD/YYYY',
++  DMY: 'DD/MM/YYYY',
++  YMD: 'YYYY-MM-DD',
++};
++
++export function ProfileTimeFormats() {
++  const { back } = useRouter();
++  const [clockFormat, setClockFormatState] = useState<ClockFormat>(() =>
++    storageGet(StorageKeys.clockFormat24h, false) ? '24h' : '12h',
++  );
++  const [dateFormat, setDateFormatState] = useState<DateFormat>(() => storageGet(StorageKeys.dateFormat, 'MDY'));
++  const [firstDay, setFirstDayState] = useState<FirstDay>(() => storageGet(StorageKeys.firstDayOfWeek, 'sun'));
++  const [currency, setCurrencyState] = useState(() => storageGet(StorageKeys.defaultCurrency, appDefaultCurrency()));
++  const [measurement, setMeasurementState] = useState<MeasurementSystem>(() =>
++    storageGet(StorageKeys.measurementSystem, 'metric'),
++  );
++  const [showCurrencyList, setShowCurrencyList] = useState(false);
++
++  function setClockFormat(v: ClockFormat) {
++    setClockFormatState(v);
++    storageSet(StorageKeys.clockFormat24h, v === '24h');
++  }
++
++  function setDateFormat(v: DateFormat) {
++    setDateFormatState(v);
++    storageSet(StorageKeys.dateFormat, v);
++  }
++
++  function setFirstDay(v: FirstDay) {
++    setFirstDayState(v);
++    storageSet(StorageKeys.firstDayOfWeek, v);
++  }
++
++  function setCurrency(code: string) {
++    setCurrencyState(code);
++    storageSet(StorageKeys.defaultCurrency, code);
++    setShowCurrencyList(false);
++  }
++
++  function setMeasurement(v: MeasurementSystem) {
++    setMeasurementState(v);
++    storageSet(StorageKeys.measurementSystem, v);
++  }
++
++  const currencyOption = CURRENCIES.find((c) => c.code === currency);
++
++  return (
++    <div className="screen">
++      <ScreenHeader title="Time & Formats" subtitle="Clock, date, first day of week, currency and units." onBack={back} />
++      <div className="pf__body">
++        <div className="pf__group">
++          <span className="pf__group-label" style={{ color: 'var(--text-secondary)' }}>
++            CLOCK FORMAT
++          </span>
++          <div className="pf__theme-toggle">
++            <button
++              type="button"
++              className={`pf__theme-btn${clockFormat === '12h' ? ' pf__theme-btn--active' : ''}`}
++              onClick={() => setClockFormat('12h')}
++            >
++              12-hour
++            </button>
++            <button
++              type="button"
++              className={`pf__theme-btn${clockFormat === '24h' ? ' pf__theme-btn--active' : ''}`}
++              onClick={() => setClockFormat('24h')}
++            >
++              24-hour
++            </button>
++          </div>
++        </div>
++
++        <div className="pf__group">
++          <span className="pf__group-label" style={{ color: 'var(--text-secondary)' }}>
++            DATE FORMAT
++          </span>
++          <div className="pf__card">
++            {(Object.keys(DATE_FORMAT_LABELS) as DateFormat[]).map((fmt, i) => (
++              <div key={fmt}>
++                <button type="button" className="pf__row pf__row--static" onClick={() => setDateFormat(fmt)}>
++                  <span className="pf__row-text">
++                    <strong>{DATE_FORMAT_LABELS[fmt]}</strong>
++                  </span>
++                  {dateFormat === fmt && <Icon name="check" size={18} style={{ color: 'var(--accent)' }} />}
++                </button>
++                {i < 2 && <div className="pf__divider" />}
++              </div>
++            ))}
++          </div>
++        </div>
++
++        <div className="pf__group">
++          <span className="pf__group-label" style={{ color: 'var(--text-secondary)' }}>
++            FIRST DAY OF WEEK
++          </span>
++          <div className="pf__theme-toggle">
++            <button
++              type="button"
++              className={`pf__theme-btn${firstDay === 'sun' ? ' pf__theme-btn--active' : ''}`}
++              onClick={() => setFirstDay('sun')}
++            >
++              Sunday
++            </button>
++            <button
++              type="button"
++              className={`pf__theme-btn${firstDay === 'mon' ? ' pf__theme-btn--active' : ''}`}
++              onClick={() => setFirstDay('mon')}
++            >
++              Monday
++            </button>
++          </div>
++        </div>
++
++        <div className="pf__group">
++          <span className="pf__group-label" style={{ color: 'var(--text-secondary)' }}>
++            DEFAULT CURRENCY
++          </span>
++          <div className="pf__card">
++            <button
++              type="button"
++              className="pf__row"
++              onClick={() => setShowCurrencyList((v) => !v)}
++            >
++              <span className="pf__row-text">
++                <strong>
++                  {currencyOption ? `${currencyOption.flag} ${currencyOption.code}` : currency}
++                </strong>
++                <span>Used as the starting currency for Budget, Expenses, Subscriptions and Debt.</span>
++              </span>
++              <Icon name="chevron-right" size={16} className="pf__row-chevron" />
++            </button>
++            {showCurrencyList && (
++              <>
++                <div className="pf__divider" />
++                <div className="pf__currency-list">
++                  {CURRENCIES.map((c) => (
++                    <button
++                      key={c.code}
++                      type="button"
++                      className="pf__row pf__row--static"
++                      onClick={() => setCurrency(c.code)}
++                    >
++                      <span className="pf__row-text">
++                        <strong>
++                          {c.flag} {c.code}
++                        </strong>
++                        <span>{c.name}</span>
++                      </span>
++                      {currency === c.code && <Icon name="check" size={18} style={{ color: 'var(--accent)' }} />}
++                    </button>
++                  ))}
++                </div>
++              </>
++            )}
++          </div>
++        </div>
++
++        <div className="pf__group">
++          <span className="pf__group-label" style={{ color: 'var(--text-secondary)' }}>
++            MEASUREMENT SYSTEM
++          </span>
++          <div className="pf__theme-toggle">
++            <button
++              type="button"
++              className={`pf__theme-btn${measurement === 'metric' ? ' pf__theme-btn--active' : ''}`}
++              onClick={() => setMeasurement('metric')}
++            >
++              Metric
++            </button>
++            <button
++              type="button"
++              className={`pf__theme-btn${measurement === 'imperial' ? ' pf__theme-btn--active' : ''}`}
++              onClick={() => setMeasurement('imperial')}
++            >
++              Imperial
++            </button>
++          </div>
++        </div>
++      </div>
++    </div>
++  );
++}
++
++export function ProfileNotifications() {
++  const { back } = useRouter();
++  const [notifGranted, setNotifGranted] = useState<boolean | null>(null);
++  const [exactAlarmGranted, setExactAlarmGranted] = useState<boolean | null>(null);
++
++  useEffect(() => {
++    AlarmPlugin.checkNotificationPermission()
++      .then(({ granted }) => setNotifGranted(granted))
++      .catch(() => setNotifGranted(null));
++    AlarmPlugin.checkExactAlarmPermission()
++      .then(({ granted }) => setExactAlarmGranted(granted))
++      .catch(() => setExactAlarmGranted(null));
++  }, []);
++
++  async function requestNotif() {
++    const { granted } = await AlarmPlugin.requestNotificationPermission();
++    setNotifGranted(granted);
++  }
++
++  async function requestExactAlarm() {
++    await AlarmPlugin.requestExactAlarmPermission();
++    const { granted } = await AlarmPlugin.checkExactAlarmPermission();
++    setExactAlarmGranted(granted);
++  }
++
++  return (
++    <div className="screen">
++      <ScreenHeader title="Notifications" subtitle="App, alarm, reminders and more." onBack={back} />
++      <div className="pf__body">
++        <div className="pf__card">
++          <div className="pf__row pf__row--static">
++            <span className="pf__row-text">
++              <strong>Notifications</strong>
++              <span>Needed for Alarm and Sleep Mode to ring and alert you.</span>
++            </span>
++            {notifGranted === null ? (
++              <span className="pf__row-value">—</span>
++            ) : notifGranted ? (
++              <span className="pf__row-value" style={{ color: 'var(--green)' }}>
++                Allowed
++              </span>
++            ) : (
++              <button type="button" className="pf__row-value" style={{ color: 'var(--accent)' }} onClick={requestNotif}>
++                Allow
++              </button>
++            )}
++          </div>
++          <div className="pf__divider" />
++          <div className="pf__row pf__row--static">
++            <span className="pf__row-text">
++              <strong>Alarms &amp; Reminders</strong>
++              <span>Lets Omni Hub schedule alarms that ring at the exact time.</span>
++            </span>
++            {exactAlarmGranted === null ? (
++              <span className="pf__row-value">—</span>
++            ) : exactAlarmGranted ? (
++              <span className="pf__row-value" style={{ color: 'var(--green)' }}>
++                Allowed
++              </span>
++            ) : (
++              <button
++                type="button"
++                className="pf__row-value"
++                style={{ color: 'var(--accent)' }}
++                onClick={requestExactAlarm}
++              >
++                Allow
++              </button>
++            )}
++          </div>
++        </div>
++      </div>
++    </div>
++  );
++}
++
++type AppLockStep = 'settings' | 'setupPin' | 'confirmPin';
++
++export function ProfileAppLock() {
++  const { back } = useRouter();
++  const [enabled, setEnabledState] = useState(() => storageGet(StorageKeys.appLockEnabled, false));
++  const [step, setStep] = useState<AppLockStep>('settings');
++  const [pinInput, setPinInput] = useState('');
++  const [pendingPin, setPendingPin] = useState('');
++  const [error, setError] = useState('');
++
++  async function completeSetup(pin: string) {
++    const salt = randomSalt();
++    const hash = await hashPin(pin, salt);
++    storageSet(StorageKeys.appLockPinSalt, salt);
++    storageSet(StorageKeys.appLockPinHash, hash);
++    storageSet(StorageKeys.appLockEnabled, true);
++    setEnabledState(true);
++    hapticSuccess();
++    setStep('settings');
++    setPinInput('');
++    setPendingPin('');
++  }
++
++  function onPinChange(value: string) {
++    setPinInput(value);
++    if (value.length !== 4) return;
++
++    if (step === 'setupPin') {
++      setPendingPin(value);
++      setPinInput('');
++      setError('');
++      setStep('confirmPin');
++      return;
++    }
++
++    if (step === 'confirmPin') {
++      if (value === pendingPin) {
++        void completeSetup(value);
++      } else {
++        setError("PINs didn't match. Try again.");
++        setPinInput('');
++        setPendingPin('');
++        setStep('setupPin');
++      }
++    }
++  }
++
++  function startEnable() {
++    setStep('setupPin');
++    setPinInput('');
++    setPendingPin('');
++    setError('');
++  }
++
++  function disable() {
++    storageSet(StorageKeys.appLockEnabled, false);
++    storageSet(StorageKeys.appLockPinHash, '');
++    storageSet(StorageKeys.appLockPinSalt, '');
++    setEnabledState(false);
++  }
++
++  if (step === 'setupPin') {
++    return (
++      <div className="screen">
++        <ScreenHeader title="App Lock" onBack={() => setStep('settings')} />
++        <PinPad title="Set a PIN" subtitle="Create a 4-digit PIN to lock Omni Hub" value={pinInput} onChange={onPinChange} error={error} />
++      </div>
++    );
++  }
++
++  if (step === 'confirmPin') {
++    return (
++      <div className="screen">
++        <ScreenHeader title="App Lock" onBack={() => setStep('settings')} />
++        <PinPad title="Confirm PIN" subtitle="Enter it again to confirm" value={pinInput} onChange={onPinChange} error={error} />
++      </div>
++    );
++  }
++
++  return (
++    <div className="screen">
++      <ScreenHeader title="App Lock & Biometrics" subtitle="Lock the app with PIN, fingerprint or face unlock." onBack={back} />
++      <div className="pf__body">
++        <div className="pf__card">
++          <div className="pf__row">
++            <span className="pf__row-icon pf__row-icon--purple">
++              <Icon name="lock" size={18} />
++            </span>
++            <span className="pf__row-text">
++              <strong>App Lock</strong>
++              <span>Require your PIN to open Omni Hub.</span>
++            </span>
++            <button
++              type="button"
++              className={`pf__switch${enabled ? ' pf__switch--on' : ''}`}
++              onClick={() => (enabled ? disable() : startEnable())}
++              aria-label="Toggle app lock"
++            >
++              <span className="pf__switch-knob" />
++            </button>
++          </div>
++          <div className="pf__divider" />
++          <div className="pf__row">
++            <span className="pf__row-icon pf__row-icon--blue">
++              <Icon name="fingerprint" size={18} />
++            </span>
++            <span className="pf__row-text">
++              <strong>Biometric Unlock</strong>
++              <span>Fingerprint or face unlock, coming soon.</span>
++            </span>
++            <span className="pf__row-value">Soon</span>
++          </div>
++          {enabled && (
++            <>
++              <div className="pf__divider" />
++              <button type="button" className="pf__row" onClick={startEnable}>
++                <span className="pf__row-icon pf__row-icon--orange">
++                  <Icon name="lock" size={18} />
++                </span>
++                <span className="pf__row-text">
++                  <strong>Change PIN</strong>
++                </span>
++                <Icon name="chevron-right" size={16} className="pf__row-chevron" />
++              </button>
++            </>
++          )}
++        </div>
++      </div>
++    </div>
++  );
++}
++
++const VAULT_AUTO_LOCK_OPTIONS = [
++  { value: 0, label: 'Immediately' },
++  { value: 1, label: 'After 1 minute' },
++  { value: 5, label: 'After 5 minutes' },
++  { value: -1, label: 'Never' },
++];
++
++export function ProfileVaultSecurity() {
++  const { back, navigate } = useRouter();
++  const [autoLock, setAutoLockState] = useState(() => storageGet(StorageKeys.vaultAutoLockMinutes, 1));
++
++  function setAutoLock(v: number) {
++    setAutoLockState(v);
++    storageSet(StorageKeys.vaultAutoLockMinutes, v);
++  }
++
++  return (
++    <div className="screen">
++      <ScreenHeader title="Vault Security" subtitle="Change PIN, auto-lock timing and biometric access." onBack={back} />
++      <div className="pf__body">
++        <div className="pf__card">
++          <button type="button" className="pf__row" onClick={() => navigate('/tools/vault')}>
++            <span className="pf__row-icon pf__row-icon--teal">
++              <Icon name="archive" size={18} />
++            </span>
++            <span className="pf__row-text">
++              <strong>Open Vault</strong>
++              <span>Change your PIN or reset the Vault from its own settings.</span>
++            </span>
++            <Icon name="chevron-right" size={16} className="pf__row-chevron" />
++          </button>
++          <div className="pf__divider" />
++          <div className="pf__row">
++            <span className="pf__row-icon pf__row-icon--blue">
++              <Icon name="fingerprint" size={18} />
++            </span>
++            <span className="pf__row-text">
++              <strong>Biometric Unlock</strong>
++              <span>Fingerprint or face unlock, coming soon.</span>
++            </span>
++            <span className="pf__row-value">Soon</span>
++          </div>
++        </div>
++
++        <div className="pf__group">
++          <span className="pf__group-label" style={{ color: 'var(--text-secondary)' }}>
++            AUTO-LOCK TIMING
++          </span>
++          <div className="pf__card">
++            {VAULT_AUTO_LOCK_OPTIONS.map((opt, i) => (
++              <div key={opt.value}>
++                <button type="button" className="pf__row pf__row--static" onClick={() => setAutoLock(opt.value)}>
++                  <span className="pf__row-text">
++                    <strong>{opt.label}</strong>
++                  </span>
++                  {autoLock === opt.value && <Icon name="check" size={18} style={{ color: 'var(--accent)' }} />}
++                </button>
++                {i < VAULT_AUTO_LOCK_OPTIONS.length - 1 && <div className="pf__divider" />}
++              </div>
++            ))}
++          </div>
++        </div>
++      </div>
++    </div>
++  );
++}
+diff --git a/src/settings/SettingsContext.tsx b/src/settings/SettingsContext.tsx
+index 687cab9..2e9fd2c 100644
+--- a/src/settings/SettingsContext.tsx
++++ b/src/settings/SettingsContext.tsx
+@@ -1,10 +1,24 @@
+-import { createContext, useContext, useState, type ReactNode } from 'react';
++import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+ import { storageGet, storageSet, StorageKeys } from '../storage/db';
++import { setHapticsEnabled as applyHapticsEnabled } from '../haptics';
++import { setKeepAwake } from '../keepAwake';
++
++export const TEXT_SCALES = [0.9, 1, 1.15, 1.3] as const;
++export type TextScale = (typeof TEXT_SCALES)[number];
+ 
+ interface SettingsContextValue {
+   /** Live, swipe-to-rotate 3D render for the AI tab's nav icon vs. a static image. */
+   nav3dIconEnabled: boolean;
+   setNav3dIconEnabled: (enabled: boolean) => void;
++
++  hapticsEnabled: boolean;
++  setHapticsEnabled: (enabled: boolean) => void;
++
++  keepAwakeEnabled: boolean;
++  setKeepAwakeEnabled: (enabled: boolean) => void;
++
++  textScale: TextScale;
++  setTextScale: (scale: TextScale) => void;
+ }
+ 
+ const SettingsContext = createContext<SettingsContextValue | null>(null);
+@@ -13,14 +27,57 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
+   const [nav3dIconEnabled, setNav3dIconEnabledState] = useState(() =>
+     storageGet(StorageKeys.nav3dIconEnabled, true),
+   );
++  const [hapticsEnabled, setHapticsEnabledState] = useState(() => storageGet(StorageKeys.hapticsEnabled, true));
++  const [keepAwakeEnabled, setKeepAwakeEnabledState] = useState(() =>
++    storageGet(StorageKeys.keepAwakeEnabled, false),
++  );
++  const [textScale, setTextScaleState] = useState<TextScale>(() => storageGet(StorageKeys.textScale, 1));
+ 
+   function setNav3dIconEnabled(enabled: boolean) {
+     setNav3dIconEnabledState(enabled);
+     storageSet(StorageKeys.nav3dIconEnabled, enabled);
+   }
+ 
++  function setHapticsEnabled(enabled: boolean) {
++    setHapticsEnabledState(enabled);
++    storageSet(StorageKeys.hapticsEnabled, enabled);
++    applyHapticsEnabled(enabled);
++  }
++
++  function setKeepAwakeEnabled(enabled: boolean) {
++    setKeepAwakeEnabledState(enabled);
++    storageSet(StorageKeys.keepAwakeEnabled, enabled);
++    setKeepAwake(enabled);
++  }
++
++  function setTextScale(scale: TextScale) {
++    setTextScaleState(scale);
++    storageSet(StorageKeys.textScale, scale);
++    document.documentElement.style.zoom = String(scale);
++  }
++
++  // Apply the persisted settings to their native/CSS side effects once on startup -- the
++  // setters above only fire from here on when the user actually changes something.
++  useEffect(() => {
++    applyHapticsEnabled(hapticsEnabled);
++    setKeepAwake(keepAwakeEnabled);
++    document.documentElement.style.zoom = String(textScale);
++    // eslint-disable-next-line react-hooks/exhaustive-deps
++  }, []);
++
+   return (
+-    <SettingsContext.Provider value={{ nav3dIconEnabled, setNav3dIconEnabled }}>
++    <SettingsContext.Provider
++      value={{
++        nav3dIconEnabled,
++        setNav3dIconEnabled,
++        hapticsEnabled,
++        setHapticsEnabled,
++        keepAwakeEnabled,
++        setKeepAwakeEnabled,
++        textScale,
++        setTextScale,
++      }}
++    >
+       {children}
+     </SettingsContext.Provider>
+   );
+diff --git a/src/storage/db.ts b/src/storage/db.ts
+index b4f78cd..4bb3fed 100644
+--- a/src/storage/db.ts
++++ b/src/storage/db.ts
+@@ -39,6 +39,18 @@ export const StorageKeys = {
+   expenseDefaultCurrency: `${PREFIX}expense.defaultCurrency`,
+   budgetDefaultCurrency: `${PREFIX}budget.defaultCurrency`,
+   nav3dIconEnabled: `${PREFIX}nav.3dIconEnabled`,
++  hapticsEnabled: `${PREFIX}settings.hapticsEnabled`,
++  keepAwakeEnabled: `${PREFIX}settings.keepAwakeEnabled`,
++  textScale: `${PREFIX}settings.textScale`,
++  clockFormat24h: `${PREFIX}settings.clockFormat24h`,
++  dateFormat: `${PREFIX}settings.dateFormat`,
++  firstDayOfWeek: `${PREFIX}settings.firstDayOfWeek`,
++  defaultCurrency: `${PREFIX}settings.defaultCurrency`,
++  measurementSystem: `${PREFIX}settings.measurementSystem`,
++  appLockEnabled: `${PREFIX}settings.appLockEnabled`,
++  appLockPinHash: `${PREFIX}settings.appLockPinHash`,
++  appLockPinSalt: `${PREFIX}settings.appLockPinSalt`,
++  vaultAutoLockMinutes: `${PREFIX}settings.vaultAutoLockMinutes`,
+ } as const;
+ 
+ export function storageGet<T>(key: string, fallback: T): T {
+diff --git a/src/tools/budget/Budget.tsx b/src/tools/budget/Budget.tsx
+index 74e65b2..847ee06 100644
+--- a/src/tools/budget/Budget.tsx
++++ b/src/tools/budget/Budget.tsx
+@@ -8,7 +8,7 @@ import { hapticTap, hapticWarning } from '../../haptics';
+ import { useCloudSync } from '../../cloud/useCloudSync';
+ import { EXPENSE_CATEGORIES, getCategory } from '../expense-tracker/categories';
+ import { currentMonthKey, formatMonthLabel, shiftMonthKey } from '../expense-tracker/month';
+-import { CURRENCIES, DEFAULT_CURRENCY, formatMoney } from '../shared/currencies';
++import { CURRENCIES, appDefaultCurrency, formatMoney } from '../shared/currencies';
+ import type { Expense } from '../expense-tracker/types';
+ import type { BudgetLimit } from './types';
+ import { SetBudget } from './SetBudget';
+@@ -40,7 +40,7 @@ export function Budget() {
+   const [showMenu, setShowMenu] = useState(false);
+   const [confirmingResetAll, setConfirmingResetAll] = useState(false);
+   const [showCurrencySheet, setShowCurrencySheet] = useState(false);
+-  const [currency, setCurrency] = useState(() => storageGet(StorageKeys.budgetDefaultCurrency, DEFAULT_CURRENCY));
++  const [currency, setCurrency] = useState(() => storageGet(StorageKeys.budgetDefaultCurrency, appDefaultCurrency()));
+ 
+   function selectCurrency(code: string) {
+     hapticTap();
+diff --git a/src/tools/debt-calculator/DebtCalculator.tsx b/src/tools/debt-calculator/DebtCalculator.tsx
+index 379a7af..2b6195b 100644
+--- a/src/tools/debt-calculator/DebtCalculator.tsx
++++ b/src/tools/debt-calculator/DebtCalculator.tsx
+@@ -6,7 +6,7 @@ import { useRouter } from '../../app/Router';
+ import { storageGet, storageSet, StorageKeys } from '../../storage/db';
+ import { useCloudSync } from '../../cloud/useCloudSync';
+ import { hapticSelect, hapticTap } from '../../haptics';
+-import { CURRENCIES, DEFAULT_CURRENCY, detectDeviceCurrency, formatMoney } from '../shared/currencies';
++import { CURRENCIES, DEFAULT_CURRENCY, appDefaultCurrency, formatMoney } from '../shared/currencies';
+ import { CalendarPicker } from '../age-date/CalendarPicker';
+ import { parseISODate, toISODate } from '../age-date/dateMath';
+ import type { DebtDirection, DebtEntry } from './types';
+@@ -37,7 +37,7 @@ export function DebtCalculator() {
+   const [person, setPerson] = useState('');
+   const [debtName, setDebtName] = useState('');
+   const [amountText, setAmountText] = useState('');
+-  const [currency, setCurrency] = useState(() => storageGet(StorageKeys.debtDefaultCurrency, detectDeviceCurrency()));
++  const [currency, setCurrency] = useState(() => storageGet(StorageKeys.debtDefaultCurrency, appDefaultCurrency()));
+   const [note, setNote] = useState('');
+   const [dueAt, setDueAt] = useState<number | undefined>(undefined);
+   const [direction, setDirection] = useState<DebtDirection>('owed_to_me');
+diff --git a/src/tools/expense-tracker/ExpenseTracker.tsx b/src/tools/expense-tracker/ExpenseTracker.tsx
+index d053085..504cead 100644
+--- a/src/tools/expense-tracker/ExpenseTracker.tsx
++++ b/src/tools/expense-tracker/ExpenseTracker.tsx
+@@ -9,7 +9,7 @@ import { hapticSelect, hapticTap } from '../../haptics';
+ import { AddExpense } from './AddExpense';
+ import { EXPENSE_CATEGORIES, getCategory } from './categories';
+ import { currentMonthKey, formatMonthLabel, shiftMonthKey } from './month';
+-import { CURRENCIES, detectDeviceCurrency, currencySymbol, formatMoney } from '../shared/currencies';
++import { CURRENCIES, appDefaultCurrency, currencySymbol, formatMoney } from '../shared/currencies';
+ import type { Expense } from './types';
+ import './ExpenseTracker.css';
+ 
+@@ -36,7 +36,7 @@ export function ExpenseTracker() {
+   const [historyFilter, setHistoryFilter] = useState<string | null>(null);
+   const [showMenu, setShowMenu] = useState(false);
+   const [showCurrencySheet, setShowCurrencySheet] = useState(false);
+-  const [currency, setCurrency] = useState(() => storageGet(StorageKeys.expenseDefaultCurrency, detectDeviceCurrency()));
++  const [currency, setCurrency] = useState(() => storageGet(StorageKeys.expenseDefaultCurrency, appDefaultCurrency()));
+   const [toast, setToast] = useState<string | null>(null);
+ 
+   function selectCurrency(code: string) {
+diff --git a/src/tools/shared/currencies.ts b/src/tools/shared/currencies.ts
+index 5c940b7..697244a 100644
+--- a/src/tools/shared/currencies.ts
++++ b/src/tools/shared/currencies.ts
+@@ -1,3 +1,5 @@
++import { storageGet, StorageKeys } from '../../storage/db';
++
+ export interface CurrencyOption {
+   code: string;
+   flag: string;
+@@ -90,6 +92,14 @@ export function detectDeviceCurrency(): string {
+   }
+ }
+ 
++/** The user's chosen app-wide default currency (Settings > Time & Formats), falling back to a
++ *  device-locale guess when they've never set one. Tools use this instead of detectDeviceCurrency()
++ *  directly so setting it once in Settings changes the starting currency everywhere that hasn't
++ *  already been customized per-tool. */
++export function appDefaultCurrency(): string {
++  return storageGet<string | null>(StorageKeys.defaultCurrency, null) ?? detectDeviceCurrency();
++}
++
+ export function currencyFlag(code: string | undefined): string {
+   return CURRENCIES.find((c) => c.code === code)?.flag ?? '💵';
+ }
+diff --git a/src/tools/subscription-calculator/SubscriptionCalculator.tsx b/src/tools/subscription-calculator/SubscriptionCalculator.tsx
+index babcea9..b1d8130 100644
+--- a/src/tools/subscription-calculator/SubscriptionCalculator.tsx
++++ b/src/tools/subscription-calculator/SubscriptionCalculator.tsx
+@@ -6,7 +6,7 @@ import { useRouter } from '../../app/Router';
+ import { storageGet, storageSet, StorageKeys } from '../../storage/db';
+ import { useCloudSync } from '../../cloud/useCloudSync';
+ import { hapticSelect, hapticTap } from '../../haptics';
+-import { CURRENCIES, DEFAULT_CURRENCY, detectDeviceCurrency, formatMoney } from '../shared/currencies';
++import { CURRENCIES, DEFAULT_CURRENCY, appDefaultCurrency, formatMoney } from '../shared/currencies';
+ import type { BillingCycle, Subscription } from './types';
+ import './SubscriptionCalculator.css';
+ 
+@@ -42,7 +42,7 @@ export function SubscriptionCalculator() {
+   const [subs, setSubs] = useState<Subscription[]>(() => storageGet(StorageKeys.subscriptions, []));
+   const [name, setName] = useState('');
+   const [amountText, setAmountText] = useState('');
+-  const [currency, setCurrency] = useState(() => storageGet(StorageKeys.subscriptionDefaultCurrency, detectDeviceCurrency()));
++  const [currency, setCurrency] = useState(() => storageGet(StorageKeys.subscriptionDefaultCurrency, appDefaultCurrency()));
+   const [cycle, setCycle] = useState<BillingCycle>('monthly');
+   const [openSwipeId, setOpenSwipeId] = useState<string | null>(null);
+   const [filterTab, setFilterTab] = useState<FilterTab>('all');
