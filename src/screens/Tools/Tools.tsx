@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
+import { useBackHandler } from '../../app/useBackHandler';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { SearchBar } from '../../components/SearchBar';
 import { ToolTile } from '../../components/ToolTile';
@@ -14,6 +15,8 @@ import { useIsLightTheme } from '../../theme/useTheme';
 import { loadPinnedToolIds, savePinnedToolIds, MAX_PINNED_TOOLS } from '../../tools/pinnedTools';
 import type { ToolCategory, ToolMeta } from '../../types';
 import './Tools.css';
+
+const SUPPORT_EMAIL = 'syhu.inc@gmail.com';
 
 type CategoryFilter = 'all' | ToolCategory;
 type SortMode = 'default' | 'alpha' | 'category';
@@ -34,6 +37,7 @@ export function Tools() {
   const [category, setCategory] = useState<CategoryFilter>('all');
   const [sortMode, setSortMode] = useState<SortMode>('default');
   const [suggestOpen, setSuggestOpen] = useState(false);
+  useBackHandler(() => setSuggestOpen(false), suggestOpen);
   const [suggestText, setSuggestText] = useState('');
   const [suggestSent, setSuggestSent] = useState(false);
   const [pinnedIds, setPinnedIds] = useState<string[]>(loadPinnedToolIds);
@@ -110,7 +114,12 @@ export function Tools() {
     setSuggestText('');
     setSuggestOpen(false);
     setSuggestSent(true);
-    setTimeout(() => setSuggestSent(false), 2500);
+    setTimeout(() => setSuggestSent(false), 3500);
+    // Nothing reads the local list, so the idea has to leave the phone: open an email draft to
+    // the owner's support address with the suggestion filled in.
+    const subject = encodeURIComponent('Omni Hub tool suggestion');
+    const body = encodeURIComponent(`${text}\n\n— sent from Omni Hub`);
+    window.location.href = `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`;
   }
 
   return (
@@ -239,7 +248,7 @@ export function Tools() {
           </button>
         </div>
 
-        {suggestSent && <p className="tools__suggest-thanks">Thanks! We saved your idea.</p>}
+        {suggestSent && <p className="tools__suggest-thanks">Thanks! Finish sending it in your email app.</p>}
       </div>
 
       {suggestOpen && (

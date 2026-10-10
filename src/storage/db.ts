@@ -28,6 +28,8 @@ export const StorageKeys = {
   debts: `${PREFIX}debts`,
   compassSettings: `${PREFIX}compass.settings`,
   timerHistory: `${PREFIX}timer.history`,
+  timerState: `${PREFIX}timer.state`,
+  stopwatchState: `${PREFIX}stopwatch.state`,
   stopwatchHistory: `${PREFIX}stopwatch.history`,
   diceRollHistory: `${PREFIX}random.diceHistory`,
   checklistCategories: `${PREFIX}checklist.categories`,
@@ -52,6 +54,8 @@ export const StorageKeys = {
   appLockPinSalt: `${PREFIX}settings.appLockPinSalt`,
   vaultAutoLockMinutes: `${PREFIX}settings.vaultAutoLockMinutes`,
   appLockBiometricEnabled: `${PREFIX}settings.appLockBiometricEnabled`,
+  appLockFailedAttempts: `${PREFIX}settings.appLockFailedAttempts`,
+  appLockLockedUntil: `${PREFIX}settings.appLockLockedUntil`,
   vaultBiometricEnabled: `${PREFIX}settings.vaultBiometricEnabled`,
 } as const;
 

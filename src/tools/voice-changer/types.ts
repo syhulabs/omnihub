@@ -27,6 +27,7 @@ export interface VcApi {
   /** Swaps the current screen for another instead of pushing — used after recording/importing
    *  finishes, so the back button from wherever that led doesn't return to a stale Record screen. */
   replace: (screen: VcScreenName) => void;
+  reset: (screen: VcScreenName) => void;
   popBack: () => void;
   /** Where to land after a recording/import finishes when the user tapped a tool tile with no
    *  audio loaded yet (e.g. Home → Auto-Tune with nothing recorded → Record → back to Auto-Tune). */

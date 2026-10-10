@@ -34,17 +34,61 @@ const MAX_HISTORY = 20;
 const RING_R = 44;
 const RING_C = 2 * Math.PI * RING_R;
 
+interface SavedTimerState {
+  status: Status;
+  remainingAtPause: number;
+  startedAt: number | null;
+  hoursInput: string;
+  minutesInput: string;
+  secondsInput: string;
+}
+
+/** A running or paused timer survives leaving the screen: its wall-clock anchor is stored and
+ *  the remaining time is recomputed on return. A timer that ran out while away comes back as
+ *  finished (the beep already happened, or couldn't, while the screen was closed). */
+function loadSavedTimer(): SavedTimerState {
+  const fallback: SavedTimerState = {
+    status: 'idle',
+    remainingAtPause: 0,
+    startedAt: null,
+    hoursInput: '0',
+    minutesInput: '5',
+    secondsInput: '0',
+  };
+  const saved = storageGet<SavedTimerState | null>(StorageKeys.timerState, null);
+  if (!saved) return fallback;
+  if (saved.status === 'running' && saved.startedAt !== null) {
+    const remaining = saved.remainingAtPause - (Date.now() - saved.startedAt);
+    if (remaining <= 0) return { ...saved, status: 'finished', remainingAtPause: 0, startedAt: null };
+  }
+  return { ...fallback, ...saved };
+}
+
 export function TimerView() {
   const { back } = useRouter();
-  const [hoursInput, setHoursInput] = useState('0');
-  const [minutesInput, setMinutesInput] = useState('5');
-  const [secondsInput, setSecondsInput] = useState('0');
+  const savedRef = useRef<SavedTimerState | null>(null);
+  if (savedRef.current === null) savedRef.current = loadSavedTimer();
+  const saved = savedRef.current;
+  const [hoursInput, setHoursInput] = useState(saved.hoursInput);
+  const [minutesInput, setMinutesInput] = useState(saved.minutesInput);
+  const [secondsInput, setSecondsInput] = useState(saved.secondsInput);
 
-  const [status, setStatus] = useState<Status>('idle');
-  const [remainingAtPause, setRemainingAtPause] = useState(0);
-  const [startedAt, setStartedAt] = useState<number | null>(null);
+  const [status, setStatus] = useState<Status>(saved.status);
+  const [remainingAtPause, setRemainingAtPause] = useState(saved.remainingAtPause);
+  const [startedAt, setStartedAt] = useState<number | null>(saved.startedAt);
   const [, forceTick] = useState(0);
-  const beepedRef = useRef(false);
+  const beepedRef = useRef(saved.status === 'finished');
+
+  useEffect(() => {
+    storageSet(StorageKeys.timerState, {
+      status,
+      remainingAtPause,
+      startedAt,
+      hoursInput,
+      minutesInput,
+      secondsInput,
+    } satisfies SavedTimerState);
+  }, [status, remainingAtPause, startedAt, hoursInput, minutesInput, secondsInput]);
 
   const [showHistory, setShowHistory] = useState(false);
   const [history, setHistory] = useState<TimerHistoryEntry[]>(() =>

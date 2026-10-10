@@ -21,6 +21,17 @@ export function formatWorldClockDiff(cityTimeZone: string, now: Date): string {
 
 /** "GMT+8 (MYT)" style label — the numeric offset is always accurate; the letter
  * abbreviation comes from Intl and is only appended when it adds real information. */
+/** "EDT", "BST"... or "" where the engine only knows a numeric offset (most non-US zones). */
+export function zoneAbbreviation(timeZone: string, now: Date): string {
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', { timeZone, timeZoneName: 'short' }).formatToParts(now);
+    const abbr = parts.find((p) => p.type === 'timeZoneName')?.value ?? '';
+    return /^GMT|^UTC/.test(abbr) ? '' : abbr;
+  } catch {
+    return '';
+  }
+}
+
 export function formatZoneLabel(timeZone: string, now: Date): string {
   const offset = getOffsetMinutes(timeZone, now);
   const sign = offset >= 0 ? '+' : '-';

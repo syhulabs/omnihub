@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { App as CapacitorApp } from '@capacitor/app';
+import { useBackHandler } from '../../app/useBackHandler';
+import { clearNativeState } from '../../storage/clearNative';
 import { Capacitor } from '@capacitor/core';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
@@ -76,6 +79,7 @@ export function ProfileAccount() {
       await deleteAccount();
       clearAllData();
       await clearAllFiles();
+      await clearNativeState();
       window.location.reload();
     } catch (err) {
       setDeleteAccountError(err instanceof Error ? err.message : 'Could not delete your account. Please try again.');
@@ -511,6 +515,7 @@ export function ProfileDataSync() {
     hapticWarning();
     clearAllData();
     await clearAllFiles();
+    await clearNativeState();
     window.location.reload();
   }
 
@@ -884,24 +889,41 @@ export function ProfileNotifications() {
   const [notifGranted, setNotifGranted] = useState<boolean | null>(null);
   const [exactAlarmGranted, setExactAlarmGranted] = useState<boolean | null>(null);
 
-  useEffect(() => {
+  function refreshPermissions() {
     AlarmPlugin.checkNotificationPermission()
       .then(({ granted }) => setNotifGranted(granted))
       .catch(() => setNotifGranted(null));
     AlarmPlugin.checkExactAlarmPermission()
       .then(({ granted }) => setExactAlarmGranted(granted))
       .catch(() => setExactAlarmGranted(null));
+  }
+
+  useEffect(() => {
+    refreshPermissions();
+    // "Allow" for exact alarms opens a system settings screen; what the user chose there is only
+    // visible once they come back, so re-read on resume.
+    const listener = CapacitorApp.addListener('resume', refreshPermissions);
+    return () => {
+      listener.then((l) => l.remove()).catch(() => {});
+    };
   }, []);
 
   async function requestNotif() {
-    const { granted } = await AlarmPlugin.requestNotificationPermission();
-    setNotifGranted(granted);
+    try {
+      const { granted } = await AlarmPlugin.requestNotificationPermission();
+      setNotifGranted(granted);
+    } catch {
+      refreshPermissions();
+    }
   }
 
   async function requestExactAlarm() {
-    await AlarmPlugin.requestExactAlarmPermission();
-    const { granted } = await AlarmPlugin.checkExactAlarmPermission();
-    setExactAlarmGranted(granted);
+    try {
+      await AlarmPlugin.requestExactAlarmPermission();
+    } catch {
+      // unavailable here; the resume re-check below covers the real device
+    }
+    refreshPermissions();
   }
 
   return (
@@ -1012,6 +1034,8 @@ export function ProfileAppLock() {
     setPendingPin('');
     setError('');
   }
+
+  useBackHandler(() => setStep('settings'), step !== 'settings');
 
   function disable() {
     storageSet(StorageKeys.appLockEnabled, false);
@@ -1163,6 +1187,8 @@ export function ProfileVaultSecurity() {
     setVerifyingPin(true);
   }
 
+  useBackHandler(() => setVerifyingPin(false), verifyingPin);
+
   async function onVerifyPinChange(value: string) {
     setPinInput(value);
     if (value.length !== 4) return;
@@ -1178,9 +1204,11 @@ export function ProfileVaultSecurity() {
     setPinError(
       result === 'wrong-pin'
         ? 'Incorrect PIN'
-        : result === 'no-vault'
-          ? 'Set up the Vault first.'
-          : "Couldn't turn on biometric unlock on this phone.",
+        : result === 'locked-out'
+          ? 'Too many attempts. Try again later.'
+          : result === 'no-vault'
+            ? 'Set up the Vault first.'
+            : "Couldn't turn on biometric unlock on this phone.",
     );
   }
 

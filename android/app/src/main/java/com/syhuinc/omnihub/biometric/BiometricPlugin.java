@@ -153,6 +153,23 @@ public class BiometricPlugin extends Plugin {
         }
 
         activity.runOnUiThread(() -> {
+            if (activity.getSupportFragmentManager().isStateSaved()) {
+                // The activity is on its way to the background; the prompt would be a silent
+                // no-op and the JS promise would never settle.
+                call.reject("Activity not ready", "unavailable");
+                return;
+            }
+            try {
+                showPromptOnUiThread(call, activity, title, subtitle, negative, onAuthenticated);
+            } catch (Exception e) {
+                call.reject("Could not show prompt: " + e.getMessage(), "failed");
+            }
+        });
+    }
+
+    private void showPromptOnUiThread(PluginCall call, FragmentActivity activity, String title, String subtitle,
+                                      String negative, OnAuthenticated onAuthenticated) {
+        {
             BiometricPrompt.AuthenticationCallback callback = new BiometricPrompt.AuthenticationCallback() {
                 @Override
                 public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
@@ -204,7 +221,7 @@ public class BiometricPlugin extends Plugin {
 
             BiometricPrompt prompt = new BiometricPrompt(activity, ContextCompat.getMainExecutor(activity), callback);
             prompt.authenticate(builder.build());
-        });
+        }
     }
 
     private String detectType(Context ctx) {

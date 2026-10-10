@@ -45,6 +45,7 @@ export function SleepMode() {
   const { user } = useAuth();
   const [config, setConfig] = useState<SleepModeStatus>({ ...DEFAULT_SLEEP_MODE_CONFIG, sessionStartMillis: 0, nagCount: 0, mutedUntilMillis: 0 });
   const [timeSheet, setTimeSheet] = useState<TimeField | null>(null);
+  const [timeDraft, setTimeDraft] = useState<{ hour: number; minute: number } | null>(null);
   const [needsExactAlarmPermission, setNeedsExactAlarmPermission] = useState(false);
   const [needsFullScreenPermission, setNeedsFullScreenPermission] = useState(false);
   const [needsOverlayPermission, setNeedsOverlayPermission] = useState(false);
@@ -56,7 +57,7 @@ export function SleepMode() {
   const [volumeDraft, setVolumeDraft] = useState<number | null>(null);
   const displayedVolume = volumeDraft ?? config.volumePercent;
 
-  useBackHandler(() => setTimeSheet(null), timeSheet !== null);
+  useBackHandler(closeTimeSheet, timeSheet !== null);
   useBackHandler(() => setScreen('main'), screen !== 'main' && timeSheet === null);
 
   useEffect(() => {
@@ -165,11 +166,32 @@ export function SleepMode() {
     await persist({ ...config, enabled: true });
   }
 
-  function updateTime(field: TimeField, hour: number, minute: number) {
-    persist(
+  // The wheel fires on every settled row; saving each one would reconfigure (and restart) the
+  // native nag session several times per scroll, so the sheet edits a draft and saves on close.
+  function openTimeSheet(field: TimeField) {
+    setTimeDraft(
       field === 'bedtime'
-        ? { ...config, bedtimeHour: hour, bedtimeMinute: minute }
-        : { ...config, wakeHour: hour, wakeMinute: minute },
+        ? { hour: config.bedtimeHour, minute: config.bedtimeMinute }
+        : { hour: config.wakeHour, minute: config.wakeMinute },
+    );
+    setTimeSheet(field);
+  }
+
+  function closeTimeSheet() {
+    const field = timeSheet;
+    const draft = timeDraft;
+    setTimeSheet(null);
+    setTimeDraft(null);
+    if (!field || !draft) return;
+    const unchanged =
+      field === 'bedtime'
+        ? draft.hour === config.bedtimeHour && draft.minute === config.bedtimeMinute
+        : draft.hour === config.wakeHour && draft.minute === config.wakeMinute;
+    if (unchanged) return;
+    void persist(
+      field === 'bedtime'
+        ? { ...config, bedtimeHour: draft.hour, bedtimeMinute: draft.minute }
+        : { ...config, wakeHour: draft.hour, wakeMinute: draft.minute },
     );
   }
 
@@ -313,7 +335,7 @@ export function SleepMode() {
               Schedule
             </h2>
             <div className="sm__schedule-row">
-              <button type="button" className="sm__time-btn" onClick={() => setTimeSheet('bedtime')}>
+              <button type="button" className="sm__time-btn" onClick={() => openTimeSheet('bedtime')}>
                 <span className="sm__time-icon sm__time-icon--night">
                   <Icon name="moon" size={16} />
                 </span>
@@ -323,7 +345,7 @@ export function SleepMode() {
                 </span>
                 <Icon name="chevron-right" size={16} className="sm__time-chevron" />
               </button>
-              <button type="button" className="sm__time-btn" onClick={() => setTimeSheet('wake')}>
+              <button type="button" className="sm__time-btn" onClick={() => openTimeSheet('wake')}>
                 <span className="sm__time-icon sm__time-icon--day">
                   <Icon name="sun" size={16} />
                 </span>
@@ -423,15 +445,15 @@ export function SleepMode() {
         </div>
 
         {timeSheet && (
-          <div className="sm__sheet" onClick={() => setTimeSheet(null)}>
+          <div className="sm__sheet" onClick={closeTimeSheet}>
             <div className="sm__sheet-content" onClick={(e) => e.stopPropagation()}>
               <h2>{timeSheet === 'bedtime' ? 'Bedtime' : 'Wake time'}</h2>
               <WheelTimePicker
-                hour={timeSheet === 'bedtime' ? config.bedtimeHour : config.wakeHour}
-                minute={timeSheet === 'bedtime' ? config.bedtimeMinute : config.wakeMinute}
-                onChange={(h, m) => updateTime(timeSheet, h, m)}
+                hour={timeDraft?.hour ?? (timeSheet === 'bedtime' ? config.bedtimeHour : config.wakeHour)}
+                minute={timeDraft?.minute ?? (timeSheet === 'bedtime' ? config.bedtimeMinute : config.wakeMinute)}
+                onChange={(h, m) => setTimeDraft({ hour: h, minute: m })}
               />
-              <button type="button" className="sm__sheet-close" onClick={() => setTimeSheet(null)}>
+              <button type="button" className="sm__sheet-close" onClick={closeTimeSheet}>
                 Done
               </button>
             </div>

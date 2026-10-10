@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { isShareCancel, saveOrShareFile } from '../../../share/saveFile';
 import { ScreenHeader } from '../../../components/ScreenHeader';
 import { Icon } from '../../../components/Icon';
 import { hapticTap, hapticSuccess } from '../../../haptics';
@@ -87,14 +88,11 @@ export function PreviewScreen({ api }: { api: VcApi }) {
       }
 
       if (saveToDevice) {
-        const url = URL.createObjectURL(encoded);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = safeName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        try {
+          await saveOrShareFile(encoded, safeName, 'Save audio');
+        } catch (err) {
+          if (!isShareCancel(err)) throw err;
+        }
       }
 
       hapticSuccess();

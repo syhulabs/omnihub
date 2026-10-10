@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { isShareCancel, saveOrShareFile } from '../../../share/saveFile';
 import { Capacitor } from '@capacitor/core';
 import { ScreenHeader } from '../../../components/ScreenHeader';
 import { Icon } from '../../../components/Icon';
@@ -98,23 +99,17 @@ export function ShareScreen({ api }: { api: VcApi }) {
     hapticTap();
     setError(null);
     try {
-      const file = new File([clip.blob], `${clip.name}.${extensionForBlob(clip.blob)}`, { type: clip.blob.type });
-      if (navigator.canShare?.({ files: [file] })) {
+      const filename = `${clip.name}.${extensionForBlob(clip.blob)}`;
+      const file = new File([clip.blob], filename, { type: clip.blob.type });
+      if (!Capacitor.isNativePlatform() && navigator.canShare?.({ files: [file] })) {
         await navigator.share({ files: [file], title: clip.name });
-        hapticSuccess();
       } else {
-        const url = URL.createObjectURL(clip.blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${clip.name}.${extensionForBlob(clip.blob)}`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        hapticSuccess();
+        // On the phone this is the system share sheet (WhatsApp, Telegram, Drive...).
+        await saveOrShareFile(clip.blob, filename, clip.name);
       }
+      hapticSuccess();
     } catch (e) {
-      if ((e as Error)?.name !== 'AbortError') {
+      if (!isShareCancel(e)) {
         hapticWarning();
         setError("Couldn't share that clip — try again.");
       }
@@ -138,7 +133,7 @@ export function ShareScreen({ api }: { api: VcApi }) {
     await deleteClip(clip.id);
     api.bumpHistoryToken();
     api.setShareClip(null);
-    api.goto('home');
+    api.reset('home');
   }
 
   async function handleToggleFavorite() {

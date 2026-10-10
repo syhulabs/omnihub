@@ -24,6 +24,11 @@ export function EffectsScreen({ api }: { api: VcApi }) {
   const [selected, setSelected] = useState('normal');
   const [intensity, setIntensity] = useState(0.5);
   const [isPlaying, setIsPlaying] = useState(false);
+
+  function stopPreview() {
+    stopPlayback();
+    setIsPlaying(false);
+  }
   const [isBusy, setIsBusy] = useState(false);
   const [isPlayingOriginal, setIsPlayingOriginal] = useState(false);
 
@@ -131,7 +136,7 @@ export function EffectsScreen({ api }: { api: VcApi }) {
         />
 
         <div className="vch__actions vch__actions--bottom">
-          <button type="button" className="vch__action vch__action--secondary" onClick={() => void preview()} disabled={isBusy || !api.original}>
+          <button type="button" className="vch__action vch__action--secondary" onClick={() => (isPlaying ? stopPreview() : void preview())} disabled={isBusy || !api.original}>
             <Icon name={isPlaying ? 'stop' : 'play'} size={17} />
             Preview
           </button>

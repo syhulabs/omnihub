@@ -15,6 +15,11 @@ export function EchoReverbScreen({ api }: { api: VcApi }) {
   const [isBusy, setIsBusy] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  function stopPreview() {
+    stopPlayback();
+    setIsPlaying(false);
+  }
+
   async function render() {
     if (!api.original) return null;
     return renderEchoReverb(api.original, {
@@ -106,7 +111,7 @@ export function EchoReverbScreen({ api }: { api: VcApi }) {
         </div>
 
         <div className="vch__actions vch__actions--bottom">
-          <button type="button" className="vch__action vch__action--secondary" onClick={() => void preview()} disabled={isBusy || !api.original}>
+          <button type="button" className="vch__action vch__action--secondary" onClick={() => (isPlaying ? stopPreview() : void preview())} disabled={isBusy || !api.original}>
             <Icon name={isPlaying ? 'stop' : 'play'} size={17} />
             Preview
           </button>

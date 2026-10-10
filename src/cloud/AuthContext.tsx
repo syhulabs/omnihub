@@ -84,7 +84,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setDeletingAccount(true);
     try {
       await deleteAccountAndData(user.uid, async () => {
-        await FirebaseAuthentication.signInWithGoogle();
+        const result = await FirebaseAuthentication.signInWithGoogle();
+        return result.user?.uid ?? null;
       });
       setUser(null);
     } finally {

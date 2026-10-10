@@ -3,6 +3,7 @@ package com.syhuinc.omnihub.alarm;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -25,10 +26,22 @@ public class AlarmRingingActivity extends Activity {
         super.onCreate(savedInstanceState);
         showOverLockScreen();
         setContentView(R.layout.activity_alarm_ringing);
+        bindAlarm(getIntent());
+    }
 
-        alarmId = getIntent().getStringExtra(AlarmScheduler.EXTRA_ALARM_ID);
-        boolean isBackup = getIntent().getBooleanExtra(AlarmScheduler.EXTRA_IS_BACKUP, false);
-        int backupIndex = getIntent().getIntExtra(AlarmScheduler.EXTRA_BACKUP_INDEX, 0);
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        // singleInstance: a later alarm reuses this instance, so it must show and act on the
+        // new alarm rather than the one that rang earlier.
+        setIntent(intent);
+        bindAlarm(intent);
+    }
+
+    private void bindAlarm(Intent intent) {
+        alarmId = intent.getStringExtra(AlarmScheduler.EXTRA_ALARM_ID);
+        boolean isBackup = intent.getBooleanExtra(AlarmScheduler.EXTRA_IS_BACKUP, false);
+        int backupIndex = intent.getIntExtra(AlarmScheduler.EXTRA_BACKUP_INDEX, 0);
         AlarmData alarm = alarmId != null ? AlarmStore.find(this, alarmId) : null;
 
         TextView timeText = findViewById(R.id.alarm_time_text);
@@ -49,17 +62,18 @@ public class AlarmRingingActivity extends Activity {
         boolean keepBackupsOnStop = alarm != null && alarm.backupPersistOnStop;
         boolean keepBackupsOnSnooze = alarm != null && alarm.backupPersistOnSnooze;
 
+        final String boundAlarmId = alarmId;
         dismissButton.setOnClickListener(v -> {
             AlarmRingService.stopRinging(this);
-            if (alarmId != null && !keepBackupsOnStop) AlarmScheduler.cancelBackups(this, alarmId);
+            if (boundAlarmId != null && !keepBackupsOnStop) AlarmScheduler.cancelBackups(this, boundAlarmId);
             finish();
         });
 
         snoozeButton.setOnClickListener(v -> {
             AlarmRingService.stopRinging(this);
-            if (alarmId != null) {
-                if (!keepBackupsOnSnooze) AlarmScheduler.cancelBackups(this, alarmId);
-                snooze(alarmId);
+            if (boundAlarmId != null) {
+                if (!keepBackupsOnSnooze) AlarmScheduler.cancelBackups(this, boundAlarmId);
+                snooze(boundAlarmId);
             }
             finish();
         });

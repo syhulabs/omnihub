@@ -4,10 +4,14 @@ import { useRouter } from '../../app/Router';
 import { evaluateExpression, type AngleMode } from './evaluate';
 import './ScientificCalculator.css';
 
+function roundResult(n: number): number {
+  return Math.round(n * 1e10) / 1e10;
+}
+
+/** Display form with thousands separators; never fed back into the expression (see equals). */
 function formatResult(n: number): string {
   if (!Number.isFinite(n)) return 'Error';
-  const rounded = Math.round(n * 1e10) / 1e10;
-  return rounded.toLocaleString(undefined, { maximumFractionDigits: 10 });
+  return roundResult(n).toLocaleString(undefined, { maximumFractionDigits: 10 });
 }
 
 export function ScientificCalculator() {
@@ -25,7 +29,8 @@ export function ScientificCalculator() {
   }, [expression, angleMode]);
 
   function insert(text: string) {
-    setExpression((prev) => prev + text);
+    // Typing after an error starts fresh instead of producing "Error5".
+    setExpression((prev) => (prev === 'Error' ? text : prev + text));
   }
 
   function clear() {
@@ -40,7 +45,8 @@ export function ScientificCalculator() {
     if (!expression.trim()) return;
     try {
       const result = evaluateExpression(expression, angleMode);
-      setExpression(formatResult(result));
+      // Plain digits only: a locale-formatted "2,000" would not parse as the next input.
+      setExpression(Number.isFinite(result) ? String(roundResult(result)) : 'Error');
     } catch {
       setExpression('Error');
     }

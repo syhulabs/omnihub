@@ -24,6 +24,8 @@ export function BarcodeScannerView({ title, formats }: BarcodeScannerViewProps) 
   const [result, setResult] = useState<Barcode | null>(null);
   const [torchAvailable, setTorchAvailable] = useState(false);
   const [torchOn, setTorchOn] = useState(false);
+  const torchOnRef = useRef(false);
+  torchOnRef.current = torchOn;
   const [copied, setCopied] = useState(false);
   const listenerRef = useRef<{ remove: () => void } | null>(null);
 
@@ -38,7 +40,10 @@ export function BarcodeScannerView({ title, formats }: BarcodeScannerViewProps) 
     } catch {
       // not scanning — fine
     }
-    if (torchOn) {
+    // Read through the ref: the scan listener and the unmount cleanup were created on the first
+    // render, when `torchOn` was still false, and would otherwise leave the torch burning.
+    if (torchOnRef.current) {
+      torchOnRef.current = false;
       try {
         await Torch.disable();
       } catch {

@@ -46,18 +46,22 @@ export function Calculator() {
   }
 
   function toggleSign() {
-    setDisplay((d) => (d.startsWith('-') ? d.slice(1) : d.length && d !== '0' ? `-${d}` : d));
+    setDisplay((d) => (d === 'Error' ? '0' : d.startsWith('-') ? d.slice(1) : d.length && d !== '0' ? `-${d}` : d));
   }
 
   function inputPercent() {
-    setDisplay((d) => formatResult(parseFloat(d) / 100));
+    setDisplay((d) => (d === 'Error' ? '0' : formatResult(parseFloat(d) / 100)));
   }
 
   function backspace() {
-    setDisplay((d) => (d.length > 1 ? d.slice(0, -1) : '0'));
+    setDisplay((d) => (d === 'Error' || d.length <= 1 ? '0' : d.slice(0, -1)));
   }
 
   function chooseOperator(nextOp: Operator) {
+    if (display === 'Error') {
+      clearAll();
+      return;
+    }
     const current = parseFloat(display);
     if (storedValue !== null && operator && !waitingForNewValue) {
       const result = applyOperator(storedValue, current, operator);

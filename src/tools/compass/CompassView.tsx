@@ -44,6 +44,20 @@ export function CompassView({ geo, settings, locked }: CompassViewProps) {
   if (!locked) lockedHeadingRef.current = liveHeading;
   const heading = locked ? lockedHeadingRef.current : liveHeading;
 
+  // The dial is rotated by a continuous, unwrapped angle: stepping 359 -> 1 would otherwise be
+  // animated by the CSS transition as a full -358deg spin the long way round every time the
+  // phone crosses north. Each update adds the shortest signed delta instead.
+  const dialAngleRef = useRef(heading);
+  const lastHeadingRef = useRef(heading);
+  if (heading !== lastHeadingRef.current) {
+    let delta = heading - lastHeadingRef.current;
+    if (delta > 180) delta -= 360;
+    if (delta < -180) delta += 360;
+    dialAngleRef.current += delta;
+    lastHeadingRef.current = heading;
+  }
+  const dialAngle = dialAngleRef.current;
+
   useEffect(() => {
     if (!settings.hapticTicks || status !== 'ready' || locked) return;
     const current = octant(heading);
@@ -101,7 +115,7 @@ export function CompassView({ geo, settings, locked }: CompassViewProps) {
               <span className="cp__backdrop-peak cp__backdrop-peak--mid" />
               <span className="cp__backdrop-peak cp__backdrop-peak--front" />
             </div>
-            <div className="cp__dial" style={{ transform: `rotate(${-heading}deg)` }}>
+            <div className="cp__dial" style={{ transform: `rotate(${-dialAngle}deg)` }}>
               {TICK_DEGREES.map((deg) => (
                 <span key={`t${deg}`} className="cp__tick-wrap" style={{ transform: `rotate(${deg}deg)` }}>
                   <span className={`cp__tick${deg % 30 === 0 ? ' cp__tick--major' : ''}`} />
@@ -109,7 +123,7 @@ export function CompassView({ geo, settings, locked }: CompassViewProps) {
               ))}
               {NUMBER_DEGREES.map((deg) => (
                 <span key={`n${deg}`} className="cp__tick-wrap" style={{ transform: `rotate(${deg}deg)` }}>
-                  <span className="cp__deg-label" style={{ transform: `translateX(-50%) rotate(${heading - deg}deg)` }}>
+                  <span className="cp__deg-label" style={{ transform: `translateX(-50%) rotate(${dialAngle - deg}deg)` }}>
                     {deg}
                   </span>
                 </span>
@@ -121,7 +135,7 @@ export function CompassView({ geo, settings, locked }: CompassViewProps) {
                   <span key={`l${deg}`} className="cp__tick-wrap" style={{ transform: `rotate(${deg}deg)` }}>
                     <span
                       className={`cp__letter${major ? ' cp__letter--major' : ''}${deg === 0 ? ' cp__letter--north' : ''}`}
-                      style={{ transform: `translateX(-50%) rotate(${heading - deg}deg)` }}
+                      style={{ transform: `translateX(-50%) rotate(${dialAngle - deg}deg)` }}
                     >
                       {label}
                     </span>
@@ -165,7 +179,11 @@ export function CompassView({ geo, settings, locked }: CompassViewProps) {
             <StatCard
               icon="pin"
               label="Your Location"
-              value={geo.status === 'ready' && geo.coords ? `${geo.coords.lat.toFixed(4)}° N\n${geo.coords.lng.toFixed(4)}° E` : geoStatusLabel(geo.status)}
+              value={
+                geo.status === 'ready' && geo.coords
+                  ? `${Math.abs(geo.coords.lat).toFixed(4)}° ${geo.coords.lat >= 0 ? 'N' : 'S'}\n${Math.abs(geo.coords.lng).toFixed(4)}° ${geo.coords.lng >= 0 ? 'E' : 'W'}`
+                  : geoStatusLabel(geo.status)
+              }
             />
             <StatCard
               icon="mountain"

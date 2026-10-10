@@ -36,12 +36,17 @@ export function RecordScreen({ api }: { api: VcApi }) {
   const rafRef = useRef<number | null>(null);
   const tickRef = useRef<(() => void) | null>(null);
 
+  const unmountedRef = useRef(false);
   useEffect(
     () => () => {
+      // Stopping the tracks makes the recorder fire `stop`; the handler below must then do
+      // nothing, or backing out of a recording would navigate the user to Effects anyway.
+      unmountedRef.current = true;
+      if (mediaRecorderRef.current) mediaRecorderRef.current.onstop = null;
+      if (autoStopRef.current) window.clearTimeout(autoStopRef.current);
       stopStream();
       clearTimer();
       stopVisualizer();
-      if (autoStopRef.current) window.clearTimeout(autoStopRef.current);
     },
     [],
   );
@@ -104,6 +109,11 @@ export function RecordScreen({ api }: { api: VcApi }) {
     setError(null);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      if (unmountedRef.current) {
+        // The user left while the permission prompt was up: don't keep the mic open.
+        stream.getTracks().forEach((t) => t.stop());
+        return;
+      }
       streamRef.current = stream;
       chunksRef.current = [];
 
@@ -169,6 +179,7 @@ export function RecordScreen({ api }: { api: VcApi }) {
 
   async function handleStopped() {
     stopStream();
+    if (unmountedRef.current) return;
     setIsBusy(true);
     try {
       const blob = new Blob(chunksRef.current, { type: mediaRecorderRef.current?.mimeType || 'audio/webm' });

@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { appDefaultCurrency, currencySymbol, formatMoney as sharedFormatMoney } from '../shared/currencies';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon } from '../../components/Icon';
 import { useRouter } from '../../app/Router';
@@ -6,9 +7,11 @@ import './SplitBill.css';
 
 const TIP_PRESETS = [0, 10, 15, 20];
 
+const CURRENCY = appDefaultCurrency();
+const SYMBOL = currencySymbol(CURRENCY);
+
 function formatMoney(amount: number): string {
-  if (!Number.isFinite(amount)) return '$0.00';
-  return `$${amount.toFixed(2)}`;
+  return sharedFormatMoney(Number.isFinite(amount) ? amount : 0, CURRENCY);
 }
 
 export function SplitBill() {
@@ -45,7 +48,7 @@ export function SplitBill() {
         <div className="sb__field">
           <label className="sb__label">Bill Amount</label>
           <div className="sb__amount-row">
-            <span className="sb__currency">$</span>
+            <span className="sb__currency">{SYMBOL}</span>
             <input
               className="sb__amount-input"
               type="number"

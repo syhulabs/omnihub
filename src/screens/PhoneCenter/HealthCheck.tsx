@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useBackHandler } from '../../app/useBackHandler';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon, type IconName } from '../../components/Icon';
 import { useRouter } from '../../app/Router';
 import { DeviceStatsPlugin, type DeviceStats } from '../../device-stats/plugin';
-import { hapticTap } from '../../haptics';
 import { DisplayTest, TouchTest, AudioTest, FrontCameraTest, RearCameraTest, SensorTest } from './HealthCheckTests';
 import './PhoneCenter.css';
 import './HealthCheck.css';
@@ -88,8 +88,9 @@ export function HealthCheck() {
     runAutoChecks();
   }, []);
 
+  useBackHandler(() => setActiveTest(null), activeTest !== null);
+
   function runAgain() {
-    hapticTap();
     runAutoChecks();
     setResults((prev) => ({
       ...prev,
@@ -103,7 +104,6 @@ export function HealthCheck() {
   }
 
   function openTest(id: CheckId) {
-    hapticTap();
     setActiveTest(id);
   }
 

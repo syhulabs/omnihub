@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { getFirstDayOfWeek } from '../../settings/formats';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon, type IconName } from '../../components/Icon';
 import { SearchBar } from '../../components/SearchBar';
@@ -24,7 +25,8 @@ const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
-const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const WEEKDAYS_MON = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const WEEKDAYS_SUN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 function formatShort(iso: string): string {
   const d = parseISODate(iso);
@@ -321,7 +323,9 @@ function CalendarTab({
   const year = viewDate.getFullYear();
   const month = viewDate.getMonth();
   const firstOfMonth = new Date(year, month, 1);
-  const startWeekday = (firstOfMonth.getDay() + 6) % 7;
+  const startsMonday = getFirstDayOfWeek() === 'mon';
+  const WEEKDAYS = startsMonday ? WEEKDAYS_MON : WEEKDAYS_SUN;
+  const startWeekday = startsMonday ? (firstOfMonth.getDay() + 6) % 7 : firstOfMonth.getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const cells: (number | null)[] = [
     ...Array.from({ length: startWeekday }, () => null),

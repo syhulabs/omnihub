@@ -100,7 +100,10 @@ final class SleepNagOverlay {
                     WindowManager.LayoutParams.MATCH_PARENT,
                     WindowManager.LayoutParams.WRAP_CONTENT,
                     type,
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                    // NOT_FOCUSABLE: the card still takes taps, but the keyboard and Back key
+                    // stay with whatever app the user is in.
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                            | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                     PixelFormat.TRANSLUCENT);
             params.gravity = Gravity.TOP;
             params.y = dp(appContext, 56);

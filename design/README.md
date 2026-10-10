@@ -36,8 +36,20 @@ tiles, 14.4/11.6px row text, 44x26 switches, full-width dividers (`.pf__body--se
   Both STRONG and WEAK biometrics are accepted so camera face unlock works; the trade-off is written up
   at the top of the Java file. Written in the cloud without an Android SDK: the owner's first local
   Gradle build is the compile check.
-- Known gaps: App Lock has no wrong-PIN lockout (the Vault does). Not built into an APK from the cloud:
-  the signing files aren't in the repo.
+- Known gaps after the Oct 10 whole-app review (fixed everything else it found):
+  - Vault cloud sync can't decrypt on a second device: the PBKDF2 salt is per device and never synced,
+    so the same PIN derives a different key there. Needs a design decision (sync the salt in a
+    `users/{uid}/vaultMeta` doc, or stop syncing the Vault).
+  - Items deleted while signed out come back at the next sign-in (no local tombstones).
+  - Timer: a timer that ends while the phone is locked only beeps once the WebView is ticking again;
+    reliable background completion needs a native notification/alarm.
+  - Wind-Down "Focus Mode" only highlights itself; nothing else changes. Needs the owner to say what it
+    should do (or be removed). `ReminderExampleScreen.tsx` and `PersonalizationScreen.tsx` are unreachable.
+  - `CrashLogActivity` is not in the manifest, so its "standalone launcher" purpose doesn't exist yet;
+    adding it would put a second icon in the launcher, so it's left for the owner to decide.
+  - Not built into an APK from the cloud: the signing files aren't in the repo. The native changes from
+    the review (alarm sync parsing, ring service, ringing activity, nag overlay, scheduler, notification
+    filter, biometric prompt guards) compile for the first time in the owner's next local build.
 - Before shipping: the owner's on-device check of every Settings sub-screen in both themes, App Lock
   (set PIN, relaunch, wrong PIN, right PIN), 12/24h and currency, then the APK routine.
 

@@ -84,6 +84,9 @@ public class SleepModeReceiver extends BroadcastReceiver {
         SleepModeData data = SleepModeStore.load(context);
         data.mutedUntilMillis = untilMillis;
         SleepModeStore.save(context, data);
+        // Stop the service first: while it's in the foreground its notification can't be
+        // cancelled, and the reminder would keep talking after "I'm going to sleep".
+        context.stopService(new Intent(context, SleepModeSpeakService.class));
         SleepModeSpeakService.clearNotification(context);
     }
 

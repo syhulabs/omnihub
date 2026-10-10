@@ -1,4 +1,4 @@
-import { useRef, type CSSProperties, type MouseEvent, type PointerEvent } from 'react';
+import { useEffect, useRef, type CSSProperties, type MouseEvent, type PointerEvent } from 'react';
 import { Icon } from './Icon';
 import type { ToolMeta } from '../types';
 import { TOOL_ICON_IMAGES } from '../assets/tool-icons';
@@ -44,6 +44,8 @@ export function ToolTile({
       timerRef.current = null;
     }
   }
+
+  useEffect(() => clearTimer, []);
 
   function handlePointerDown(e: PointerEvent) {
     // Every new gesture starts clean — otherwise a stale suppress flag left

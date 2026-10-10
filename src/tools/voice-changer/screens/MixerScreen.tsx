@@ -19,6 +19,11 @@ export function MixerScreen({ api }: { api: VcApi }) {
   const [isBusy, setIsBusy] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  function stopPreview() {
+    stopPlayback();
+    setIsPlaying(false);
+  }
+
   function toggleEffect(id: string) {
     hapticSelect();
     setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
@@ -103,7 +108,7 @@ export function MixerScreen({ api }: { api: VcApi }) {
           <button
             type="button"
             className="vch__action vch__action--secondary"
-            onClick={() => void preview()}
+            onClick={() => (isPlaying ? stopPreview() : void preview())}
             disabled={isBusy || !api.original || selected.length === 0}
           >
             <Icon name={isPlaying ? 'stop' : 'play'} size={17} />

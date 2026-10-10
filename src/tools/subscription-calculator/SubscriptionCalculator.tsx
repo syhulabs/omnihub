@@ -84,7 +84,7 @@ export function SubscriptionCalculator() {
       id: `${now}`,
       name: ex.name,
       amount: ex.amount,
-      currency: DEFAULT_CURRENCY,
+      currency,
       cycle: ex.cycle,
       createdAt: now,
       updatedAt: now,
@@ -102,13 +102,16 @@ export function SubscriptionCalculator() {
     nameInputRef.current?.focus();
   }
 
-  const { monthlyTotal, yearlyTotal } = useMemo(() => {
-    const monthly = subs.reduce((sum, s) => {
+  // Amounts in different currencies can't be added as one number: the totals cover the
+  // selected currency and say how many rows they leave out.
+  const { monthlyTotal, yearlyTotal, otherCurrencyCount } = useMemo(() => {
+    const counted = subs.filter((s) => (s.currency ?? DEFAULT_CURRENCY) === currency);
+    const monthly = counted.reduce((sum, s) => {
       const cycleDef = CYCLES.find((c) => c.id === s.cycle);
       return sum + (cycleDef ? cycleDef.perMonth(s.amount) : s.amount);
     }, 0);
-    return { monthlyTotal: monthly, yearlyTotal: monthly * 12 };
-  }, [subs]);
+    return { monthlyTotal: monthly, yearlyTotal: monthly * 12, otherCurrencyCount: subs.length - counted.length };
+  }, [subs, currency]);
 
   const visibleSubs = useMemo(() => {
     let list = filterTab === 'all' ? subs : subs.filter((s) => s.cycle === filterTab);
@@ -150,7 +153,11 @@ export function SubscriptionCalculator() {
             <div>
               <span>Total per Year</span>
               <strong>{formatMoney(yearlyTotal, currency)}</strong>
-              <em>Save smarter. Live better.</em>
+              <em>
+                {otherCurrencyCount > 0
+                  ? `${otherCurrencyCount} in other currencies not counted.`
+                  : 'Save smarter. Live better.'}
+              </em>
             </div>
           </div>
         </div>

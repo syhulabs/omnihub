@@ -186,6 +186,11 @@
   color: var(--red) !important;
 }
 
+.bg__near {
+  color: var(--orange);
+  font-weight: 700;
+}
+
 .bg__list {
   list-style: none;
   margin: 0;

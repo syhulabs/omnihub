@@ -29,7 +29,7 @@ export function PrivacyPolicy() {
             controls, or can fully guarantee.
           </p>
           <p>
-            <strong>If you choose to sign in with Google</strong> (Desk ▸ Cloud Sync), to sync
+            <strong>If you choose to sign in with Google</strong> (Desk ▸ Profile), to sync
             your data across your own devices:
           </p>
           <ul>
@@ -73,15 +73,15 @@ export function PrivacyPolicy() {
           <ul>
             <li>
               You can export a backup of this data at any time from{' '}
-              <strong>Desk ▸ Export Backup</strong>, which saves a JSON file to your device
+              <strong>Desk ▸ Data & Sync ▸ Export Backup</strong>, which saves a JSON file to your device
               that only you control.
             </li>
             <li>
               You can delete all local data at any time from{' '}
-              <strong>Desk ▸ Clear All Data</strong>.
+              <strong>Desk ▸ Data & Sync ▸ Clear All Data</strong>.
             </li>
             <li>
-              Signing out (Desk ▸ Sign Out) stops syncing but does not delete what's already on
+              Signing out (Desk ▸ Profile ▸ Sign Out) stops syncing but does not delete what's already on
               your device or already synced to your account.
             </li>
             <li>
@@ -113,7 +113,7 @@ export function PrivacyPolicy() {
             and the Vault must be reset. Opening or saving a Vault photo/file decrypts a temporary
             copy for that action (e.g. to view an image or save it to your Downloads folder); that
             copy is no longer encrypted once it leaves the Vault. Vault photos and files are not
-            included in the main <strong>Desk ▸ Export Backup</strong> file; use{' '}
+            included in the main <strong>Desk ▸ Data & Sync ▸ Export Backup</strong> file; use{' '}
             <strong>Vault ▸ Photos &amp; Files ▸ Export</strong> instead, which decrypts them into a
             plain <code>.zip</code> file on your device — that zip is unencrypted, since it needs
             to be readable outside the app, so store or share it with the same care you'd give the

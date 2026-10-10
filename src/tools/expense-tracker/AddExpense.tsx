@@ -13,7 +13,9 @@ interface AddExpenseProps {
 }
 
 function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
+  // Local calendar date: toISOString() is UTC and would say "yesterday" every morning in UTC+8.
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
 export function AddExpense({ initialCategoryId, currencySymbol, onSave, onClose }: AddExpenseProps) {
@@ -26,13 +28,15 @@ export function AddExpense({ initialCategoryId, currencySymbol, onSave, onClose 
   function buildExpense(): Expense | null {
     const numeric = parseFloat(amount);
     if (!amount || Number.isNaN(numeric) || numeric <= 0) return null;
+    // A cleared date field would create an expense no month could ever show.
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateISO)) return null;
     return { id: `${Date.now()}`, amount: numeric, categoryId, note: note.trim(), dateISO, updatedAt: Date.now() };
   }
 
   function save() {
     const expense = buildExpense();
     if (!expense) {
-      setError('Enter an amount greater than 0.');
+      setError(/^\d{4}-\d{2}-\d{2}$/.test(dateISO) ? 'Enter an amount greater than 0.' : 'Pick a date.');
       return;
     }
     onSave(expense);

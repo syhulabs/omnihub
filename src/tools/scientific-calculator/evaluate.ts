@@ -65,7 +65,15 @@ function applyFunction(name: string, arg: number, mode: AngleMode): number {
   }
 }
 
-/** Small recursive-descent parser/evaluator: expr -> term -> factor(^) -> unary -> primary. */
+/** True for a token that can start an operand: "2π", "2(3+4)" and "3sin(30)" mean multiplication. */
+function startsOperand(tok: Token | undefined): boolean {
+  if (tok === undefined) return false;
+  if (typeof tok === 'number' || tok === '(') return true;
+  return FUNCTIONS.has(tok) || tok in CONSTANTS;
+}
+
+/** Small recursive-descent parser/evaluator: expr -> term -> unary -> factor(^) -> primary,
+ *  so that -2^2 is -(2^2) as on any calculator, and ^ is right-associative. */
 export function evaluateExpression(input: string, angleMode: AngleMode): number {
   const tokens = tokenize(input);
   let pos = 0;
@@ -84,23 +92,18 @@ export function evaluateExpression(input: string, angleMode: AngleMode): number 
   }
 
   function parseTerm(): number {
-    let value = parseFactor();
-    while (peek() === '*' || peek() === '/') {
-      const op = advance();
-      const rhs = parseFactor();
-      value = op === '*' ? value * rhs : value / rhs;
+    let value = parseUnary();
+    for (;;) {
+      if (peek() === '*' || peek() === '/') {
+        const op = advance();
+        const rhs = parseUnary();
+        value = op === '*' ? value * rhs : value / rhs;
+      } else if (startsOperand(peek())) {
+        value *= parseUnary(); // implicit multiplication
+      } else {
+        return value;
+      }
     }
-    return value;
-  }
-
-  function parseFactor(): number {
-    const base = parseUnary();
-    if (peek() === '^') {
-      advance();
-      const exponent = parseFactor();
-      return Math.pow(base, exponent);
-    }
-    return base;
   }
 
   function parseUnary(): number {
@@ -112,7 +115,17 @@ export function evaluateExpression(input: string, angleMode: AngleMode): number 
       advance();
       return parseUnary();
     }
-    return parsePrimary();
+    return parseFactor();
+  }
+
+  function parseFactor(): number {
+    const base = parsePrimary();
+    if (peek() === '^') {
+      advance();
+      const exponent = parseUnary();
+      return Math.pow(base, exponent);
+    }
+    return base;
   }
 
   function parsePrimary(): number {

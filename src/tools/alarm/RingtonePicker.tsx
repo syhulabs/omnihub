@@ -138,7 +138,11 @@ export function RingtonePicker({ mode = 'select', category, excludeAlarmId, alar
   async function handleApplyBulk() {
     if (!pendingSound) return;
     const { alarms } = await AlarmPlugin.list();
-    for (const id of selectedBulkIds) {
+    // The sheet says the sound "is set for this alarm", so a saved alarm being edited gets it
+    // now too; otherwise backing out of the editor would leave only the others changed.
+    const ids = new Set(selectedBulkIds);
+    if (excludeAlarmId) ids.add(excludeAlarmId);
+    for (const id of ids) {
       const alarm = alarms.find((a) => a.id === id);
       if (!alarm) continue;
       await scheduleAlarmSynced({

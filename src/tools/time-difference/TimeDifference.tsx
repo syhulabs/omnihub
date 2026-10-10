@@ -218,7 +218,7 @@ export function TimeDifference() {
               </span>
               <div>
                 <strong>Best Time to Connect</strong>
-                <span>Waking hours (8 AM – 9 PM) in both places</span>
+                <span>Waking hours ({formatHour12(8)} – {formatHour12(21)}) in both places</span>
               </div>
             </div>
 
@@ -231,11 +231,11 @@ export function TimeDifference() {
               ))}
             </div>
             <div className="tdiff__bar-labels">
-              <span>12 AM</span>
-              <span>6 AM</span>
-              <span>12 PM</span>
-              <span>6 PM</span>
-              <span>12 AM</span>
+              <span>{formatHour12(0)}</span>
+              <span>{formatHour12(6)}</span>
+              <span>{formatHour12(12)}</span>
+              <span>{formatHour12(18)}</span>
+              <span>{formatHour12(0)}</span>
             </div>
 
             <div className="tdiff__legend">

@@ -480,3 +480,13 @@
 .cl-detail__sheet-item:active {
   background: var(--bg-active);
 }
+
+.cl__copied {
+  margin: 0 20px 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--green) 15%, transparent);
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 600;
+}

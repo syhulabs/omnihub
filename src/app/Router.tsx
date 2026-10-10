@@ -18,9 +18,13 @@ function currentPath(): string {
   return window.location.hash.slice(1) || '/';
 }
 
+/** Where a tool was opened from, when that was somewhere other than Home or the Hub (Phone
+ *  Center's Flashlight shortcut, Vault Security's "Open Vault"). Back then returns there. */
+let toolOrigin: string | null = null;
+
 /** The screen "back" should return to, independent of how the user actually navigated in. */
 function parentPath(path: string): string {
-  if (path.startsWith('/tools/')) return '/tools';
+  if (path.startsWith('/tools/')) return toolOrigin ?? '/tools';
   if (path === '/device-info') return '/phone-center';
   if (path === '/storage-details') return '/phone-center';
   if (path === '/health-check') return '/phone-center';
@@ -44,6 +48,11 @@ export function RouterProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const navigate = (nextPath: string, options?: { replace?: boolean }) => {
+    if (nextPath.startsWith('/tools/')) {
+      const from = currentPath();
+      const fromTopLevel = from === '/' || from === '/tools' || from.startsWith('/tools/');
+      toolOrigin = fromTopLevel ? null : from;
+    }
     if (options?.replace) {
       const url = new URL(window.location.href);
       url.hash = `#${nextPath}`;

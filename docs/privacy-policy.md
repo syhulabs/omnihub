@@ -8,7 +8,7 @@ Omni Hub doesn't require an account. Signing in with Google is entirely optional
 
 **If you never sign in:** nothing. Every tool's data (notes, alarms, Vault, and everything else) stays on your device and is never sent anywhere. Omni Hub itself uses no analytics, tracking, or advertising SDKs. The Google libraries we use for optional sign-in are built into the app and may make minimal automatic device-identification calls in the background on their own, as any app using Google's Firebase does — we turn their automatic data collection off by default (see [Third-party services](#third-party-services) below), but that's Google's library behavior, not something Omni Hub reads, controls, or can fully guarantee.
 
-**If you choose to sign in with Google** (Desk ▸ Cloud Sync), to sync your data across your own devices:
+**If you choose to sign in with Google** (Desk ▸ Profile), to sync your data across your own devices:
 
 - Firebase Authentication (a Google service) receives your Google account's basic profile — name, email address, and profile photo — to identify you as the signed-in user. Omni Hub doesn't see or store your Google password.
 - These tools' content syncs to Cloud Firestore (also a Google service), scoped to your account, so it can reach your other signed-in devices: **Notes** (titles and text), **Checklist** (list names and items), **Expense Tracker** (amounts, categories, notes, dates), **Budget** (per-category limits), **Subscription Calculator**, **Debt Tracker** (amounts and names/notes you enter), and **Alarms** (time, label, repeat, sound choice, and backup settings — see [Alarm](#alarm) below).
@@ -20,9 +20,9 @@ No advertising, analytics, or tracking SDKs are used, and nothing collected is e
 
 Everything you enter into Omni Hub — notes, checklists, expenses, budgets, calculator history, pinned tools, and app settings — is stored **on your device** at minimum, using standard local browser storage (`localStorage`). The tools listed above are additionally copied to Google's Firebase servers only if, and for as long as, you're signed in.
 
-- You can export a backup of this data at any time from **Desk ▸ Export Backup**, which saves a JSON file to your device that only you control.
-- You can delete all local data at any time from **Desk ▸ Clear All Data**.
-- Signing out (Desk ▸ Sign Out) stops syncing but does not delete what's already on your device or already synced to your account.
+- You can export a backup of this data at any time from **Desk ▸ Data & Sync ▸ Export Backup**, which saves a JSON file to your device that only you control.
+- You can delete all local data at any time from **Desk ▸ Data & Sync ▸ Clear All Data**.
+- Signing out (Desk ▸ Profile ▸ Sign Out) stops syncing but does not delete what's already on your device or already synced to your account.
 - Uninstalling the app deletes local data along with it; it does not delete anything already synced to your account — sign in again after reinstalling to get it back.
 
 ## Vault
@@ -31,7 +31,7 @@ Notes, photos, and files you save in the **Vault** are additionally encrypted on
 
 **Your PIN, and any key derived from it, never leaves your device — not even if you sign in and sync.** If you sign in, only the already-encrypted ciphertext of your Vault notes is copied to Firebase, in a form Omni Hub itself cannot read without your PIN; a second device only regains access to it by unlocking with the same PIN. Vault photos and files don't sync at all yet and stay device-only regardless of sign-in status.
 
-Your PIN is never stored anywhere, on-device or in the cloud — only used to derive that key each time you unlock — so if you forget it, Vault content cannot be recovered and the Vault must be reset. Opening or saving a Vault photo/file decrypts a temporary copy for that action (e.g. to view an image or save it to your Downloads folder); that copy is no longer encrypted once it leaves the Vault. Vault photos and files are not included in the main **Desk ▸ Export Backup** file; use **Vault ▸ Photos & Files ▸ Export** instead, which decrypts them into a plain `.zip` file on your device — that zip is unencrypted, since it needs to be readable outside the app, so store or share it with the same care you'd give the original photos/files. Use **Vault ▸ Photos & Files ▸ Import** to bring that zip back in (e.g. after reinstalling), which re-encrypts everything as it's added.
+Your PIN is never stored anywhere, on-device or in the cloud — only used to derive that key each time you unlock — so if you forget it, Vault content cannot be recovered and the Vault must be reset. Opening or saving a Vault photo/file decrypts a temporary copy for that action (e.g. to view an image or save it to your Downloads folder); that copy is no longer encrypted once it leaves the Vault. Vault photos and files are not included in the main **Desk ▸ Data & Sync ▸ Export Backup** file; use **Vault ▸ Photos & Files ▸ Export** instead, which decrypts them into a plain `.zip` file on your device — that zip is unencrypted, since it needs to be readable outside the app, so store or share it with the same care you'd give the original photos/files. Use **Vault ▸ Photos & Files ▸ Import** to bring that zip back in (e.g. after reinstalling), which re-encrypts everything as it's added.
 
 After 5 wrong PIN attempts, Vault locks itself out with an escalating delay (30s, then 1m, 2m, 5m, 10m, and 30m for every attempt after that) before you can try again — this never clears or wipes any Vault data, it only slows down guessing.
 

@@ -1,4 +1,5 @@
 import { useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import { shareText } from '../../share/saveFile';
 import { formatClockDate } from '../../settings/formats';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon } from '../../components/Icon';
@@ -41,6 +42,7 @@ function toLocalInputValue(ts: number): string {
 
 export function ChecklistDetail({ list, onChange, onDelete, onClose, onDuplicate }: ChecklistDetailProps) {
   const [newItemText, setNewItemText] = useState('');
+  const [copiedNotice, setCopiedNotice] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [confirmingClear, setConfirmingClear] = useState(false);
   const [showMore, setShowMore] = useState(false);
@@ -106,11 +108,11 @@ export function ChecklistDetail({ list, onChange, onDelete, onClose, onDuplicate
       ...list.items.map((i) => `${i.checked ? '☑' : '☐'} ${i.text}`),
     ].join('\n');
     try {
-      if (navigator.share) {
-        await navigator.share({ title: list.name || 'Checklist', text });
-      } else {
-        await navigator.clipboard.writeText(text);
+      const how = await shareText(list.name || 'Checklist', text);
+      if (how === 'copied') {
         hapticSuccess();
+        setCopiedNotice(true);
+        window.setTimeout(() => setCopiedNotice(false), 1800);
       }
     } catch {
       // user cancelled the share sheet, or clipboard unavailable — nothing to do
@@ -184,6 +186,7 @@ export function ChecklistDetail({ list, onChange, onDelete, onClose, onDuplicate
             aria-label="Delete list"
           >
             <Icon name="trash" size={18} />
+      {copiedNotice && <p className="cl__copied">Copied to clipboard</p>}
           </button>
         }
       />

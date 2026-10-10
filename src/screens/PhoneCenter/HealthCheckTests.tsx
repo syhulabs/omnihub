@@ -72,15 +72,23 @@ export function TouchTest({ onComplete, onCancel }: TestProps) {
     }
   }
 
+  const detachRef = useRef<(() => void) | null>(null);
+  useEffect(() => () => detachRef.current?.(), []);
+
   function handlePointerDown(e: ReactPointerEvent<HTMLDivElement>) {
     markAt(e.clientX, e.clientY);
+    detachRef.current?.();
     const move = (ev: PointerEvent) => markAt(ev.clientX, ev.clientY);
     const up = () => {
       window.removeEventListener('pointermove', move);
       window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', up);
+      detachRef.current = null;
     };
+    detachRef.current = up;
     window.addEventListener('pointermove', move);
     window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
   }
 
   useEffect(() => {

@@ -1,4 +1,5 @@
 import { zipSync, unzipSync, strToU8 } from 'fflate';
+import { saveOrShareFile } from '../share/saveFile';
 import { encryptBytes, decryptBytes } from './crypto';
 import { getAllFiles, putFile, type VaultFileRecord } from './fileStore';
 
@@ -47,15 +48,8 @@ export async function exportFilesZip(key: CryptoKey): Promise<{ count: number }>
 
   const zipped = zipSync(entries, { level: 0 });
   const blob = new Blob([zipped as BlobPart], { type: 'application/zip' });
-  const url = URL.createObjectURL(blob);
   const date = new Date().toISOString().slice(0, 10);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `omni-hub-vault-files-${date}.zip`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  await saveOrShareFile(blob, `omni-hub-vault-files-${date}.zip`, 'Export Vault files');
 
   return { count: records.length };
 }

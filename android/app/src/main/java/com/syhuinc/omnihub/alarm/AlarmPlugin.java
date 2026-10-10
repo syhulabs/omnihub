@@ -85,6 +85,11 @@ public class AlarmPlugin extends Plugin {
         call.resolve(ret);
     }
 
+    private static Long getLongValue(PluginCall call, String key) {
+        Object value = call.getData().opt(key);
+        return value instanceof Number ? ((Number) value).longValue() : null;
+    }
+
     /**
      * Applies an alarm as it already exists on another signed-in device, via cloud sync -
      * distinct from schedule() because it must preserve the incoming createdAt/updatedAt exactly
@@ -96,17 +101,19 @@ public class AlarmPlugin extends Plugin {
         String id = call.getString("id");
         Integer hour = call.getInt("hour");
         Integer minute = call.getInt("minute");
-        Double updatedAt = call.getDouble("updatedAt");
+        // Epoch millis are parsed from JSON as Integer/Long, so getDouble() would return null
+        // for every real timestamp and reject the whole sync; read any Number.
+        Long updatedAt = getLongValue(call, "updatedAt");
 
         if (id == null || hour == null || minute == null || updatedAt == null) {
             call.reject("id, hour, minute, and updatedAt are required");
             return;
         }
 
-        Double createdAt = call.getDouble("createdAt");
+        Long createdAt = getLongValue(call, "createdAt");
         AlarmData alarm = buildAlarmFromCall(call, id, hour, minute);
-        alarm.createdAt = createdAt != null ? createdAt.longValue() : System.currentTimeMillis();
-        alarm.updatedAt = updatedAt.longValue();
+        alarm.createdAt = createdAt != null ? createdAt : System.currentTimeMillis();
+        alarm.updatedAt = updatedAt;
 
         AlarmStore.upsert(getContext(), alarm);
         boolean armed = false;

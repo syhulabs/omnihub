@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { isShareCancel, saveOrShareFile } from '../share/saveFile';
 import { Icon } from '../components/Icon';
 import { encryptBytes, decryptBytes } from './crypto';
 import { putFile, getAllFiles, deleteFile, type VaultFileRecord } from './fileStore';
@@ -87,13 +88,12 @@ export function VaultFiles({ vaultKey }: VaultFilesProps) {
       if (isImage(record.mime)) {
         setPreview({ url, name: record.name });
       } else {
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = record.name;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setTimeout(() => URL.revokeObjectURL(url), 4000);
+        URL.revokeObjectURL(url);
+        try {
+          await saveOrShareFile(blob, record.name, record.name);
+        } catch (err) {
+          if (!isShareCancel(err)) throw err;
+        }
       }
     } finally {
       setBusy(false);

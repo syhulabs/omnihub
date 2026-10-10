@@ -233,6 +233,10 @@ export function Budget() {
           const hasLimit = limit > 0;
           const pct = hasLimit ? Math.min(100, (spent / limit) * 100) : 0;
           const over = hasLimit && spent > limit;
+          // The category's Spending Alert: warn once spending crosses its threshold.
+          const near =
+            hasLimit && !over && (budget?.alertEnabled ?? true) && pct >= (budget?.alertThresholdPct ?? 80);
+          const tone = over ? 'bg__over' : near ? 'bg__near' : '';
 
           return (
             <li key={cat.id}>
@@ -247,14 +251,14 @@ export function Budget() {
                 <div className="bg__track">
                   <div
                     className="bg__bar"
-                    style={{ width: `${pct}%`, background: over ? 'var(--red)' : cat.color }}
+                    style={{ width: `${pct}%`, background: over ? 'var(--red)' : near ? 'var(--orange)' : cat.color }}
                   />
                 </div>
                 <div className="bg__card-bottom">
-                  <span className={over ? 'bg__over' : ''}>
+                  <span className={tone}>
                     {formatMoney(spent, currency)} / {hasLimit ? formatMoney(limit, currency) : formatMoney(0, currency)}
                   </span>
-                  <span className={over ? 'bg__over' : ''}>{hasLimit ? `${Math.round(pct)}%` : '0%'}</span>
+                  <span className={tone}>{hasLimit ? `${Math.round(pct)}%` : '0%'}</span>
                 </div>
               </button>
             </li>

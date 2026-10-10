@@ -204,8 +204,8 @@ export function DateCalculator() {
           <p className="ad__tip">
             <Icon name="lightbulb" size={16} />
             <span>
-              <strong>Tip:</strong> You can also use Add / Subtract to find a date by adding or subtracting days,
-              weeks, months or years.
+              <strong>Tip:</strong> You can also use Add / Subtract to find the date a number of days from
+              any starting date.
             </span>
           </p>
         </div>

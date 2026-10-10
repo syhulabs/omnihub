@@ -40,6 +40,8 @@ export function useCloudSync<T extends SyncItem>(
   function persist(next: T[]) {
     const prevMap = new Map(itemsRef.current.map((i) => [i.id, i]));
     rawPersist(next);
+    // Two persists in one handler must diff against each other, not the stale render snapshot.
+    itemsRef.current = next;
 
     const engine = engineRef.current;
     const uid = uidRef.current;

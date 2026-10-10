@@ -130,7 +130,7 @@ export const generateSleepReminders = onRequest(
       return;
     }
 
-    const body = req.body as GenerateRequestBody;
+    const body = (req.body ?? {}) as GenerateRequestBody;
     if (!isPersonality(body.personality)) {
       res.status(400).json({ error: 'personality must be "gentle" or "friendly".' });
       return;

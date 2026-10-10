@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
+import { Haptics } from '@capacitor/haptics';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon, type IconName } from '../../components/Icon';
 import { useRouter } from '../../app/Router';
 import { DeviceStatsPlugin, type DeviceStats } from '../../device-stats/plugin';
-import { hapticTap } from '../../haptics';
 import './PhoneCenter.css';
 
 const QUICK_ACTIONS: { id: string; label: string; icon: IconName; color: string }[] = [
@@ -46,11 +46,11 @@ export function PhoneCenter() {
   }, []);
 
   function runQuickAction(id: string) {
-    hapticTap();
+    // No hapticTap() here: App.tsx already buzzes every button press once.
     if (id === 'flashlight') navigate('/tools/flashlight');
     else if (id === 'wifi') DeviceStatsPlugin.openWifiPanel().catch(() => {});
     else if (id === 'sound') DeviceStatsPlugin.openSoundPanel().catch(() => {});
-    else if (id === 'vibrate') hapticTap();
+    else if (id === 'vibrate') Haptics.vibrate({ duration: 400 }).catch(() => {}); // a real test buzz, even with haptic feedback off
     else if (id === 'more') DeviceStatsPlugin.openAppSettings().catch(() => {});
   }
 
@@ -88,10 +88,10 @@ export function PhoneCenter() {
               </span>
               <span>Battery</span>
             </div>
-            <strong className="pc2__card-value">{stats ? `${stats.batteryPercent}%` : '—'}</strong>
+            <strong className="pc2__card-value">{stats && stats.batteryPercent >= 0 ? `${stats.batteryPercent}%` : '—'}</strong>
             <span className="pc2__card-sub">{stats?.isCharging ? 'Charging' : 'Not charging'}</span>
             <div className="pc2__bar">
-              <div className="pc2__bar-fill" style={{ width: `${stats?.batteryPercent ?? 0}%` }} />
+              <div className="pc2__bar-fill" style={{ width: `${Math.max(0, stats?.batteryPercent ?? 0)}%` }} />
             </div>
             {!!stats?.batteryTempC && (
               <span className="pc2__card-foot">
@@ -141,16 +141,20 @@ export function PhoneCenter() {
               <span>Connection</span>
             </div>
             <div className="pc2__conn-row">
-              <strong className="pc2__card-value">{stats?.wifiConnected ? 'Wi-Fi' : 'Off'}</strong>
+              <strong className="pc2__card-value">
+                {stats?.wifiConnected ? 'Wi-Fi' : stats?.hasInternetConnection ? 'Mobile data' : 'Off'}
+              </strong>
               {stats?.wifiConnected && (stats?.wifiSignalBars ?? -1) >= 0 && (
                 <span className="pc2__signal" aria-label={`Signal strength ${stats.wifiSignalBars} of 4`}>
                   {[0, 1, 2, 3].map((i) => (
-                    <span key={i} className={`pc2__signal-bar${i < (stats.wifiSignalBars + 1) ? ' pc2__signal-bar--on' : ''}`} />
+                    <span key={i} className={`pc2__signal-bar${i < stats.wifiSignalBars ? ' pc2__signal-bar--on' : ''}`} />
                   ))}
                 </span>
               )}
             </div>
-            <span className="pc2__card-sub">{stats?.wifiConnected ? 'Connected' : 'Not connected'}</span>
+            <span className="pc2__card-sub">
+              {stats?.wifiConnected ? 'Connected' : stats?.hasInternetConnection ? 'Connected' : 'Not connected'}
+            </span>
             {!!stats?.ipAddress && <span className="pc2__card-foot">{stats.ipAddress}</span>}
             {!!(stats?.wifiRxMbps || stats?.wifiTxMbps) && (
               <span className="pc2__card-foot">

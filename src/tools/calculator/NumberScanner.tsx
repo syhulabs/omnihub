@@ -29,7 +29,9 @@ function extractBestNumber(result: ProcessImageResult): number | null {
   for (const block of result.blocks) {
     for (const line of block.lines) {
       for (const el of line.elements) {
-        const cleaned = el.text.replace(/,/g, '').trim();
+        // Prices arrive as one element with the currency attached ("$12.50", "RM12.50"):
+        // drop anything before the number, and a trailing symbol too.
+        const cleaned = el.text.replace(/,/g, '').trim().replace(/^[^\d-]+/, '').replace(/[^\d.]+$/, '');
         if (!/^-?\d+(\.\d+)?$/.test(cleaned)) continue;
         const value = parseFloat(cleaned);
         if (Number.isNaN(value)) continue;
@@ -50,6 +52,7 @@ export function NumberScanner({ onUseResult, onClose }: NumberScannerProps) {
   const [toast, setToast] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const unmountedRef = useRef(false);
 
   function showToast(message: string) {
     setToast(message);
@@ -60,6 +63,11 @@ export function NumberScanner({ onUseResult, onClose }: NumberScannerProps) {
     setPhase('checking');
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      if (unmountedRef.current) {
+        // Backed out while the permission prompt was up: release the camera instead of leaking it.
+        stream.getTracks().forEach((t) => t.stop());
+        return;
+      }
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -79,7 +87,10 @@ export function NumberScanner({ onUseResult, onClose }: NumberScannerProps) {
 
   useEffect(() => {
     startCamera();
-    return () => stopCamera();
+    return () => {
+      unmountedRef.current = true;
+      stopCamera();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

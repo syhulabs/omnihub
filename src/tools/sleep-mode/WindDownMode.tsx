@@ -38,6 +38,7 @@ export function WindDownMode({ onBack, autoStart, initialAction }: WindDownModeP
   useBackHandler(() => setBreathingOpen(false), breathingOpen);
   useBackHandler(() => setDimOn(false), dimOn);
   const endAtRef = useRef(0);
+  const soundsRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (!running) return;
@@ -45,8 +46,11 @@ export function WindDownMode({ onBack, autoStart, initialAction }: WindDownModeP
     const id = window.setInterval(() => {
       const left = endAtRef.current - Date.now();
       if (left <= 0) {
+        // Wind-down is over: the user should be asleep, so the sound stops with it.
         setRemaining(0);
         setRunning(false);
+        audioEngine.stopSound();
+        setPlayingId(null);
         hapticSuccess();
         window.clearInterval(id);
       } else {
@@ -79,6 +83,7 @@ export function WindDownMode({ onBack, autoStart, initialAction }: WindDownModeP
 
   function handleAction(id: string) {
     hapticSelect();
+    if (id === 'sounds') soundsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     if (id === 'breathing') setBreathingOpen(true);
     if (id === 'dim') setDimOn(true);
     if (id === 'focus') setFocusOn((v) => !v);
@@ -152,7 +157,7 @@ export function WindDownMode({ onBack, autoStart, initialAction }: WindDownModeP
           {running ? 'Stop Wind-Down' : 'Start Wind-Down'}
         </button>
 
-        <section className="sm__section wd__sounds-section">
+        <section className="sm__section wd__sounds-section" ref={soundsRef}>
           <h2>Choose a sound</h2>
           <div className="sm__chip-row">
             {SOUND_FILTERS.map((f) => (

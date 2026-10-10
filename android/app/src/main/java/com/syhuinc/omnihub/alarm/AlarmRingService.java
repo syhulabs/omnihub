@@ -83,6 +83,9 @@ public class AlarmRingService extends Service {
         AlarmData alarm = alarmId != null ? AlarmStore.find(this, alarmId) : null;
 
         startForegroundWithNotification(alarm);
+        // A backup or a second alarm firing while one is still ringing must replace it, not
+        // layer a second looping ringtone (and wake lock) on top that no Stop can reach.
+        stopPlayback();
         acquireWakeLock();
         startRingtone(alarm);
         startVibration();
@@ -248,17 +251,33 @@ public class AlarmRingService extends Service {
         }
     }
 
+    /** Silences and releases everything the current ring holds; safe to call when nothing is ringing. */
+    private void stopPlayback() {
+        if (ringtone != null) {
+            try {
+                if (ringtone.isPlaying()) ringtone.stop();
+            } catch (Exception ignored) {
+            }
+            ringtone = null;
+        }
+        if (vibrator != null) vibrator.cancel();
+        TorchBlinker.stop(this, TorchBlinker.SOURCE_ALARM);
+        if (wakeLock != null) {
+            try {
+                if (wakeLock.isHeld()) wakeLock.release();
+            } catch (Exception ignored) {
+            }
+            wakeLock = null;
+        }
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         autoStopHandler.removeCallbacks(autoStopRunnable);
         if (activeInstance == this) activeInstance = null;
         currentAlarmId = null;
-        if (ringtone != null && ringtone.isPlaying()) ringtone.stop();
-        ringtone = null;
-        if (vibrator != null) vibrator.cancel();
-        TorchBlinker.stop(this, TorchBlinker.SOURCE_ALARM);
-        if (wakeLock != null && wakeLock.isHeld()) wakeLock.release();
+        stopPlayback();
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE);
     }
 

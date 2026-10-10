@@ -18,9 +18,15 @@ function minutesOfDay(ms: number): number {
 }
 
 function formatTimeOfDay(minutes: number): string {
-  const h24 = Math.floor(minutes / 60) % 24;
-  const m = Math.round(minutes % 60);
-  return formatClock(h24, m);
+  const total = ((Math.round(minutes) % 1440) + 1440) % 1440;
+  return formatClock(Math.floor(total / 60), total % 60);
+}
+
+/** Minutes of day re-based so that a night straddling midnight averages sensibly: 23:30 and 00:30
+ *  become 1410 and 1470 (not 1410 and 30), so their average is midnight, not noon. */
+function bedtimeMinutes(ms: number): number {
+  const m = minutesOfDay(ms);
+  return m < 720 ? m + 1440 : m;
 }
 
 /** Actual bedtime proxy: the last nag time if any (roughly "when you stopped scrolling"), else the scheduled bedtime. */
@@ -72,7 +78,7 @@ export function SleepInsights({ onBack }: SleepInsightsProps) {
   }
 
   const recent = sessions.slice(-14);
-  const avgBedtimeMin = recent.reduce((sum, s) => sum + minutesOfDay(actualBedtimeMillis(s)), 0) / recent.length;
+  const avgBedtimeMin = recent.reduce((sum, s) => sum + bedtimeMinutes(actualBedtimeMillis(s)), 0) / recent.length;
   const avgWakeMin = recent.reduce((sum, s) => sum + minutesOfDay(s.wakeScheduledMillis), 0) / recent.length;
   const onScheduleCount = recent.filter((s) => s.nagCount === 0).length;
   const avgSleepHours =

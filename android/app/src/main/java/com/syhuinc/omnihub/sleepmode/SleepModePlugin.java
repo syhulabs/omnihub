@@ -132,6 +132,9 @@ public class SleepModePlugin extends Plugin {
         }
         for (int tier = 0; tier < clips.length(); tier++) {
             try {
+                // JSONArray.getString turns a JSON null into the text "null", which would be
+                // decoded and saved over a previously good clip.
+                if (clips.isNull(tier)) continue;
                 String b64 = clips.getString(tier);
                 if (b64 == null || b64.isEmpty()) continue;
                 byte[] wavBytes = android.util.Base64.decode(b64, android.util.Base64.DEFAULT);

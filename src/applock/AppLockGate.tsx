@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { PinPad } from '../vault/PinPad';
 import { Icon } from '../components/Icon';
-import { storageGet, StorageKeys } from '../storage/db';
+import { storageGet, storageRemove, storageSet, StorageKeys } from '../storage/db';
+import { formatLockoutRemaining, lockoutMsFor } from '../vault/lockout';
 import { BiometricPlugin } from '../biometric/plugin';
 import { hashPin } from './crypto';
 
@@ -18,6 +19,15 @@ export function AppLockGate({ children }: { children: ReactNode }) {
   const [error, setError] = useState('');
   const [biometricReady, setBiometricReady] = useState(false);
   const promptedRef = useRef(false);
+  const [lockedUntil, setLockedUntil] = useState(() => storageGet(StorageKeys.appLockLockedUntil, 0));
+  const [now, setNow] = useState(() => Date.now());
+  const isLockedOut = lockedUntil > now;
+
+  useEffect(() => {
+    if (!isLockedOut) return;
+    const id = window.setInterval(() => setNow(Date.now()), 500);
+    return () => window.clearInterval(id);
+  }, [isLockedOut]);
 
   useEffect(() => {
     if (unlocked || !biometricEnabled) return;
@@ -53,16 +63,37 @@ export function AppLockGate({ children }: { children: ReactNode }) {
 
   async function onPinChange(value: string) {
     setPinInput(value);
-    if (value.length !== 4) return;
+    if (value.length < 4) {
+      if (error) setError('');
+      return;
+    }
+    if (storageGet(StorageKeys.appLockLockedUntil, 0) > Date.now()) {
+      setPinInput('');
+      return;
+    }
 
     const salt = storageGet<string>(StorageKeys.appLockPinSalt, '');
     const storedHash = storageGet<string>(StorageKeys.appLockPinHash, '');
     const hash = await hashPin(value, salt);
 
     if (hash === storedHash) {
+      storageSet(StorageKeys.appLockFailedAttempts, 0);
+      storageRemove(StorageKeys.appLockLockedUntil);
       setUnlocked(true);
     } else {
-      setError('Incorrect PIN');
+      // Same escalation as the Vault: a 4-digit PIN must not be guessable at full speed.
+      const failed = storageGet(StorageKeys.appLockFailedAttempts, 0) + 1;
+      storageSet(StorageKeys.appLockFailedAttempts, failed);
+      const lockoutMs = lockoutMsFor(failed);
+      if (lockoutMs > 0) {
+        const until = Date.now() + lockoutMs;
+        storageSet(StorageKeys.appLockLockedUntil, until);
+        setLockedUntil(until);
+        setNow(Date.now());
+        setError('');
+      } else {
+        setError('Incorrect PIN');
+      }
       setPinInput('');
     }
   }
@@ -73,12 +104,13 @@ export function AppLockGate({ children }: { children: ReactNode }) {
     <div className="screen">
       <PinPad
         title="Enter PIN"
-        subtitle="Unlock Omni Hub"
+        subtitle={isLockedOut ? `Too many attempts. Try again in ${formatLockoutRemaining(lockedUntil, now)}` : 'Unlock Omni Hub'}
         value={pinInput}
         onChange={(v) => void onPinChange(v)}
         error={error}
+        disabled={isLockedOut}
         action={
-          biometricReady ? (
+          biometricReady && !isLockedOut ? (
             <button type="button" className="vault-pin__action-btn" onClick={() => void tryBiometric()}>
               <Icon name="fingerprint" size={18} />
               Use fingerprint or face

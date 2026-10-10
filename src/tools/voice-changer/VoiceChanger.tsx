@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { stopPlayback } from './playback';
 import { useRouter } from '../../app/Router';
 import { useBackHandler } from '../../app/useBackHandler';
 import type { VcApi, VcScreenName } from './types';
@@ -39,6 +40,11 @@ export function VoiceChanger() {
     setStack((s) => [...s.slice(0, -1), next]);
   }
 
+  /** Throws the whole stack away, e.g. after deleting the clip a Share screen was showing. */
+  function reset(next: VcScreenName) {
+    setStack([next]);
+  }
+
   function popBack() {
     if (stack.length > 1) {
       setStack((s) => s.slice(0, -1));
@@ -59,6 +65,9 @@ export function VoiceChanger() {
 
   useBackHandler(popBack, screen !== 'home');
 
+  // Leaving the tool must not leave a preview playing with nothing on screen to stop it.
+  useEffect(() => () => stopPlayback(), []);
+
   function setOriginal(buffer: AudioBuffer) {
     setOriginalState(buffer);
     setProcessed(buffer);
@@ -78,6 +87,7 @@ export function VoiceChanger() {
     setResult,
     goto,
     replace,
+    reset,
     popBack,
     pendingScreen,
     setPendingScreen,

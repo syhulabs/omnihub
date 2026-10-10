@@ -95,11 +95,15 @@ export function DebtCalculator() {
     [debts],
   );
 
-  const { owedToMe, iOwe, net } = useMemo(() => {
-    const owedToMe = owedToMeDebts.reduce((sum, d) => sum + d.amount, 0);
-    const iOwe = iOweDebts.reduce((sum, d) => sum + d.amount, 0);
-    return { owedToMe, iOwe, net: owedToMe - iOwe };
-  }, [owedToMeDebts, iOweDebts]);
+  // Totals are per currency: RM100 + $100 is not "200" of anything. Rows in other currencies
+  // still list normally; the summary says how many it leaves out.
+  const inCurrency = (d: DebtEntry) => (d.currency ?? DEFAULT_CURRENCY) === currency;
+  const { owedToMe, iOwe, net, otherCurrencyCount } = useMemo(() => {
+    const owedToMe = owedToMeDebts.filter(inCurrency).reduce((sum, d) => sum + d.amount, 0);
+    const iOwe = iOweDebts.filter(inCurrency).reduce((sum, d) => sum + d.amount, 0);
+    return { owedToMe, iOwe, net: owedToMe - iOwe, otherCurrencyCount: debts.filter((d) => !inCurrency(d)).length };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [owedToMeDebts, iOweDebts, debts, currency]);
 
   const currencyOption = CURRENCIES.find((c) => c.code === currency);
 
@@ -183,6 +187,11 @@ export function DebtCalculator() {
                 {net >= 0 ? 'People owe you ' : 'You owe people '}
                 {formatMoney(Math.abs(net), currency)}
               </strong>
+              {otherCurrencyCount > 0 && (
+                <span className="dc__currency-note">
+                  {otherCurrencyCount} in other currencies not counted.
+                </span>
+              )}
             </div>
           </div>
         )}
@@ -412,11 +421,11 @@ export function DebtCalculator() {
               </div>
               <div className="dc__stat-row">
                 <span>Largest debt owed to you</span>
-                <strong>{formatMoney(Math.max(0, ...owedToMeDebts.map((d) => d.amount)), currency)}</strong>
+                <strong>{formatMoney(Math.max(0, ...owedToMeDebts.filter(inCurrency).map((d) => d.amount)), currency)}</strong>
               </div>
               <div className="dc__stat-row">
                 <span>Largest debt you owe</span>
-                <strong>{formatMoney(Math.max(0, ...iOweDebts.map((d) => d.amount)), currency)}</strong>
+                <strong>{formatMoney(Math.max(0, ...iOweDebts.filter(inCurrency).map((d) => d.amount)), currency)}</strong>
               </div>
               <div className="dc__stat-row">
                 <span>Net balance</span>

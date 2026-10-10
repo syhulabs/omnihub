@@ -13,9 +13,10 @@ export function formatClock(ms: number, showHours: boolean): string {
   return `${pad(minutes)}:${pad(seconds)}`;
 }
 
-export function formatStopwatch(ms: number): string {
+/** "MM:SS.cc"; with `wrapHours` the minutes roll over at 60 for a display that shows hours separately. */
+export function formatStopwatch(ms: number, wrapHours = false): string {
   const totalMs = Math.max(0, ms);
-  const minutes = Math.floor(totalMs / 60000);
+  const minutes = wrapHours ? Math.floor((totalMs % 3600000) / 60000) : Math.floor(totalMs / 60000);
   const seconds = Math.floor((totalMs % 60000) / 1000);
   const centis = Math.floor((totalMs % 1000) / 10);
   return `${pad(minutes)}:${pad(seconds)}.${pad(centis)}`;

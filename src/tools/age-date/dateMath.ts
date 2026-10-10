@@ -20,22 +20,23 @@ export function toISODate(date: Date): string {
 }
 
 export function ageBreakdown(birth: Date, asOf: Date): AgeBreakdown {
-  let years = asOf.getFullYear() - birth.getFullYear();
-  let months = asOf.getMonth() - birth.getMonth();
-  let days = asOf.getDate() - birth.getDate();
-
-  if (days < 0) {
-    months -= 1;
-    const prevMonthLastDay = new Date(asOf.getFullYear(), asOf.getMonth(), 0).getDate();
-    days += prevMonthLastDay;
-  }
+  const from = stripTime(birth);
+  const to = stripTime(asOf);
+  let years = to.getFullYear() - from.getFullYear();
+  let months = to.getMonth() - from.getMonth();
+  if (to.getDate() < from.getDate()) months -= 1;
   if (months < 0) {
     years -= 1;
     months += 12;
   }
+  // Days are counted from the anniversary that `years`/`months` lands on, clamped to that month's
+  // length (31 Jan + 1 month -> 28/29 Feb), so they can never come out negative.
+  const anchorMonth = new Date(from.getFullYear() + years, from.getMonth() + months, 1);
+  const anchorDay = Math.min(from.getDate(), new Date(anchorMonth.getFullYear(), anchorMonth.getMonth() + 1, 0).getDate());
+  const anchor = new Date(anchorMonth.getFullYear(), anchorMonth.getMonth(), anchorDay);
+  const days = Math.max(0, daysBetween(anchor, to));
 
-  const totalDays = Math.round((asOf.getTime() - birth.getTime()) / 86400000);
-  return { years, months, days, totalDays };
+  return { years, months, days, totalDays: daysBetween(from, to) };
 }
 
 export function nextBirthday(birth: Date, asOf: Date): { date: Date; daysUntil: number } {

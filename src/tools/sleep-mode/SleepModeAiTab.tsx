@@ -1,4 +1,4 @@
-import { useRef, useState, type CSSProperties, type TouchEvent } from 'react';
+import { useRef, useState, type CSSProperties, type TouchEvent, useEffect } from 'react';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon, type IconName } from '../../components/Icon';
 import { hapticTap, hapticSelect } from '../../haptics';
@@ -51,6 +51,9 @@ export function SleepModeAiTab({ onBack }: SleepModeAiTabProps) {
     audioRef.current = null;
     setPlaying(false);
   }
+
+  // A sample must not keep talking after the user has moved to another tab or screen.
+  useEffect(() => () => audioRef.current?.pause(), []);
 
   function selectPersonality(id: string) {
     if (!PREVIEW_SAMPLES[id]) return; // Custom has no fixed voice to preview

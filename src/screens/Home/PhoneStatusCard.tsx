@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useBackHandler } from '../../app/useBackHandler';
 import { Icon } from '../../components/Icon';
 import { DeviceStatsPlugin, type DeviceStats } from '../../device-stats/plugin';
 import './PhoneStatusCard.css';
@@ -29,6 +30,7 @@ function statusFor(stats: DeviceStats | null): { tone: 'good' | 'warn'; text: st
 export function PhoneStatusCard({ atTop, onHide, onTogglePosition, onOpen }: PhoneStatusCardProps) {
   const [stats, setStats] = useState<DeviceStats | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  useBackHandler(() => setMenuOpen(false), menuOpen);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -105,7 +107,7 @@ export function PhoneStatusCard({ atTop, onHide, onTogglePosition, onOpen }: Pho
       <div className="phc__stats">
         <div className="phc__stat phc__stat--battery">
           <Icon name="battery" size={19} />
-          <strong>{stats ? `${stats.batteryPercent}%` : '—'}</strong>
+          <strong>{stats && stats.batteryPercent >= 0 ? `${stats.batteryPercent}%` : '—'}</strong>
           <span>Battery</span>
         </div>
         <div className="phc__stat phc__stat--storage">
@@ -120,8 +122,8 @@ export function PhoneStatusCard({ atTop, onHide, onTogglePosition, onOpen }: Pho
         </div>
         <div className="phc__stat phc__stat--wifi">
           <Icon name="wifi" size={19} />
-          <strong>Wi-Fi</strong>
-          <span>{stats?.wifiConnected ? 'Connected' : 'Off'}</span>
+          <strong>{!stats?.wifiConnected && stats?.hasInternetConnection ? 'Mobile' : 'Wi-Fi'}</strong>
+          <span>{stats?.wifiConnected ? 'Connected' : stats?.hasInternetConnection ? 'Data' : 'Off'}</span>
         </div>
       </div>
     </div>

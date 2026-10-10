@@ -25,6 +25,7 @@ import { VaultFiles } from './VaultFiles';
 import { clearAllFiles, getAllFiles, putFile } from './fileStore';
 import type { VaultNote, VaultNoteRecord } from './types';
 import { forgetVaultKey, parkVaultKey, resumeVaultKey } from './session';
+import { clearVaultFailedAttempts, formatLockoutRemaining, recordVaultFailedAttempt, vaultLockedUntil } from './lockout';
 import { BiometricPlugin } from '../biometric/plugin';
 import {
   disableVaultBiometric,
@@ -38,18 +39,6 @@ const CANARY_TEXT = VAULT_CANARY_TEXT;
 
 type Status = 'loading' | 'setupPin' | 'confirmPin' | 'locked' | 'unlocked';
 type Tab = 'notes' | 'files';
-
-// A 4-digit PIN is only 10,000 possibilities, and nothing upstream of this screen rate-limits
-// guesses -- so once someone's past the first few mistakes (a genuine typo), escalate the cost
-// of guessing quickly rather than ever letting attempts run unthrottled.
-const LOCKOUT_FREE_ATTEMPTS = 5;
-const LOCKOUT_SCHEDULE_SEC = [30, 60, 120, 300, 600, 1800]; // 30s, 1m, 2m, 5m, 10m, 30m (cap)
-
-function lockoutMsFor(failedAttempts: number): number {
-  if (failedAttempts < LOCKOUT_FREE_ATTEMPTS) return 0;
-  const tier = Math.min(failedAttempts - LOCKOUT_FREE_ATTEMPTS, LOCKOUT_SCHEDULE_SEC.length - 1);
-  return LOCKOUT_SCHEDULE_SEC[tier] * 1000;
-}
 
 function newNote(): VaultNote {
   const now = Date.now();
@@ -183,8 +172,7 @@ export function Vault() {
       if (!isVaultBiometricEnabled()) setBiometricReady(false);
       return;
     }
-    storageSet(StorageKeys.vaultFailedAttempts, 0);
-    storageRemove(StorageKeys.vaultLockedUntil);
+    clearVaultFailedAttempts();
     setLockedUntil(0);
     await openWithKey(unlockedKey);
   }
@@ -223,19 +211,21 @@ export function Vault() {
     const keyBits = await deriveVaultKeyBits(pin, salt);
     const derivedKey = await importVaultKey(keyBits);
     const canary = await encryptText(derivedKey, CANARY_TEXT);
-    storageSet(StorageKeys.vaultSalt, salt);
-    storageSet(StorageKeys.vaultCanary, canary);
     forgetVaultKey();
     if (changingPin) {
-      // Re-encrypt the existing notes and files with the new key rather than losing them.
-      await persistNotes(notes, derivedKey);
+      // Re-encrypt the existing notes and files with the new key rather than losing them. The
+      // new salt/canary are committed only afterwards, so a crash mid-way leaves the old PIN
+      // still able to open everything instead of stranding half-converted data.
+      await persistNotes(notes, derivedKey, { pushAll: true });
       if (key) await reencryptFiles(key, derivedKey);
-      await refreshVaultBiometricSecret(keyBits);
     } else {
       encryptedRecordsRef.current = [];
       storageSet(StorageKeys.vaultNotes, []);
       setNotes([]);
     }
+    storageSet(StorageKeys.vaultSalt, salt);
+    storageSet(StorageKeys.vaultCanary, canary);
+    if (changingPin) await refreshVaultBiometricSecret(keyBits);
     setKey(derivedKey);
     setError('');
     setPinInput('');
@@ -249,7 +239,7 @@ export function Vault() {
     // Re-check against storage, not the `lockedUntil` state, in case the lockout was set in a
     // different tab/reload of this screen -- the PIN pad being disabled should already prevent
     // reaching here while locked, but don't rely solely on that.
-    const activeLockUntil = storageGet(StorageKeys.vaultLockedUntil, 0);
+    const activeLockUntil = vaultLockedUntil();
     if (activeLockUntil > Date.now()) {
       setPinInput('');
       return;
@@ -264,12 +254,8 @@ export function Vault() {
       const plain = await decryptText(derivedKey, canary);
       if (plain !== CANARY_TEXT) throw new Error('mismatch');
     } catch {
-      const failedAttempts = storageGet(StorageKeys.vaultFailedAttempts, 0) + 1;
-      storageSet(StorageKeys.vaultFailedAttempts, failedAttempts);
-      const lockoutMs = lockoutMsFor(failedAttempts);
-      if (lockoutMs > 0) {
-        const until = Date.now() + lockoutMs;
-        storageSet(StorageKeys.vaultLockedUntil, until);
+      const until = recordVaultFailedAttempt();
+      if (until > 0) {
         setLockedUntil(until);
         // The PinPad subtitle takes over with a live countdown while locked out (see the
         // `status === 'locked'` render below) -- leaving this unset means there's nothing stale
@@ -283,8 +269,7 @@ export function Vault() {
       return;
     }
 
-    storageSet(StorageKeys.vaultFailedAttempts, 0);
-    storageRemove(StorageKeys.vaultLockedUntil);
+    clearVaultFailedAttempts();
     setLockedUntil(0);
     await openWithKey(derivedKey);
   }
@@ -312,7 +297,7 @@ export function Vault() {
     setStatus('unlocked');
   }
 
-  async function persistNotes(next: VaultNote[], activeKey: CryptoKey) {
+  async function persistNotes(next: VaultNote[], activeKey: CryptoKey, options?: { pushAll?: boolean }) {
     const prevRecords = encryptedRecordsRef.current;
     setNotes(next);
     const records: VaultNoteRecord[] = await Promise.all(
@@ -331,7 +316,9 @@ export function Vault() {
       const nextIds = new Set(records.map((r) => r.id));
       for (const rec of records) {
         const prev = prevMap.get(rec.id);
-        if (!prev || prev.updatedAt !== rec.updatedAt) engine.pushUpsert(uid, rec);
+        // After a PIN change every record is new ciphertext even though nothing was edited, so
+        // the cloud copy must follow or other devices would keep the old-key version.
+        if (options?.pushAll || !prev || prev.updatedAt !== rec.updatedAt) engine.pushUpsert(uid, rec);
       }
       for (const [id] of prevMap) {
         if (!nextIds.has(id)) engine.pushDelete(uid, id, Date.now());
@@ -497,9 +484,7 @@ export function Vault() {
   if (status === 'locked') {
     const lockRemainingMs = lockedUntil - nowTick;
     const isLockedOut = lockRemainingMs > 0;
-    const remainingLabel = isLockedOut
-      ? `${Math.floor(lockRemainingMs / 60000)}:${String(Math.ceil((lockRemainingMs % 60000) / 1000)).padStart(2, '0')}`
-      : '';
+    const remainingLabel = isLockedOut ? formatLockoutRemaining(lockedUntil, nowTick) : '';
     return (
       <div className="screen">
         <ScreenHeader title="Vault" onBack={back} />

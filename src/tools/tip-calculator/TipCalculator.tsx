@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { appDefaultCurrency, currencySymbol, formatMoney as sharedFormatMoney } from '../shared/currencies';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon } from '../../components/Icon';
 import { useRouter } from '../../app/Router';
@@ -6,9 +7,11 @@ import './TipCalculator.css';
 
 const TIP_PRESETS = [10, 15, 18, 20, 25];
 
+const CURRENCY = appDefaultCurrency();
+const SYMBOL = currencySymbol(CURRENCY);
+
 function formatMoney(amount: number): string {
-  if (!Number.isFinite(amount)) return '$0.00';
-  return `$${amount.toFixed(2)}`;
+  return sharedFormatMoney(Number.isFinite(amount) ? amount : 0, CURRENCY);
 }
 
 export function TipCalculator() {
@@ -41,7 +44,7 @@ export function TipCalculator() {
         <div className="tc__field">
           <label className="tc__label">Bill Amount</label>
           <div className="tc__amount-row">
-            <span className="tc__currency">$</span>
+            <span className="tc__currency">{SYMBOL}</span>
             <input
               className="tc__amount-input"
               type="number"

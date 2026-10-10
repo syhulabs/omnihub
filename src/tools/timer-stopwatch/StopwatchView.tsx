@@ -25,14 +25,41 @@ const RING_R = 44;
 const RING_C = 2 * Math.PI * RING_R;
 const TICKS = Array.from({ length: 12 }, (_, i) => i * 30);
 
+interface SavedStopwatchState {
+  running: boolean;
+  accumulated: number;
+  startedAt: number | null;
+  laps: Lap[];
+  lastLapTotal: number;
+}
+
+const EMPTY_STOPWATCH: SavedStopwatchState = { running: false, accumulated: 0, startedAt: null, laps: [], lastLapTotal: 0 };
+
 export function StopwatchView() {
   const { back } = useRouter();
-  const [running, setRunning] = useState(false);
-  const [accumulated, setAccumulated] = useState(0);
-  const [startedAt, setStartedAt] = useState<number | null>(null);
+  // A running stopwatch keeps counting while the user is elsewhere in the app: only its
+  // wall-clock start is stored, so time away is counted exactly.
+  const savedRef = useRef<SavedStopwatchState | null>(null);
+  if (savedRef.current === null) {
+    savedRef.current = { ...EMPTY_STOPWATCH, ...storageGet<Partial<SavedStopwatchState>>(StorageKeys.stopwatchState, {}) };
+  }
+  const saved = savedRef.current;
+  const [running, setRunning] = useState(saved.running && saved.startedAt !== null);
+  const [accumulated, setAccumulated] = useState(saved.accumulated);
+  const [startedAt, setStartedAt] = useState<number | null>(saved.startedAt);
   const [, forceTick] = useState(0);
-  const [laps, setLaps] = useState<Lap[]>([]);
-  const lastLapTotalRef = useRef(0);
+  const [laps, setLaps] = useState<Lap[]>(saved.laps);
+  const lastLapTotalRef = useRef(saved.lastLapTotal);
+
+  useEffect(() => {
+    storageSet(StorageKeys.stopwatchState, {
+      running,
+      accumulated,
+      startedAt,
+      laps,
+      lastLapTotal: lastLapTotalRef.current,
+    } satisfies SavedStopwatchState);
+  }, [running, accumulated, startedAt, laps]);
 
   const [showHistory, setShowHistory] = useState(false);
   const [history, setHistory] = useState<StopwatchHistoryEntry[]>(() =>
@@ -182,8 +209,8 @@ export function StopwatchView() {
                     <span className="tm2__colon">:</span>
                   </>
                 )}
-                <span>{formatStopwatch(elapsed).split('.')[0]}</span>
-                <span className="sw2__display--accent">.{formatStopwatch(elapsed).split('.')[1]}</span>
+                <span>{formatStopwatch(elapsed, showHours).split('.')[0]}</span>
+                <span className="sw2__display--accent">.{formatStopwatch(elapsed, showHours).split('.')[1]}</span>
               </div>
               <div className="tm2__unit-row">
                 {showHours && <span>HR</span>}

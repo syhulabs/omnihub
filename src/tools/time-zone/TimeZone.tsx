@@ -13,6 +13,7 @@ import {
   dayOffsetLabel,
   dayPeriod,
   formatTimeLower,
+  zoneAbbreviation,
   formatWorldClockDiff,
   formatZoneLabel,
   friendlyZoneName,
@@ -181,7 +182,7 @@ export function TimeZone() {
               {localCity ? localCity.name : friendlyZoneName(localTimeZone)}
             </span>
             <span className="tz__hero2-country">
-              {localCity ? `${localCity.country} ` : ''}({formatZoneLabel(localTimeZone, now).replace(/^GMT[+-][\d:]+\s?/, '') || formatZoneLabel(localTimeZone, now)})
+              {localCity ? `${localCity.country} ` : ''}({zoneAbbreviation(localTimeZone, now) || formatZoneLabel(localTimeZone, now)})
             </span>
             <span className="tz__hero2-time">
               {formatTimeLower(now).replace(/\s?(am|pm)/i, '')}

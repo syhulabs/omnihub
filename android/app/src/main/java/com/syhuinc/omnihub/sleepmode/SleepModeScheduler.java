@@ -33,10 +33,32 @@ public class SleepModeScheduler {
         return am != null && am.canScheduleExactAlarms();
     }
 
-    /** Arms tonight's (or tomorrow's, if already past) bedtime firing. Cancels any pending beat. */
+    /** Arms tonight's (or tomorrow's, if already past) bedtime firing. Cancels any pending beat.
+     *  When bedtime has already passed and it's not yet wake time, the session starts right
+     *  away: otherwise any settings change after bedtime would silently skip tonight. */
     public static boolean armBedtime(Context ctx, SleepModeData data) {
         if (!data.enabled) return false;
+        long now = System.currentTimeMillis();
+        if (isWithinSleepWindow(data, now)) {
+            return scheduleAt(ctx, now + 1_000L, KIND_BEDTIME);
+        }
         return scheduleAt(ctx, nextBedtimeTriggerMillis(data), KIND_BEDTIME);
+    }
+
+    /** True between the most recent bedtime and the wake time that follows it. */
+    static boolean isWithinSleepWindow(SleepModeData data, long nowMillis) {
+        Calendar bed = Calendar.getInstance();
+        bed.setTimeInMillis(nowMillis);
+        bed.set(Calendar.HOUR_OF_DAY, data.bedtimeHour);
+        bed.set(Calendar.MINUTE, data.bedtimeMinute);
+        bed.set(Calendar.SECOND, 0);
+        bed.set(Calendar.MILLISECOND, 0);
+        if (bed.getTimeInMillis() > nowMillis) bed.add(Calendar.DAY_OF_YEAR, -1);
+        Calendar wake = (Calendar) bed.clone();
+        wake.set(Calendar.HOUR_OF_DAY, data.wakeHour);
+        wake.set(Calendar.MINUTE, data.wakeMinute);
+        if (!wake.after(bed)) wake.add(Calendar.DAY_OF_YEAR, 1);
+        return nowMillis >= bed.getTimeInMillis() && nowMillis < wake.getTimeInMillis();
     }
 
     public static boolean scheduleBeat(Context ctx, long triggerAtMillis) {
