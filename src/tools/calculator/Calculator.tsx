@@ -107,7 +107,7 @@ export function Calculator() {
     setShowScanner(false);
   }
 
-  function useHistoryResult(entry: CalculatorHistoryEntry) {
+  function applyHistoryResult(entry: CalculatorHistoryEntry) {
     setDisplay(entry.result);
     setStoredValue(null);
     setOperator(null);
@@ -158,7 +158,7 @@ export function Calculator() {
                     <button
                       type="button"
                       className="calc__history-item"
-                      onClick={() => useHistoryResult(entry)}
+                      onClick={() => applyHistoryResult(entry)}
                     >
                       <span className="calc__history-expr">{entry.expression} =</span>
                       <span className="calc__history-result">{entry.result}</span>

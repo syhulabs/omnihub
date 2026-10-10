@@ -1,6 +1,6 @@
 # Privacy Policy for Omni Hub
 
-**Last updated:** September 2026
+**Last updated:** October 2026
 
 Omni Hub doesn't require an account. Signing in with Google is entirely optional and only unlocks syncing some of your data across your own devices — nothing else changes, and nothing is shared, sold, or used for ads or analytics either way.
 
@@ -42,6 +42,7 @@ Omni Hub does not access your contacts. It requests these permissions, all used 
 - **Internet / network access** — required only for the optional Google Sign-In and cloud sync described above, and for Sleep Mode AI (see below). Unused unless you sign in. Omni Hub separately checks (but does not use to connect anywhere) whether you currently have a Wi-Fi or mobile connection, to show connection status on the "My Phone" card and Phone Health Check.
 - **Vibrate** — haptic feedback (tap and completion vibrations).
 - **Alarms, notifications, and background wake permissions** (schedule alarms, post notifications, run in the foreground briefly while an alarm rings, keep the device awake for that, show the ringing screen over the lock screen, and restart alarms after the device reboots) — all used solely by the **Alarm** feature, so an alarm you set still rings even if Omni Hub is closed. None of this involves any network access.
+- **Biometrics** (optional, off by default) — used only by the **App Lock** and **Vault** "Biometric Unlock" settings, so you can unlock with your fingerprint or face instead of typing your PIN. Android's own system prompt does the matching; Omni Hub only learns whether it succeeded and never sees, stores, or transmits your fingerprint or face data.
 - **Display over other apps** — used only by **Sleep Mode**'s on-screen reminder card, so it can appear on top of whatever you're doing when a reminder fires, but only while your phone is unlocked and in active use. Without this permission granted, the same reminder still shows as a normal notification.
 - **Camera / flashlight** — used by the **QR Scanner**, **Barcode Scanner**, and **Flashlight** tools, and by the **Phone Health Check**'s Front Camera and Rear Camera tests (Phone Center) to show you a live preview so you can confirm your cameras work. In every case the preview is shown to you only, entirely on your device — no photo, video, or scanned image is ever saved or transmitted; a scanned code's decoded text stays on-device too.
 - **Phone state** (optional, off by default) — used only by the **Flashlight** tool's "Flash Alerts" setting to detect when your phone starts or stops ringing, so it can blink the flash for an incoming call. Omni Hub never reads phone numbers, call logs, or call content.

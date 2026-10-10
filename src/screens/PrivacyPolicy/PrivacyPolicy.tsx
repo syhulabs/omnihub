@@ -7,7 +7,7 @@ export function PrivacyPolicy() {
 
   return (
     <div className="screen">
-      <ScreenHeader title="Privacy Policy" subtitle="Last updated September 2026" onBack={back} />
+      <ScreenHeader title="Privacy Policy" subtitle="Last updated October 2026" onBack={back} />
 
       <div className="pp__body">
         <p className="pp__lede">
@@ -147,6 +147,13 @@ export function PrivacyPolicy() {
               alarms after the device reboots) — all used solely by the <strong>Alarm</strong>{' '}
               feature, so an alarm you set still rings even if Omni Hub is closed. None of this
               involves any network access.
+            </li>
+            <li>
+              <strong>Biometrics</strong> (optional, off by default) — used only by the{' '}
+              <strong>App Lock</strong> and <strong>Vault</strong> "Biometric Unlock" settings, so you can
+              unlock with your fingerprint or face instead of typing your PIN. Android's own system
+              prompt does the matching; Omni Hub only learns whether it succeeded and never sees,
+              stores, or transmits your fingerprint or face data.
             </li>
             <li>
               <strong>Display over other apps</strong> — used only by <strong>Sleep Mode</strong>

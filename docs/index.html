@@ -280,7 +280,7 @@
 
   <span class="updated">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20ZM12 6v6l4 2" /></svg>
-    Last updated September 2026
+    Last updated October 2026
   </span>
 
   <p class="lede">Omni Hub doesn't require an account. Signing in with Google is entirely optional and only unlocks syncing some of your data across your own devices — nothing else changes, and nothing is shared, sold, or used for ads or analytics either way.</p>
@@ -339,6 +339,7 @@
       <li><strong>Internet / network access</strong> — required only for the optional Google Sign-In and cloud sync described above, and for Sleep Mode AI (see below). Unused unless you sign in. Omni Hub separately checks (but does not use to connect anywhere) whether you currently have a Wi-Fi or mobile connection, to show connection status on the "My Phone" card and Phone Health Check.</li>
       <li><strong>Vibrate</strong> — haptic feedback (tap and completion vibrations).</li>
       <li><strong>Alarms, notifications, and background wake permissions</strong> (schedule alarms, post notifications, run in the foreground briefly while an alarm rings, keep the device awake for that, show the ringing screen over the lock screen, and restart alarms after the device reboots) — all used solely by the <strong>Alarm</strong> feature, so an alarm you set still rings even if Omni Hub is closed. None of this involves any network access.</li>
+      <li><strong>Biometrics</strong> (optional, off by default) — used only by the <strong>App Lock</strong> and <strong>Vault</strong> "Biometric Unlock" settings, so you can unlock with your fingerprint or face instead of typing your PIN. Android's own system prompt does the matching; Omni Hub only learns whether it succeeded and never sees, stores, or transmits your fingerprint or face data.</li>
       <li><strong>Display over other apps</strong> — used only by <strong>Sleep Mode</strong>'s on-screen reminder card, so it can appear on top of whatever you're doing when a reminder fires, but only while your phone is unlocked and in active use. Without this permission granted, the same reminder still shows as a normal notification.</li>
       <li><strong>Camera / flashlight</strong> — used by the <strong>QR Scanner</strong>, <strong>Barcode Scanner</strong>, and <strong>Flashlight</strong> tools, and by the <strong>Phone Health Check</strong>'s Front Camera and Rear Camera tests (Phone Center) to show you a live preview so you can confirm your cameras work. In every case the preview is shown to you only, entirely on your device — no photo, video, or scanned image is ever saved or transmitted; a scanned code's decoded text stays on-device too.</li>
       <li><strong>Phone state</strong> (optional, off by default) — used only by the <strong>Flashlight</strong> tool's "Flash Alerts" setting to detect when your phone starts or stops ringing, so it can blink the flash for an incoming call. Omni Hub never reads phone numbers, call logs, or call content.</li>

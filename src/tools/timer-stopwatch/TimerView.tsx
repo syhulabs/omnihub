@@ -111,7 +111,7 @@ export function TimerView() {
     setSecondsInput(pad(totalSec % 60));
   }
 
-  function useHistoryEntry(entry: TimerHistoryEntry) {
+  function applyHistoryEntry(entry: TimerHistoryEntry) {
     reset();
     fillFromMs(entry.durationMs);
     setShowHistory(false);
@@ -215,7 +215,7 @@ export function TimerView() {
                     <button
                       type="button"
                       className="tm2__history-item"
-                      onClick={() => useHistoryEntry(entry)}
+                      onClick={() => applyHistoryEntry(entry)}
                     >
                       <span className="tm2__history-icon">
                         <Icon name={PRESETS.find((p) => p.label === entry.label)?.icon ?? 'timer'} size={17} />
