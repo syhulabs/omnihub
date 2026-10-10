@@ -44,7 +44,8 @@ git-ignored on purpose and are **not in the repo**; the owner keeps them private
   Craft `src/screens/Craft`, Desk `src/screens/Profile` (route `/profile`).
 - Tools registry `src/tools/registry.ts`; icons `src/components/Icon.tsx`; theme tokens `src/theme/theme.css`.
 - Custom native plugins in `android/app/src/main/java/com/syhuinc/omnihub/<feature>/`, registered in
-  `MainActivity.java` before `super.onCreate()`.
+  `MainActivity.java` before `super.onCreate()`. The cloud session has no Android SDK, so native Java
+  can't be compiled there: keep it small and conservative, and say so when it ships untested.
 - Reference mockups: `design/` (see `design/README.md`).
 
 ## Open work and plans

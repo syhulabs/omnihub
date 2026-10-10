@@ -23,6 +23,32 @@ import {
   type MeasurementSystem,
 } from '../../settings/formats';
 import { vaultAutoLockMinutes } from '../../vault/session';
+import {
+  BiometricPlugin,
+  biometricLabel,
+  biometricUnavailableReason,
+  type BiometricCheck,
+} from '../../biometric/plugin';
+import { disableVaultBiometric, enableVaultBiometric, isVaultBiometricEnabled } from '../../vault/biometric';
+
+/** One check per screen visit: what biometrics this phone has and whether any is enrolled. */
+function useBiometricCheck(): BiometricCheck | null {
+  const [check, setCheck] = useState<BiometricCheck | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    BiometricPlugin.check()
+      .then((r) => {
+        if (!cancelled) setCheck(r);
+      })
+      .catch(() => {
+        if (!cancelled) setCheck({ available: false, reason: 'no_hardware', type: 'none' });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  return check;
+}
 import './Profile.css';
 
 type Theme = 'dark' | 'light';
@@ -934,6 +960,10 @@ type AppLockStep = 'settings' | 'setupPin' | 'confirmPin';
 export function ProfileAppLock() {
   const { back } = useRouter();
   const [enabled, setEnabledState] = useState(() => storageGet(StorageKeys.appLockEnabled, false));
+  const [biometricEnabled, setBiometricEnabledState] = useState(() =>
+    storageGet(StorageKeys.appLockBiometricEnabled, false),
+  );
+  const biometrics = useBiometricCheck();
   const [step, setStep] = useState<AppLockStep>('settings');
   const [pinInput, setPinInput] = useState('');
   const [pendingPin, setPendingPin] = useState('');
@@ -987,8 +1017,39 @@ export function ProfileAppLock() {
     storageSet(StorageKeys.appLockEnabled, false);
     storageSet(StorageKeys.appLockPinHash, '');
     storageSet(StorageKeys.appLockPinSalt, '');
+    storageSet(StorageKeys.appLockBiometricEnabled, false);
     setEnabledState(false);
+    setBiometricEnabledState(false);
   }
+
+  async function toggleBiometric() {
+    if (biometricEnabled) {
+      storageSet(StorageKeys.appLockBiometricEnabled, false);
+      setBiometricEnabledState(false);
+      return;
+    }
+    // Prove the phone's biometrics actually work for this user before relying on them.
+    try {
+      await BiometricPlugin.authenticate({
+        title: 'Turn on Biometric Unlock',
+        subtitle: 'Confirm with your fingerprint or face',
+        negativeButtonText: 'Cancel',
+      });
+    } catch {
+      hapticWarning();
+      return;
+    }
+    storageSet(StorageKeys.appLockBiometricEnabled, true);
+    setBiometricEnabledState(true);
+    hapticSuccess();
+  }
+
+  const biometricSubtitle = !enabled
+    ? 'Turn on App Lock first.'
+    : biometrics?.available
+      ? `${biometricLabel(biometrics.type)} instead of your PIN. The PIN still works as a backup.`
+      : biometricUnavailableReason(biometrics);
+  const biometricPossible = enabled && !!biometrics?.available;
 
   if (step === 'setupPin') {
     return (
@@ -1037,9 +1098,17 @@ export function ProfileAppLock() {
             </span>
             <span className="pf__row-text">
               <strong>Biometric Unlock</strong>
-              <span>Fingerprint or face unlock, coming soon.</span>
+              <span>{biometricSubtitle}</span>
             </span>
-            <span className="pf__row-value">Soon</span>
+            <button
+              type="button"
+              className={`pf__switch${biometricEnabled ? ' pf__switch--on' : ''}`}
+              onClick={() => void toggleBiometric()}
+              disabled={!biometricPossible && !biometricEnabled}
+              aria-label="Toggle biometric unlock"
+            >
+              <span className="pf__switch-knob" />
+            </button>
           </div>
           {enabled && (
             <>
@@ -1071,10 +1140,70 @@ const VAULT_AUTO_LOCK_OPTIONS = [
 export function ProfileVaultSecurity() {
   const { back, navigate } = useRouter();
   const [autoLock, setAutoLockState] = useState(vaultAutoLockMinutes);
+  const [biometricEnabled, setBiometricEnabledState] = useState(isVaultBiometricEnabled);
+  const biometrics = useBiometricCheck();
+  const vaultExists = storageGet<string | null>(StorageKeys.vaultSalt, null) !== null;
+  const [verifyingPin, setVerifyingPin] = useState(false);
+  const [pinInput, setPinInput] = useState('');
+  const [pinError, setPinError] = useState('');
 
   function setAutoLock(v: number) {
     setAutoLockState(v);
     storageSet(StorageKeys.vaultAutoLockMinutes, v);
+  }
+
+  function toggleBiometric() {
+    if (biometricEnabled) {
+      void disableVaultBiometric();
+      setBiometricEnabledState(false);
+      return;
+    }
+    setPinInput('');
+    setPinError('');
+    setVerifyingPin(true);
+  }
+
+  async function onVerifyPinChange(value: string) {
+    setPinInput(value);
+    if (value.length !== 4) return;
+    const result = await enableVaultBiometric(value);
+    if (result === 'ok') {
+      hapticSuccess();
+      setBiometricEnabledState(true);
+      setVerifyingPin(false);
+      return;
+    }
+    hapticWarning();
+    setPinInput('');
+    setPinError(
+      result === 'wrong-pin'
+        ? 'Incorrect PIN'
+        : result === 'no-vault'
+          ? 'Set up the Vault first.'
+          : "Couldn't turn on biometric unlock on this phone.",
+    );
+  }
+
+  const biometricSubtitle = !vaultExists
+    ? 'Set up the Vault first.'
+    : biometrics?.available
+      ? `${biometricLabel(biometrics.type)} instead of your Vault PIN. The PIN still works as a backup.`
+      : biometricUnavailableReason(biometrics);
+  const biometricPossible = vaultExists && !!biometrics?.available;
+
+  if (verifyingPin) {
+    return (
+      <div className="screen">
+        <ScreenHeader title="Vault Security" onBack={() => setVerifyingPin(false)} />
+        <PinPad
+          title="Enter Vault PIN"
+          subtitle="Confirm your PIN once to turn on fingerprint or face unlock"
+          value={pinInput}
+          onChange={(v) => void onVerifyPinChange(v)}
+          error={pinError}
+        />
+      </div>
+    );
   }
 
   return (
@@ -1099,9 +1228,17 @@ export function ProfileVaultSecurity() {
             </span>
             <span className="pf__row-text">
               <strong>Biometric Unlock</strong>
-              <span>Fingerprint or face unlock, coming soon.</span>
+              <span>{biometricSubtitle}</span>
             </span>
-            <span className="pf__row-value">Soon</span>
+            <button
+              type="button"
+              className={`pf__switch${biometricEnabled ? ' pf__switch--on' : ''}`}
+              onClick={toggleBiometric}
+              disabled={!biometricPossible && !biometricEnabled}
+              aria-label="Toggle Vault biometric unlock"
+            >
+              <span className="pf__switch-knob" />
+            </button>
           </div>
         </div>
 

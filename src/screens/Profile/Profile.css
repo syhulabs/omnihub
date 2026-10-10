@@ -410,6 +410,10 @@
   transition: background 0.15s ease;
 }
 
+.pf__switch:disabled {
+  opacity: 0.4;
+}
+
 .pf__switch--on {
   background: var(--accent-gradient);
   box-shadow: 0 0 12px -2px color-mix(in srgb, var(--accent) 60%, transparent);

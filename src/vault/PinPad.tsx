@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Icon } from '../components/Icon';
 
 const PIN_LENGTH = 4;
@@ -11,9 +12,11 @@ interface PinPadProps {
   error?: string;
   /** Disables all key input, e.g. during a post-failed-attempts lockout. */
   disabled?: boolean;
+  /** Rendered under the keys, e.g. a "Use fingerprint or face" button. */
+  action?: ReactNode;
 }
 
-export function PinPad({ title, subtitle, value, onChange, error, disabled }: PinPadProps) {
+export function PinPad({ title, subtitle, value, onChange, error, disabled, action }: PinPadProps) {
   function press(key: string) {
     if (disabled) return;
     if (key === 'backspace') {
@@ -57,6 +60,7 @@ export function PinPad({ title, subtitle, value, onChange, error, disabled }: Pi
           ),
         )}
       </div>
+      {action && <div className="vault-pin__action">{action}</div>}
     </div>
   );
 }

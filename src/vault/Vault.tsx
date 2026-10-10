@@ -15,6 +15,9 @@ import {
   decryptBytes,
   randomSalt,
   type EncryptedPayload,
+  VAULT_CANARY_TEXT,
+  deriveVaultKeyBits,
+  importVaultKey,
 } from './crypto';
 import { PinPad, PIN_LENGTH } from './PinPad';
 import { VaultNoteEditor } from './VaultNoteEditor';
@@ -22,9 +25,16 @@ import { VaultFiles } from './VaultFiles';
 import { clearAllFiles, getAllFiles, putFile } from './fileStore';
 import type { VaultNote, VaultNoteRecord } from './types';
 import { forgetVaultKey, parkVaultKey, resumeVaultKey } from './session';
+import { BiometricPlugin } from '../biometric/plugin';
+import {
+  disableVaultBiometric,
+  isVaultBiometricEnabled,
+  refreshVaultBiometricSecret,
+  unlockVaultWithBiometric,
+} from './biometric';
 import './Vault.css';
 
-const CANARY_TEXT = 'omni-hub-vault-ok';
+const CANARY_TEXT = VAULT_CANARY_TEXT;
 
 type Status = 'loading' | 'setupPin' | 'confirmPin' | 'locked' | 'unlocked';
 type Tab = 'notes' | 'files';
@@ -63,6 +73,8 @@ export function Vault() {
   const [tab, setTab] = useState<Tab>('notes');
   const [lockedUntil, setLockedUntil] = useState(() => storageGet(StorageKeys.vaultLockedUntil, 0));
   const [nowTick, setNowTick] = useState(() => Date.now());
+  const [biometricReady, setBiometricReady] = useState(false);
+  const biometricPromptedRef = useRef(false);
 
   // Only the already-PIN-encrypted records ever leave the device — the key itself never does.
   // Kept alongside `notes` (decrypted, for the UI) since that's what actually gets synced.
@@ -141,6 +153,42 @@ export function Vault() {
   // Vault Security); "Immediately" (the default) parks nothing, so this is a no-op then.
   useEffect(() => () => parkVaultKey(keyRef.current), []);
 
+  useEffect(() => {
+    if (!isVaultBiometricEnabled()) return;
+    let cancelled = false;
+    BiometricPlugin.check()
+      .then((r) => {
+        if (!cancelled) setBiometricReady(r.available);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Offer the fingerprint/face prompt by itself the first time the locked screen shows, the
+  // way the phone's own lock screen does; the button under the keypad covers every retry.
+  useEffect(() => {
+    if (status !== 'locked' || !biometricReady || biometricPromptedRef.current) return;
+    if (storageGet(StorageKeys.vaultLockedUntil, 0) > Date.now()) return;
+    biometricPromptedRef.current = true;
+    void tryBiometricUnlock();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, biometricReady]);
+
+  async function tryBiometricUnlock() {
+    const unlockedKey = await unlockVaultWithBiometric();
+    if (!unlockedKey) {
+      // Cancelled, failed, or the stored key is gone: the PIN pad is still right there.
+      if (!isVaultBiometricEnabled()) setBiometricReady(false);
+      return;
+    }
+    storageSet(StorageKeys.vaultFailedAttempts, 0);
+    storageRemove(StorageKeys.vaultLockedUntil);
+    setLockedUntil(0);
+    await openWithKey(unlockedKey);
+  }
+
   // Only ticks while an active lockout needs a live countdown -- otherwise idle.
   useEffect(() => {
     if (lockedUntil <= Date.now()) return;
@@ -172,7 +220,8 @@ export function Vault() {
 
   async function completeSetup(pin: string) {
     const salt = randomSalt();
-    const derivedKey = await deriveVaultKey(pin, salt);
+    const keyBits = await deriveVaultKeyBits(pin, salt);
+    const derivedKey = await importVaultKey(keyBits);
     const canary = await encryptText(derivedKey, CANARY_TEXT);
     storageSet(StorageKeys.vaultSalt, salt);
     storageSet(StorageKeys.vaultCanary, canary);
@@ -181,6 +230,7 @@ export function Vault() {
       // Re-encrypt the existing notes and files with the new key rather than losing them.
       await persistNotes(notes, derivedKey);
       if (key) await reencryptFiles(key, derivedKey);
+      await refreshVaultBiometricSecret(keyBits);
     } else {
       encryptedRecordsRef.current = [];
       storageSet(StorageKeys.vaultNotes, []);
@@ -385,6 +435,8 @@ export function Vault() {
     storageRemove(StorageKeys.vaultLockedUntil);
     void clearAllFiles();
     forgetVaultKey();
+    void disableVaultBiometric();
+    setBiometricReady(false);
     setKey(null);
     setNotes([]);
     setDraft(null);
@@ -458,6 +510,14 @@ export function Vault() {
           onChange={setPinInput}
           error={isLockedOut ? undefined : error}
           disabled={isLockedOut}
+          action={
+            biometricReady && !isLockedOut ? (
+              <button type="button" className="vault-pin__action-btn" onClick={() => void tryBiometricUnlock()}>
+                <Icon name="fingerprint" size={18} />
+                Use fingerprint or face
+              </button>
+            ) : undefined
+          }
         />
       </div>
     );

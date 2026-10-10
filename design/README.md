@@ -30,8 +30,14 @@ tiles, 14.4/11.6px row text, 44x26 switches, full-width dividers (`.pf__body--se
 - Notifications: shows/requests the notification and exact-alarm permissions.
 - Security: App Lock with a 4-digit PIN gate at cold start (`src/applock/`); Vault Security links to the
   Vault and sets its auto-lock grace period (`src/vault/session.ts`, key parked in memory only).
-- Known gaps: fingerprint/face unlock is shown as "Soon" (not built); App Lock has no wrong-PIN lockout
-  (the Vault does). Not built into an APK from the cloud: the signing files aren't in the repo.
+- Biometric Unlock (fingerprint/face, native `BiometricPlugin` on androidx.biometric 1.1.0): App Lock
+  auto-prompts at cold start with the PIN as fallback; the Vault keeps its derived key in a
+  Keystore-encrypted store that the plugin only releases after a successful prompt (`src/vault/biometric.ts`).
+  Both STRONG and WEAK biometrics are accepted so camera face unlock works; the trade-off is written up
+  at the top of the Java file. Written in the cloud without an Android SDK: the owner's first local
+  Gradle build is the compile check.
+- Known gaps: App Lock has no wrong-PIN lockout (the Vault does). Not built into an APK from the cloud:
+  the signing files aren't in the repo.
 - Before shipping: the owner's on-device check of every Settings sub-screen in both themes, App Lock
   (set PIN, relaunch, wrong PIN, right PIN), 12/24h and currency, then the APK routine.
 

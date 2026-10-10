@@ -51,6 +51,8 @@ export const StorageKeys = {
   appLockPinHash: `${PREFIX}settings.appLockPinHash`,
   appLockPinSalt: `${PREFIX}settings.appLockPinSalt`,
   vaultAutoLockMinutes: `${PREFIX}settings.vaultAutoLockMinutes`,
+  appLockBiometricEnabled: `${PREFIX}settings.appLockBiometricEnabled`,
+  vaultBiometricEnabled: `${PREFIX}settings.vaultBiometricEnabled`,
 } as const;
 
 export function storageGet<T>(key: string, fallback: T): T {

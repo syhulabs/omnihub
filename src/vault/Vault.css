@@ -112,6 +112,31 @@
   box-shadow: none;
 }
 
+/* Optional row under the keypad: biometric unlock */
+.vault-pin__action {
+  margin-top: 22px;
+}
+
+.vault-pin__action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 18px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 15%, transparent),
+    0 4px 18px -6px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.vault-pin__action-btn:active {
+  transform: scale(0.97);
+}
+
 /* Settings panel */
 
 .vault__settings {
