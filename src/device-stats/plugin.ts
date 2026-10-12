@@ -19,11 +19,8 @@ export interface DeviceStats {
   wifiSignalBars: number;
 }
 
+/** Audio only: photos and videos are not read (Play's Photo and Video Permissions policy). */
 export interface StorageBreakdown {
-  photosBytes: number;
-  photosCount: number;
-  videosBytes: number;
-  videosCount: number;
   audioBytes: number;
   audioCount: number;
 }
@@ -145,7 +142,7 @@ class DeviceStatsPluginWeb extends WebPlugin implements DeviceStatsPluginInterfa
 
   async getStorageBreakdown(): Promise<StorageBreakdown> {
     // No real media index in a browser — zeros rather than a fabricated breakdown.
-    return { photosBytes: 0, photosCount: 0, videosBytes: 0, videosCount: 0, audioBytes: 0, audioCount: 0 };
+    return { audioBytes: 0, audioCount: 0 };
   }
 
   async openStorageSettings(): Promise<void> {

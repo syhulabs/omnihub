@@ -414,6 +414,13 @@
   border-radius: var(--radius-md);
 }
 
+/* The value here is a short size ("12.3 GB"), so it takes only the room it needs and the label
+   column keeps the rest, instead of the 55% the shared Device Info rule reserves. */
+.sd__row .di__row-value {
+  flex: 0 0 auto;
+  max-width: none;
+}
+
 .sd__row-sub {
   display: block;
   margin-top: 2px;

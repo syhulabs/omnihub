@@ -203,11 +203,11 @@ export function PrivacyPolicy() {
               ringtone. Not used for anything else.
             </li>
             <li>
-              <strong>Photos, Videos, and Audio</strong> (optional, requested only if you open{' '}
+              <strong>Audio files</strong> (optional, requested only if you open{' '}
               <strong>Phone Center ▸ Storage Details</strong>) — used only to show how much space
-              your photos, videos, and audio files take up. Omni Hub reads file sizes and counts
-              from your media library; it never opens, previews, uploads, or transmits the files
-              themselves.
+              your audio files take up. Omni Hub reads file sizes and counts from your media
+              library; it never opens, plays, uploads, or transmits the files themselves. Omni Hub
+              does not request access to your photos or videos.
             </li>
           </ul>
           <p>

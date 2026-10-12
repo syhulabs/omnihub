@@ -49,14 +49,10 @@ import java.util.Enumeration;
                 // denied — if it shared an alias with the granular media permissions, it would
                 // permanently drag that alias to "denied" even after the user granted the ones
                 // that actually apply on their OS version.
-                @Permission(
-                        strings = {
-                                Manifest.permission.READ_MEDIA_IMAGES,
-                                Manifest.permission.READ_MEDIA_VIDEO,
-                                Manifest.permission.READ_MEDIA_AUDIO
-                        },
-                        alias = "media33"
-                ),
+                // Audio only: Google Play's Photo and Video Permissions policy doesn't allow
+                // READ_MEDIA_IMAGES/VIDEO for a storage breakdown, so photos and videos are not
+                // read at all and count under "Other" in Storage Details.
+                @Permission(strings = { Manifest.permission.READ_MEDIA_AUDIO }, alias = "media33"),
                 @Permission(strings = { Manifest.permission.READ_EXTERNAL_STORAGE }, alias = "mediaLegacy")
         }
 )
@@ -213,10 +209,10 @@ public class DeviceStatsPlugin extends Plugin {
     }
 
     /**
-     * Real Photos/Videos/Audio sizes via MediaStore — deliberately doesn't attempt Apps,
-     * Documents, Downloads or duplicate-file detection, since accurate versions of those need
-     * MANAGE_EXTERNAL_STORAGE or PACKAGE_USAGE_STATS, both far more invasive than this feature
-     * needs to justify.
+     * Real audio sizes via MediaStore. Photos and videos are deliberately not read (see the
+     * permission note above), and neither are Apps, Documents or Downloads, since accurate
+     * versions of those need MANAGE_EXTERNAL_STORAGE or PACKAGE_USAGE_STATS, both far more
+     * invasive than this feature needs to justify.
      */
     @PluginMethod
     public void getStorageBreakdown(PluginCall call) {
@@ -225,10 +221,6 @@ public class DeviceStatsPlugin extends Plugin {
             return;
         }
         JSObject ret = new JSObject();
-        ret.put("photosBytes", sumMediaSize(MediaStore.Images.Media.EXTERNAL_CONTENT_URI));
-        ret.put("photosCount", countMedia(MediaStore.Images.Media.EXTERNAL_CONTENT_URI));
-        ret.put("videosBytes", sumMediaSize(MediaStore.Video.Media.EXTERNAL_CONTENT_URI));
-        ret.put("videosCount", countMedia(MediaStore.Video.Media.EXTERNAL_CONTENT_URI));
         ret.put("audioBytes", sumMediaSize(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI));
         ret.put("audioCount", countMedia(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI));
         call.resolve(ret);

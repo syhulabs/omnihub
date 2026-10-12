@@ -11,8 +11,6 @@ function formatGb(bytes: number): string {
 }
 
 const CATEGORY_COLORS = {
-  photos: 'var(--orange)',
-  videos: 'var(--red)',
   audio: 'var(--purple)',
   other: 'var(--blue)',
 } as const;
@@ -41,16 +39,12 @@ export function StorageDetails() {
   }
 
   const usedBytes = stats ? stats.storageTotalBytes - stats.storageFreeBytes : 0;
-  const otherBytes = breakdown
-    ? Math.max(0, usedBytes - breakdown.photosBytes - breakdown.videosBytes - breakdown.audioBytes)
-    : 0;
+  const otherBytes = breakdown ? Math.max(0, usedBytes - breakdown.audioBytes) : 0;
 
   const categories: { key: keyof typeof CATEGORY_COLORS; icon: IconName; label: string; bytes: number; sub: string }[] = breakdown
     ? [
-        { key: 'photos', icon: 'image', label: 'Photos', bytes: breakdown.photosBytes, sub: `${breakdown.photosCount.toLocaleString()} photos` },
-        { key: 'videos', icon: 'camera', label: 'Videos', bytes: breakdown.videosBytes, sub: `${breakdown.videosCount.toLocaleString()} videos` },
         { key: 'audio', icon: 'music', label: 'Audio', bytes: breakdown.audioBytes, sub: `${breakdown.audioCount.toLocaleString()} audio files` },
-        { key: 'other', icon: 'database', label: 'Other', bytes: otherBytes, sub: 'Apps & system files' },
+        { key: 'other', icon: 'database', label: 'Other', bytes: otherBytes, sub: 'Apps, photos, videos & system files' },
       ]
     : [];
 
@@ -86,9 +80,9 @@ export function StorageDetails() {
 
         {permission === 'denied' && (
           <div className="sd__permission">
-            <Icon name="image" size={22} />
-            <strong>See what's using your storage</strong>
-            <span>Grant access to Photos, Videos, and Audio to break down what's taking up space.</span>
+            <Icon name="music" size={22} />
+            <strong>See how much space audio uses</strong>
+            <span>Grant access to audio files to see how much space your music and recordings take up.</span>
             <button type="button" className="sd__permission-btn" onClick={grantAccess}>
               Grant Access
             </button>
