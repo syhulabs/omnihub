@@ -1,13 +1,13 @@
-/* Geometry is from design/bottom-nav-reference-v2.png (1220x350 at the phone's width): the bar
-   keeps that aspect ratio, the SVG frame fills it, and every tab is placed by percentage, so at
-   436 CSS px wide each element lands where the mockup has it. Vertical percentages are of the
-   bar's height (350); horizontal ones of its width (1220). */
+/* Geometry is from design/bottom-nav-reference-v2.png (1220 wide at the phone's width), compressed
+   vertically to 272 units (see BottomNav.tsx): the bar keeps that aspect ratio, the SVG frame fills
+   it, and every tab is placed by percentage, so at 436 CSS px wide each element lands where the
+   drawing has it. Vertical percentages are of the bar's height (272); horizontal of its width. */
 
 .bottom-nav {
   position: relative;
   flex-shrink: 0;
   width: 100%;
-  aspect-ratio: 1220 / 350;
+  aspect-ratio: 1220 / 272;
   margin-bottom: var(--safe-bottom);
   z-index: 2;
 }
@@ -34,22 +34,21 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* icon centre at y = 170/350; label centre at y = 256.5/350 */
+/* icon centre at y = 139/272 (27 units below the accent line, as in the mockup); label centre 205/272 */
 .bottom-nav__icon {
   position: absolute;
   left: 50%;
-  top: 48.57%;
+  top: 51.1%;
   transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .bottom-nav__label {
   position: absolute;
   left: 50%;
-  top: 73.3%;
+  top: 75.4%;
   transform: translate(-50%, -50%);
   white-space: nowrap;
   font-size: 12.1px;
@@ -62,18 +61,13 @@
   color: #79acff;
 }
 
-.bottom-nav__item:active .bottom-nav__icon,
-.bottom-nav__item:active .bottom-nav__mark {
-  transform: translate(-50%, -50%) scale(0.92);
-}
-
-/* The AI tile is drawn in the SVG; the mark sits in its lower half: x 541-677, y 112-212 */
+/* The AI tile is drawn in the SVG (y 36-176); the mark is centred in it at the mockup's width */
 .bottom-nav__item--brand {
   width: 13.7%;
 }
 
 .bottom-nav__item--brand .bottom-nav__label {
-  top: 76.4%; /* the mockup sets "AI" lower than the other labels: centre y = 267.5/350 */
+  top: 75.4%;
   color: #bca6ff;
 }
 
@@ -85,16 +79,9 @@
 .bottom-nav__mark {
   position: absolute;
   left: 50%;
-  top: 46.3%;
+  top: 39%; /* tile interior centre: (42 + 170) / 2 = 106 of 272 */
   width: 81.5%;
   transform: translate(-50%, -50%);
   user-select: none;
-  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-@media (min-width: 560px) {
-  /* On a wide (web) viewport the bar would grow past phone proportions; cap it like the app shell. */
-  .bottom-nav {
-    font-size: 100%;
-  }
-}

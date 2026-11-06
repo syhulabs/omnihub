@@ -3,10 +3,12 @@ import { useRouter } from './Router';
 import navMark from '../assets/syxdi-ai/nav-icon-static.webp';
 import './BottomNav.css';
 
-/* The bar is drawn to design/bottom-nav-reference-v2.png, a 1220x350 mockup at the phone's exact
+/* The bar is drawn to design/bottom-nav-reference-v2.png, a 1220-wide mockup at the phone's exact
    width: the frame, accent lines and AI tile are one SVG in that coordinate space, and the tabs
    are placed at the mockup's measured centres as percentages, so the whole bar scales with the
-   screen width and lands pixel-for-pixel at 436 CSS px. */
+   screen width and lands pixel-for-pixel at 436 CSS px. Vertically it is compressed from the
+   mockup's 350 units to 272 (the owner found the full height too tall): every stroke, angle, icon
+   and label keeps its size, only the empty space between them shrinks. */
 
 interface Tab {
   path: string;
@@ -33,7 +35,7 @@ export function BottomNav() {
 
   return (
     <nav className="bottom-nav">
-      <svg className="bottom-nav__frame" viewBox="0 0 1220 350" aria-hidden="true" focusable="false">
+      <svg className="bottom-nav__frame" viewBox="0 0 1220 272" aria-hidden="true" focusable="false">
         <defs>
           {/* sampled along the mockup's tile border: cyan at top-left, blue, violet, magenta at bottom-right */}
           <linearGradient id="bn-tile" x1="0" y1="0" x2="1" y2="1">
@@ -46,20 +48,20 @@ export function BottomNav() {
         </defs>
         {/* outer frame: chamfered corners, raised notch for the AI tile */}
         <path
-          d="M117 58 H498 L537 14 H685 L724 58 H1102 L1164 120 V260 L1102 322 H117 L55 260 V120 Z"
+          d="M117 58 H498 L537 14 H685 L724 58 H1102 L1164 120 V196 L1102 258 H117 L55 196 V120 Z"
           fill="none"
           stroke="#649bff"
           strokeWidth="5"
           strokeLinejoin="miter"
         />
         {/* purple accent lines following the top chamfers */}
-        <path d="M458 106.5 H120 L86 151" fill="none" stroke="#7a62ff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M761 106.5 H1099 L1133 151" fill="none" stroke="#7a62ff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M458 88 H120 L86 133" fill="none" stroke="#7a62ff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M761 88 H1099 L1133 133" fill="none" stroke="#7a62ff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
         {/* pink bars under the outer tabs */}
-        <path d="M153 302 H318" stroke="#ed5ac5" strokeWidth="5" strokeLinecap="round" />
-        <path d="M901 302 H1066" stroke="#ed5ac5" strokeWidth="5" strokeLinecap="round" />
+        <path d="M153 238 H318" stroke="#ed5ac5" strokeWidth="5" strokeLinecap="round" />
+        <path d="M901 238 H1066" stroke="#ed5ac5" strokeWidth="5" strokeLinecap="round" />
         {/* AI tile */}
-        <rect x="529" y="39" width="161" height="198" rx="35" fill="none" stroke="url(#bn-tile)" strokeWidth="6" />
+        <rect x="529" y="39" width="161" height="134" rx="35" fill="none" stroke="url(#bn-tile)" strokeWidth="6" />
       </svg>
 
       {TABS.map((tab) => {
