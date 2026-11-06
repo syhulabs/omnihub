@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Haptics } from '@capacitor/haptics';
+import { isIOS } from '../../platform';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon, type IconName } from '../../components/Icon';
 import { useRouter } from '../../app/Router';
@@ -13,6 +14,9 @@ const QUICK_ACTIONS: { id: string; label: string; icon: IconName; color: string 
   { id: 'vibrate', label: 'Vibrate', icon: 'zap', color: 'var(--red)' },
   { id: 'more', label: 'More', icon: 'more-dots', color: 'var(--text-secondary)' },
 ];
+
+// iOS only lets an app open its own Settings page, so the Wi-Fi and Sound panels have no equivalent there.
+const QUICK_ACTIONS_FOR_PLATFORM = isIOS ? QUICK_ACTIONS.filter((a) => a.id !== 'wifi' && a.id !== 'sound') : QUICK_ACTIONS;
 
 function formatGb(bytes: number): string {
   if (!bytes) return '—';
@@ -189,8 +193,8 @@ export function PhoneCenter() {
 
         <div className="pc2__quick">
           <span className="pc2__quick-title">Quick Actions</span>
-          <div className="pc2__quick-grid">
-            {QUICK_ACTIONS.map((action) => (
+          <div className="pc2__quick-grid" style={{ gridTemplateColumns: `repeat(${QUICK_ACTIONS_FOR_PLATFORM.length}, 1fr)` }}>
+            {QUICK_ACTIONS_FOR_PLATFORM.map((action) => (
               <button
                 key={action.id}
                 type="button"

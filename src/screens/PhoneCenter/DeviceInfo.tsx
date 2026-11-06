@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { isIOS } from '../../platform';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon, type IconName } from '../../components/Icon';
 import { useRouter } from '../../app/Router';
@@ -41,7 +42,7 @@ export function DeviceInfo() {
     : null;
 
   const rows: { icon: IconName; label: string; value: string }[] = [
-    { icon: 'smartphone', label: 'Android Version', value: info?.androidVersion || '—' },
+    { icon: 'smartphone', label: isIOS ? 'iOS Version' : 'Android Version', value: info?.androidVersion || '—' },
     { icon: 'file', label: 'Build Number', value: info?.buildNumber || '—' },
     { icon: 'smartphone', label: 'Model', value: info?.deviceModel || '—' },
     ...(info && info.screenWidthPx

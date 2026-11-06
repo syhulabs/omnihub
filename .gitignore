@@ -13,7 +13,6 @@ android/.gradle/
 android/local.properties
 android/captures/
 android/app/release/
-ios
 
 # Release signing — never commit these. The keystore is the app's identity on the
 # Play Store; back it up somewhere safe outside this repo.

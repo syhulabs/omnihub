@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { isIOS } from '../../platform';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon, type IconName } from '../../components/Icon';
 import { useRouter } from '../../app/Router';
@@ -66,7 +67,8 @@ export function StorageDetails() {
           </div>
         </div>
 
-        {stats && (
+        {/* iOS has no media index to break storage down by, and only lets an app open its own Settings page. */}
+        {stats && !isIOS && (
           <div className="sd__totalbar">
             {categories.map((c) => (
               <div
@@ -78,7 +80,7 @@ export function StorageDetails() {
           </div>
         )}
 
-        {permission === 'denied' && (
+        {!isIOS && permission === 'denied' && (
           <div className="sd__permission">
             <Icon name="music" size={22} />
             <strong>See how much space audio uses</strong>
@@ -107,20 +109,22 @@ export function StorageDetails() {
           </div>
         )}
 
-        <button
-          type="button"
-          className="pc2__row"
-          onClick={() => DeviceStatsPlugin.openStorageSettings().catch(() => {})}
-        >
-          <span className="pc2__row-icon">
-            <Icon name="settings" size={18} />
-          </span>
-          <span className="pc2__row-text">
-            <strong>Clean Up Storage</strong>
-            <span>Opens your device's storage settings to free up space</span>
-          </span>
-          <Icon name="chevron-right" size={18} className="pc2__row-chevron" />
-        </button>
+        {!isIOS && (
+          <button
+            type="button"
+            className="pc2__row"
+            onClick={() => DeviceStatsPlugin.openStorageSettings().catch(() => {})}
+          >
+            <span className="pc2__row-icon">
+              <Icon name="settings" size={18} />
+            </span>
+            <span className="pc2__row-text">
+              <strong>Clean Up Storage</strong>
+              <span>Opens your device's storage settings to free up space</span>
+            </span>
+            <Icon name="chevron-right" size={18} className="pc2__row-chevron" />
+          </button>
+        )}
       </div>
     </div>
   );

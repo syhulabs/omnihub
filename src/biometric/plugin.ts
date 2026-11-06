@@ -24,7 +24,7 @@ export interface BiometricPluginInterface {
   check(): Promise<BiometricCheck>;
   /** Shows the system fingerprint/face prompt; resolves only on success. */
   authenticate(options: PromptOptions): Promise<void>;
-  /** Keeps `secret` (base64) encrypted under an Android Keystore key, for retrieveSecret. */
+  /** Keeps `secret` (base64) encrypted under an Android Keystore key (the Keychain on iOS), for retrieveSecret. */
   storeSecret(options: { secret: string }): Promise<void>;
   /** Shows the prompt and, on success, hands back the stored secret (base64). */
   retrieveSecret(options: PromptOptions): Promise<{ secret: string }>;

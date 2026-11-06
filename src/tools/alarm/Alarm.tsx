@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { isIOS } from '../../platform';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon } from '../../components/Icon';
 import { SwipeToDelete } from '../../components/SwipeToDelete';
@@ -197,7 +198,7 @@ export function Alarm() {
         action={
           selecting ? (
             <>
-              {selectedIds.size > 0 && (
+              {selectedIds.size > 0 && !isIOS && (
                 <button type="button" className="alarm__header-btn" onClick={() => setShowBulkSound(true)}>
                   Change Sound
                 </button>

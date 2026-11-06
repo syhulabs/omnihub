@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { isShareCancel, saveOrShareFile } from '../../../share/saveFile';
 import { Capacitor } from '@capacitor/core';
+import { isIOS } from '../../../platform';
 import { ScreenHeader } from '../../../components/ScreenHeader';
 import { Icon } from '../../../components/Icon';
 import { hapticTap, hapticSuccess, hapticWarning } from '../../../haptics';
@@ -257,7 +258,8 @@ export function ShareScreen({ api }: { api: VcApi }) {
                 <span>Rename</span>
               </button>
             )}
-            {Capacitor.isNativePlatform() && (
+            {/* iOS has no API for an app to set the ringtone. */}
+            {Capacitor.isNativePlatform() && !isIOS && (
               <button type="button" className="vch__menu-row" onClick={() => void handleSetRingtone()} disabled={ringtoneStatus === 'busy'}>
                 <Icon name="bell" size={17} />
                 <span>

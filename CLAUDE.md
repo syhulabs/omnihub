@@ -1,6 +1,7 @@
 # Omni Hub — working notes for Claude
 
-Offline all-in-one Android utility app. Vite + React + TypeScript, wrapped with Capacitor.
+Offline all-in-one utility app for Android (shipping) and iOS (project ready, not yet built on a Mac).
+Vite + React + TypeScript, wrapped with Capacitor.
 Package `com.syhuinc.omnihub`, versionName 1.0, last shipped versionCode 168. Work directly on `main`.
 The owner tests on a Motorola Edge 60 Fusion and reviews every change visually, in dark and light theme.
 
@@ -47,6 +48,11 @@ git-ignored on purpose and are **not in the repo**; the owner keeps them private
   `MainActivity.java` before `super.onCreate()`. The cloud session has no Android SDK, so native Java
   can't be compiled there: keep it small and conservative, and say so when it ships untested.
 - Reference mockups: `design/` (see `design/README.md`).
+- iOS: `ios/` (Capacitor + CocoaPods, iPhone only). The seven plugins have Swift counterparts in
+  `ios/App/App/Plugins/`, registered in `OmniBridgeViewController.capacitorDidLoad()`. The message bank
+  is generated from the Java one (`scripts/gen-sleep-message-bank.py`). Android-only features are hidden
+  on iOS with `isIOS` from `src/platform.ts`, never left as dead controls. The cloud session has no Xcode
+  either: Swift ships uncompiled, say so. Setup, limitations and the App Store checklist: `docs/ios-build.md`.
 
 ## Open work and plans
 

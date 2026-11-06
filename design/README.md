@@ -54,6 +54,16 @@ tiles, 14.4/11.6px row text, 44x26 switches, full-width dividers (`.pf__body--se
 - Before shipping: the owner's on-device check of every Settings sub-screen in both themes, App Lock
   (set PIN, relaunch, wrong PIN, right PIN), 12/24h and currency, then the APK routine.
 
+## iOS (project scaffolded Nov 6, never built on a Mac yet)
+`ios/` is a Capacitor CocoaPods project; `docs/ios-build.md` has the Mac steps. Open items before an App Store
+submission (TestFlight does not need them):
+- **Sign in with Apple** is required by App Store guideline 4.8 because the app offers Google Sign-In. Needs the
+  Apple provider in Firebase, the capability in Xcode, and an Apple button next to Google in the Desk tab.
+- The in-app Privacy Policy page describes Android permissions; reword per platform or link the website.
+- First compile of `ios/App/App/Plugins/*.swift` happens on the owner's Mac; expect small fixes.
+- iOS behaviour differences are deliberate (alarms and Sleep Mode as local notifications, no flash alerts,
+  no ringtone setting, no system panels); the table in `docs/ios-build.md` is the reference.
+
 ## SYXDI AI
 Coming-soon AI companion tab. Features promised on the page: natural conversations, learns your
 preferences, personal news feed, smart insights. No functionality yet; no clickable buttons on the page.

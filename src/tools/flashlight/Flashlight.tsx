@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
+import { isIOS } from '../../platform';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Torch } from '@capawesome/capacitor-torch';
 import { ScreenHeader } from '../../components/ScreenHeader';
@@ -243,7 +244,8 @@ export function Flashlight() {
           </div>
         )}
 
-        {isNative && status === 'ready' && (
+        {/* Flash Alerts need notification access and call state, which iOS does not give apps. */}
+        {isNative && !isIOS && status === 'ready' && (
           <div className="fl__alerts">
             <div className="fl__alerts-head">
               <span className="fl__alerts-icon">

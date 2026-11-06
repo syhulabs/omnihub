@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { isIOS } from '../../platform';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon, type IconName } from '../../components/Icon';
 import {
@@ -358,11 +359,16 @@ export function AlarmEditor({ alarmId, initial, onClose, onDelete }: AlarmEditor
           onChange={(e) => setLabel(e.target.value)}
         />
 
-        <h2 className="alarm-editor__section-title">Sound</h2>
-        <button type="button" className="alarm-editor__sound-row" onClick={() => setShowRingtonePicker(true)}>
-          <span>{soundName || 'Default Alarm'}</span>
-          <Icon name="chevron-right" size={18} />
-        </button>
+        {/* iOS alarms are notifications that can only play the device ringtone, so there is no sound to pick. */}
+        {!isIOS && (
+          <>
+            <h2 className="alarm-editor__section-title">Sound</h2>
+            <button type="button" className="alarm-editor__sound-row" onClick={() => setShowRingtonePicker(true)}>
+              <span>{soundName || 'Default Alarm'}</span>
+              <Icon name="chevron-right" size={18} />
+            </button>
+          </>
+        )}
 
         <h2 className="alarm-editor__section-title">Backup Alarms</h2>
         <div className="alarm-editor__backup-row">
