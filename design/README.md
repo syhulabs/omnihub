@@ -12,7 +12,8 @@ The owner's approved designs. Match these exactly (see CLAUDE.md). Newest refere
 | `home-reference.jpg` | Home tab + My Phone card menu (two states) | Built and matched (Oct 8). The phone photo can't be reproduced; the app shows an icon |
 | `hub-reference-OLD-sep22.jpg` | Old "Tools" screen | **Outdated**: predates the Hub rename and the glossy 3D icon set. Ask the owner for a current Hub reference before changing Hub |
 | `settings-reference.jpg` | Settings screen (Desk → Settings) | Built and matched (Oct 10); awaiting the owner's on-device review |
-| `bottom-nav-reference.jpg` | Bottom nav bar | In use |
+| `bottom-nav-reference-v2.png` | Bottom nav bar (angular frame, raised AI tile; 1220x350 at the phone's width) | Built and matched (Nov 6). Replaces `bottom-nav-reference.jpg`. The 3D model icon and its Settings toggle are gone by the owner's request, so the Settings GENERAL card has two rows, not the mockup's three |
+| `bottom-nav-reference.jpg` | Old bottom nav bar | **Outdated** (Nov 6) |
 | `sleep-mode-ai-tab-reference-dark.jpg` / `-light.jpg` | Sleep Mode → AI personality tab with previews | See plans |
 | `app-icon-reference.jpg` | App icon direction the owner picked | In use |
 

@@ -40,7 +40,6 @@ export const StorageKeys = {
   subscriptionDefaultCurrency: `${PREFIX}subscription.defaultCurrency`,
   expenseDefaultCurrency: `${PREFIX}expense.defaultCurrency`,
   budgetDefaultCurrency: `${PREFIX}budget.defaultCurrency`,
-  nav3dIconEnabled: `${PREFIX}nav.3dIconEnabled`,
   hapticsEnabled: `${PREFIX}settings.hapticsEnabled`,
   keepAwakeEnabled: `${PREFIX}settings.keepAwakeEnabled`,
   textScale: `${PREFIX}settings.textScale`,

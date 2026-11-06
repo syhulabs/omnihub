@@ -224,8 +224,6 @@ export function ProfileAccount() {
 export function ProfileSettings() {
   const { back, navigate } = useRouter();
   const {
-    nav3dIconEnabled,
-    setNav3dIconEnabled,
     hapticsEnabled,
     setHapticsEnabled,
     keepAwakeEnabled,
@@ -273,24 +271,6 @@ export function ProfileSettings() {
                 className={`pf__switch${keepAwakeEnabled ? ' pf__switch--on' : ''}`}
                 onClick={() => setKeepAwakeEnabled(!keepAwakeEnabled)}
                 aria-label="Toggle keep screen awake"
-              >
-                <span className="pf__switch-knob" />
-              </button>
-            </div>
-            <div className="pf__divider" />
-            <div className="pf__row">
-              <span className="pf__row-icon pf__row-icon--nav3d">
-                <Icon name="zap" size={20} />
-              </span>
-              <span className="pf__row-text">
-                <strong>3D Nav Icon</strong>
-                <span>Swipeable 3D icon for the AI tab. Turn off to save battery.</span>
-              </span>
-              <button
-                type="button"
-                className={`pf__switch${nav3dIconEnabled ? ' pf__switch--on' : ''}`}
-                onClick={() => setNav3dIconEnabled(!nav3dIconEnabled)}
-                aria-label="Toggle 3D nav icon"
               >
                 <span className="pf__switch-knob" />
               </button>

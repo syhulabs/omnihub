@@ -1,74 +1,67 @@
-import { useEffect, useRef, type MouseEvent, type PointerEvent } from 'react';
 import { Icon, type IconName } from '../components/Icon';
 import { useRouter } from './Router';
-import { useSettings } from '../settings/SettingsContext';
-import markModel from '../assets/syxdi-ai/mark.glb?url';
-import navIconStatic from '../assets/syxdi-ai/nav-icon-static.webp';
+import navMark from '../assets/syxdi-ai/nav-icon-static.webp';
 import './BottomNav.css';
 
-// A browser still fires a click after pointerup regardless of how far the
-// pointer moved in between, so dragging the brand tab's model to rotate it
-// would otherwise also navigate to the AI tab. Suppress the click once
-// movement crosses this threshold, same pattern as ToolTile's long-press
-// detection -- just distance-based instead of time-based.
-const DRAG_CANCEL_PX = 6;
+/* The bar is drawn to design/bottom-nav-reference-v2.png, a 1220x350 mockup at the phone's exact
+   width: the frame, accent lines and AI tile are one SVG in that coordinate space, and the tabs
+   are placed at the mockup's measured centres as percentages, so the whole bar scales with the
+   screen width and lands pixel-for-pixel at 436 CSS px. */
 
 interface Tab {
   path: string;
   label: string;
-  /** Flat Icon-set name. Unused (and omitted) for a `brand` tab, which renders its own image instead. */
   icon?: IconName;
-  /** Rendered as its own image badge instead of the flat Icon set, with no text label. */
+  /** Box size of the flat icon, chosen per glyph so its drawn extent matches the mockup. */
+  iconSize?: number;
+  /** Horizontal centre as a percentage of the bar width. */
+  x: number;
+  /** The centre AI tab: the brand mark inside the tile instead of a flat icon. */
   brand?: boolean;
 }
 
 const TABS: Tab[] = [
-  { path: '/', label: 'Home', icon: 'home' },
-  { path: '/tools', label: 'Hub', icon: 'grid' },
-  { path: '/ai', label: '', brand: true },
-  { path: '/craft', label: 'Craft', icon: 'flask' },
-  { path: '/profile', label: 'Desk', icon: 'archive' },
+  { path: '/', label: 'Home', icon: 'home', iconSize: 35, x: 14.84 },
+  { path: '/tools', label: 'Hub', icon: 'grid', iconSize: 33, x: 33.0 },
+  { path: '/ai', label: 'AI', brand: true, x: 50 },
+  { path: '/craft', label: 'Craft', icon: 'flask', iconSize: 30, x: 67.38 },
+  { path: '/profile', label: 'Desk', icon: 'archive', iconSize: 32, x: 85.57 },
 ];
 
 export function BottomNav() {
   const { path, navigate } = useRouter();
-  const { nav3dIconEnabled } = useSettings();
-  const dragStartRef = useRef<{ x: number; y: number } | null>(null);
-  const draggedRef = useRef(false);
-
-  function handleBrandPointerDown(e: PointerEvent) {
-    dragStartRef.current = { x: e.clientX, y: e.clientY };
-    draggedRef.current = false;
-  }
-
-  function handleBrandPointerMove(e: PointerEvent) {
-    if (!dragStartRef.current || draggedRef.current) return;
-    const dx = e.clientX - dragStartRef.current.x;
-    const dy = e.clientY - dragStartRef.current.y;
-    if (Math.abs(dx) > DRAG_CANCEL_PX || Math.abs(dy) > DRAG_CANCEL_PX) draggedRef.current = true;
-  }
-
-  function handleBrandClickCapture(e: MouseEvent) {
-    if (draggedRef.current) {
-      e.preventDefault();
-      e.stopPropagation();
-      draggedRef.current = false;
-    }
-  }
-
-  useEffect(() => {
-    if (!nav3dIconEnabled) return;
-    // Dynamic import so the ~1MB model-viewer library is only fetched once
-    // someone's actually on a screen with the bottom nav AND has the 3D icon
-    // on, not bundled into the app's main chunk. Re-mounting the nav
-    // (leaving/returning to a top-level tab) re-triggers this, but the
-    // module import is cached by the browser so it's a no-op after the
-    // first load.
-    import('@google/model-viewer');
-  }, [nav3dIconEnabled]);
 
   return (
     <nav className="bottom-nav">
+      <svg className="bottom-nav__frame" viewBox="0 0 1220 350" aria-hidden="true" focusable="false">
+        <defs>
+          {/* sampled along the mockup's tile border: cyan at top-left, blue, violet, magenta at bottom-right */}
+          <linearGradient id="bn-tile" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#0ec9ff" />
+            <stop offset="0.22" stopColor="#30a3ff" />
+            <stop offset="0.5" stopColor="#6470ff" />
+            <stop offset="0.76" stopColor="#a04eff" />
+            <stop offset="1" stopColor="#e24bce" />
+          </linearGradient>
+        </defs>
+        {/* outer frame: chamfered corners, raised notch for the AI tile */}
+        <path
+          d="M117 58 H498 L537 14 H685 L724 58 H1102 L1164 120 V260 L1102 322 H117 L55 260 V120 Z"
+          fill="none"
+          stroke="#649bff"
+          strokeWidth="5"
+          strokeLinejoin="miter"
+        />
+        {/* purple accent lines following the top chamfers */}
+        <path d="M458 106.5 H120 L86 151" fill="none" stroke="#7a62ff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M761 106.5 H1099 L1133 151" fill="none" stroke="#7a62ff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+        {/* pink bars under the outer tabs */}
+        <path d="M153 302 H318" stroke="#ed5ac5" strokeWidth="5" strokeLinecap="round" />
+        <path d="M901 302 H1066" stroke="#ed5ac5" strokeWidth="5" strokeLinecap="round" />
+        {/* AI tile */}
+        <rect x="529" y="39" width="161" height="198" rx="35" fill="none" stroke="url(#bn-tile)" strokeWidth="6" />
+      </svg>
+
       {TABS.map((tab) => {
         const active = tab.path === '/' ? path === '/' : path === tab.path || path.startsWith(`${tab.path}/`);
         return (
@@ -76,36 +69,19 @@ export function BottomNav() {
             key={tab.path}
             type="button"
             className={`bottom-nav__item${active ? ' bottom-nav__item--active' : ''}${tab.brand ? ' bottom-nav__item--brand' : ''}`}
+            style={{ left: `${tab.x}%` }}
             onClick={() => navigate(tab.path)}
-            onPointerDown={tab.brand && nav3dIconEnabled ? handleBrandPointerDown : undefined}
-            onPointerMove={tab.brand && nav3dIconEnabled ? handleBrandPointerMove : undefined}
-            onClickCapture={tab.brand && nav3dIconEnabled ? handleBrandClickCapture : undefined}
             aria-current={active ? 'page' : undefined}
             aria-label={tab.brand ? 'SYXDI AI' : undefined}
           >
-            <span className="bottom-nav__icon-wrap">
-              {tab.brand ? (
-                nav3dIconEnabled ? (
-                  <model-viewer
-                    className="bottom-nav__brand-icon"
-                    src={markModel}
-                    alt=""
-                    camera-controls
-                    disable-zoom
-                    environment-image="neutral"
-                    exposure="1.1"
-                    shadow-intensity="0"
-                    camera-orbit="0deg 78deg 110%"
-                    field-of-view="28deg"
-                  />
-                ) : (
-                  <img src={navIconStatic} alt="" className="bottom-nav__brand-icon" />
-                )
-              ) : (
-                <Icon name={tab.icon!} size={22} />
-              )}
-            </span>
-            {tab.label && <span>{tab.label}</span>}
+            {tab.brand ? (
+              <img src={navMark} alt="" className="bottom-nav__mark" draggable={false} />
+            ) : (
+              <span className={`bottom-nav__icon bottom-nav__icon--${tab.icon}`}>
+                <Icon name={tab.icon!} size={tab.iconSize} strokeWidth={1.5} />
+              </span>
+            )}
+            <span className="bottom-nav__label">{tab.label}</span>
           </button>
         );
       })}
