@@ -2,391 +2,395 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Omni Hub Privacy Policy</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Omni Hub — 26+ everyday tools. One app.</title>
+<meta name="description" content="Omni Hub is an all-in-one toolbox for Android: calculators, alarms, notes, a PIN-locked Vault, Sleep Mode and more. No account needed, nothing tracked.">
+<meta name="theme-color" content="#0a0e16">
+<link rel="icon" type="image/png" href="site/favicon.png">
+<link rel="apple-touch-icon" href="site/icon-192.png">
+<meta property="og:title" content="Omni Hub — 26+ everyday tools. One app.">
+<meta property="og:description" content="An all-in-one toolbox for Android. Sign-in optional, nothing tracked.">
+<meta property="og:image" content="https://omnihub.syhu.net/store-assets/feature-graphic.png">
+<meta property="og:url" content="https://omnihub.syhu.net/">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f3f4f8;
-    --bg-elevated: #ffffff;
-    --bg-elevated-2: #eceef4;
-    --border: rgba(15, 23, 42, 0.08);
-    --border-strong: rgba(15, 23, 42, 0.14);
-    --text-primary: #10131a;
-    --text-secondary: #4c5568;
-    --text-tertiary: #7d879a;
-    --accent: #3b63e0;
-    --accent-soft: rgba(59, 99, 224, 0.1);
-    --green: #16a34a;
-    --green-soft: rgba(22, 163, 74, 0.1);
-    --radius-sm: 10px;
-    --radius-md: 16px;
-    --radius-lg: 22px;
-    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06), 0 1px 1px rgba(15, 23, 42, 0.04);
-    color-scheme: light;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #0a0e16;
-      --bg-elevated: #131a27;
-      --bg-elevated-2: #1b2434;
-      --border: rgba(255, 255, 255, 0.08);
-      --border-strong: rgba(255, 255, 255, 0.14);
-      --text-primary: #f5f7fa;
-      --text-secondary: #9aa4b6;
-      --text-tertiary: #6b7484;
-      --accent: #6c8fff;
-      --accent-soft: rgba(108, 143, 255, 0.14);
-      --green: #34d071;
-      --green-soft: rgba(52, 208, 113, 0.14);
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 1px rgba(0, 0, 0, 0.2);
-      color-scheme: dark;
-    }
+    --bg: #0a0e16;
+    --bg-elevated: #131a27;
+    --bg-elevated-2: #1b2434;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.14);
+    --text-primary: #f5f7fa;
+    --text-secondary: #9aa4b6;
+    --text-tertiary: #6b7484;
+    --accent: #6c8fff;
+    --accent-2: #a855f7;
+    --cyan: #38d8ff;
+    --green: #34d071;
+    --radius-sm: 12px;
+    --radius-md: 18px;
+    --radius-lg: 26px;
+    --glow: 0 0 40px -8px rgba(108, 143, 255, 0.55);
+    color-scheme: dark;
   }
 
   * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   html, body { margin: 0; padding: 0; }
 
   body {
     background: var(--bg);
+    background-image:
+      radial-gradient(90% 60% at 50% -10%, rgba(108, 143, 255, 0.18) 0%, rgba(10, 14, 22, 0) 60%),
+      radial-gradient(60% 40% at 100% 20%, rgba(168, 85, 247, 0.12) 0%, rgba(10, 14, 22, 0) 60%);
     color: var(--text-primary);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
-    padding-inline: 20px;
-    padding-block: 28px 64px;
+    line-height: 1.5;
   }
 
-  h1, h2, h3 {
-    font-family: "Manrope", -apple-system, BlinkMacSystemFont, sans-serif;
-    text-wrap: balance;
-  }
+  h1, h2, h3 { font-family: "Manrope", -apple-system, BlinkMacSystemFont, sans-serif; letter-spacing: -0.02em; margin: 0; }
+  p { margin: 0; }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
 
-  .page {
-    max-width: 640px;
-    margin-inline: auto;
-  }
+  .wrap { width: min(1100px, 100% - 40px); margin-inline: auto; }
 
-  .masthead {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 22px;
+  /* ---- Nav ---- */
+  .nav {
+    position: sticky; top: 0; z-index: 10;
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    background: rgba(10, 14, 22, 0.72);
+    border-bottom: 1px solid var(--border);
   }
+  .nav .wrap { display: flex; align-items: center; gap: 18px; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: "Manrope", sans-serif; font-weight: 800; font-size: 17px; letter-spacing: 0.02em; }
+  .brand img { width: 32px; height: 32px; border-radius: 9px; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+  .nav-links { margin-left: auto; display: flex; align-items: center; gap: 22px; font-size: 14px; font-weight: 600; color: var(--text-secondary); }
+  .nav-links a:hover { color: var(--text-primary); }
+  .nav-links .cta { color: #fff; }
+  @media (max-width: 560px) { .nav-links a:not(.cta) { display: none; } }
 
-  .mark {
-    flex-shrink: 0;
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 13px 22px; border-radius: 999px;
+    font-weight: 700; font-size: 15px; color: #fff;
     background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 8px 24px -8px rgba(99, 102, 241, 0.7), inset 0 1px 0 rgba(255,255,255,0.18);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
-
-  .mark svg { width: 20px; height: 20px; }
-
-  .masthead-text {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    min-width: 0;
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 12px 30px -8px rgba(99, 102, 241, 0.8), inset 0 1px 0 rgba(255,255,255,0.18); }
+  .btn svg { width: 20px; height: 20px; }
+  .btn--ghost {
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border-strong); box-shadow: none; color: var(--text-primary);
   }
+  .btn--ghost:hover { background: rgba(255,255,255,0.09); box-shadow: none; }
+  .nav .btn { padding: 9px 16px; font-size: 13.5px; }
 
-  .app-name {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text-secondary);
-    letter-spacing: 0.02em;
+  /* ---- Hero ---- */
+  .hero { padding: 72px 0 40px; }
+  .hero .wrap { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 48px; align-items: center; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--cyan); padding: 8px 14px; border-radius: 999px;
+    border: 1px solid rgba(56, 216, 255, 0.35); background: rgba(56, 216, 255, 0.06);
   }
-
-  h1 {
-    font-size: 27px;
-    font-weight: 800;
-    line-height: 1.15;
-    margin: 4px 0 6px;
-    letter-spacing: -0.01em;
+  .eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+  .hero h1 { font-size: clamp(44px, 7vw, 76px); font-weight: 800; line-height: 1; margin-top: 22px; }
+  .hero h1 .grad {
+    background: linear-gradient(90deg, #8b9cff 0%, #a855f7 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
   }
+  .hero .tagline { font-size: clamp(20px, 2.6vw, 26px); font-weight: 700; margin-top: 16px; font-family: "Manrope", sans-serif; }
+  .hero .tagline em { font-style: normal; color: var(--cyan); }
+  .hero .sub { color: var(--text-secondary); font-size: 16.5px; max-width: 520px; margin-top: 14px; }
+  .hero .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+  .hero .note { margin-top: 14px; font-size: 13px; color: var(--text-tertiary); }
 
-  .updated {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--green);
-    background: var(--green-soft);
-    padding: 4px 10px 4px 8px;
-    border-radius: 999px;
-    width: fit-content;
-  }
-
-  .updated svg { width: 13px; height: 13px; }
-
-  .lede {
-    font-size: 15.5px;
-    line-height: 1.6;
-    color: var(--text-secondary);
-    margin: 18px 0 24px;
-    max-width: 62ch;
-  }
-
-  nav.toc {
-    background: var(--bg-elevated);
+  .phone {
+    position: relative; width: min(300px, 80vw); margin-inline: auto;
+    border-radius: 36px; padding: 10px;
+    background: linear-gradient(160deg, #262f42 0%, #0f1420 100%);
     border: 1px solid var(--border-strong);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-sm);
-    padding: 16px 18px;
-    margin-bottom: 30px;
+    box-shadow: 0 30px 80px -30px rgba(0,0,0,0.9), var(--glow);
+  }
+  .phone img { border-radius: 28px; width: 100%; height: auto; }
+  .phone::after {
+    content: ""; position: absolute; inset: -40px; z-index: -1; border-radius: 60px;
+    background: radial-gradient(60% 50% at 50% 60%, rgba(168, 85, 247, 0.28) 0%, rgba(10,14,22,0) 70%);
   }
 
-  nav.toc p {
-    margin: 0 0 10px;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--text-tertiary);
+  @media (max-width: 860px) {
+    .hero { padding-top: 44px; }
+    .hero .wrap { grid-template-columns: 1fr; gap: 40px; }
+    .phone { width: min(260px, 72vw); }
   }
 
-  nav.toc ol {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 6px 16px;
+  /* ---- Trust strip ---- */
+  .trust { padding: 30px 0 10px; }
+  .trust .wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .trust-card {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 18px 18px; border-radius: var(--radius-md);
+    background: linear-gradient(135deg, rgba(19,26,39,0.95), rgba(27,36,52,0.85));
+    border: 1px solid var(--border); box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+  .trust-card .ic {
+    flex: none; width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center;
+    background: rgba(52, 208, 113, 0.14); color: var(--green);
+  }
+  .trust-card .ic.blue { background: rgba(108, 143, 255, 0.14); color: var(--accent); }
+  .trust-card .ic.purple { background: rgba(168, 85, 247, 0.16); color: #c084fc; }
+  .trust-card .ic svg { width: 20px; height: 20px; }
+  .trust-card strong { display: block; font-size: 15px; }
+  .trust-card span { font-size: 13.5px; color: var(--text-secondary); }
+  @media (max-width: 760px) { .trust .wrap { grid-template-columns: 1fr; } }
+
+  /* ---- Sections ---- */
+  section.block { padding: 64px 0; }
+  .section-head { margin-bottom: 28px; }
+  .section-head .kicker { font-size: 12px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+  .section-head h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; margin-top: 8px; }
+  .section-head p { color: var(--text-secondary); margin-top: 10px; max-width: 620px; }
+
+  /* ---- Tools ---- */
+  .cat { margin-top: 30px; }
+  .cat h3 { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 14px; }
+  .tools { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .tool {
+    display: flex; flex-direction: column; gap: 10px;
+    padding: 14px; border-radius: var(--radius-md);
+    background: var(--bg-elevated); border: 1px solid var(--border);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+  .tool:hover { transform: translateY(-2px); border-color: var(--border-strong); }
+  .tool img { width: 56px; height: 56px; border-radius: 14px; object-fit: cover; }
+  .tool strong { font-size: 14px; }
+  .tool span { font-size: 12.5px; color: var(--text-secondary); line-height: 1.35; }
+  .tool.vault { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 16px; background: linear-gradient(135deg, rgba(168,85,247,0.16), rgba(19,26,39,0.95)); }
+  .tool.vault img { width: 64px; height: 64px; }
+  .tool.vault strong { font-size: 16px; }
+
+  /* ---- Screens ---- */
+  .screens { overflow-x: auto; padding: 10px 20px 24px; margin-inline: -20px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .screens::-webkit-scrollbar { display: none; }
+  .screens-row { display: flex; gap: 18px; width: max-content; }
+  .screens img {
+    width: 220px; height: auto; border-radius: 22px; scroll-snap-align: start;
+    border: 1px solid var(--border-strong);
+    box-shadow: 0 20px 50px -24px rgba(0,0,0,0.9);
   }
 
-  nav.toc a {
-    font-size: 13.5px;
-    font-weight: 600;
-    color: var(--accent);
-    text-decoration: none;
+  /* ---- Privacy ---- */
+  .privacy-card {
+    display: grid; grid-template-columns: 1.3fr 1fr; gap: 32px; align-items: center;
+    padding: 36px; border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(19,26,39,0.95) 0%, rgba(27,36,52,0.9) 100%);
+    border: 1px solid var(--border); box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), var(--glow);
   }
-
-  nav.toc a:hover { text-decoration: underline; }
-
-  section {
-    margin-bottom: 30px;
-    scroll-margin-top: 20px;
+  .privacy-card h2 { font-size: clamp(26px, 3.6vw, 34px); font-weight: 800; }
+  .privacy-card p { color: var(--text-secondary); margin-top: 12px; }
+  .privacy-card ul { margin: 18px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+  .privacy-card li { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; }
+  .privacy-card li svg { flex: none; width: 18px; height: 18px; color: var(--green); margin-top: 2px; }
+  .privacy-links { display: grid; gap: 12px; }
+  .plink {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 16px 18px; border-radius: var(--radius-md);
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border-strong);
+    transition: background 0.15s ease;
   }
+  .plink:hover { background: rgba(255,255,255,0.08); }
+  .plink strong { display: block; font-size: 15px; }
+  .plink span { font-size: 13px; color: var(--text-secondary); }
+  .plink svg { flex: none; width: 18px; height: 18px; color: var(--text-tertiary); }
+  @media (max-width: 760px) { .privacy-card { grid-template-columns: 1fr; padding: 26px 22px; } }
 
-  h2 {
-    font-size: 18px;
-    font-weight: 800;
-    letter-spacing: -0.005em;
-    margin: 0 0 10px;
-    padding-top: 18px;
-    border-top: 1px solid var(--border);
-  }
-
-  section:first-of-type h2 { border-top: none; padding-top: 0; }
-
-  h3 {
-    font-size: 14.5px;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin: 16px 0 6px;
-  }
-
-  p {
-    font-size: 14.5px;
-    line-height: 1.65;
-    color: var(--text-secondary);
-    margin: 0 0 12px;
-    max-width: 66ch;
-  }
-
-  p strong, li strong { color: var(--text-primary); font-weight: 700; }
-
-  ul {
-    margin: 0 0 12px;
-    padding-left: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  li {
-    font-size: 14.5px;
-    line-height: 1.6;
-    color: var(--text-secondary);
-    max-width: 64ch;
-  }
-
-  a { color: var(--accent); }
-
-  code {
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    font-size: 0.9em;
-    background: var(--bg-elevated-2);
-    padding: 0.1em 0.4em;
-    border-radius: 5px;
-    color: var(--text-primary);
-  }
-
-  .callout {
-    background: var(--accent-soft);
-    border: 1px solid transparent;
-    border-radius: var(--radius-sm);
-    padding: 12px 14px;
-    font-size: 14px;
-    line-height: 1.6;
-    color: var(--text-primary);
-    margin: 12px 0;
-  }
-
-  .callout strong { color: var(--text-primary); }
-
-  footer {
-    margin-top: 36px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border);
-    font-size: 13px;
-    color: var(--text-tertiary);
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  @media (max-width: 420px) {
-    nav.toc ol { grid-template-columns: 1fr; }
-  }
+  /* ---- Footer ---- */
+  footer { border-top: 1px solid var(--border); padding: 32px 0 44px; color: var(--text-tertiary); font-size: 13.5px; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: center; justify-content: space-between; }
+  footer nav { display: flex; flex-wrap: wrap; gap: 20px; }
+  footer nav a { color: var(--text-secondary); font-weight: 600; }
+  footer nav a:hover { color: var(--text-primary); }
 </style>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div class="page">
-  <div class="masthead">
-    <div class="mark">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M6 11V8a6 6 0 0 1 12 0v3 M5 11h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1Z M12 15v3" />
-      </svg>
-    </div>
-    <div class="masthead-text">
-      <span class="app-name">OMNI HUB</span>
-      <h1 style="margin:0; font-size: 16px; font-weight: 700;">Privacy Policy</h1>
-    </div>
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="./"><img src="site/icon-256.webp" alt="" width="32" height="32">OMNI HUB</a>
+    <nav class="nav-links">
+      <a href="#tools">Tools</a>
+      <a href="#screens">Screens</a>
+      <a href="privacy-policy.html">Privacy</a>
+      <a class="btn cta" href="https://play.google.com/store/apps/details?id=com.syhuinc.omnihub">Get the app</a>
+    </nav>
   </div>
+</header>
 
-  <h1>Your data stays on your device, unless you choose otherwise.</h1>
-
-  <span class="updated">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20ZM12 6v6l4 2" /></svg>
-    Last updated October 2026
-  </span>
-
-  <p class="lede">Omni Hub doesn't require an account. Signing in with Google is entirely optional and only unlocks syncing some of your data across your own devices — nothing else changes, and nothing is shared, sold, or used for ads or analytics either way.</p>
-
-  <nav class="toc" aria-label="Table of contents">
-    <p>On this page</p>
-    <ol>
-      <li><a href="#collect">What we collect</a></li>
-      <li><a href="#where">Where your data lives</a></li>
-      <li><a href="#vault">Vault</a></li>
-      <li><a href="#permissions">Permissions</a></li>
-      <li><a href="#alarm">Alarm</a></li>
-      <li><a href="#sleep-ai">Sleep Mode AI</a></li>
-      <li><a href="#third-party">Third-party services</a></li>
-      <li><a href="#children">Children's privacy</a></li>
-      <li><a href="#changes">Changes to this policy</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ol>
-  </nav>
-
-  <section id="collect">
-    <h2>What we collect</h2>
-    <p><strong>If you never sign in:</strong> nothing. Every tool's data (notes, alarms, Vault, and everything else) stays on your device and is never sent anywhere. Omni Hub itself uses no analytics, tracking, or advertising SDKs. The Google libraries we use for optional sign-in are built into the app and may make minimal automatic device-identification calls in the background on their own, as any app using Google's Firebase does — we turn their automatic data collection off by default (see <a href="#third-party">Third-party services</a> below), but that's Google's library behavior, not something Omni Hub reads, controls, or can fully guarantee.</p>
-    <p><strong>If you choose to sign in with Google</strong> (Desk ▸ Profile), to sync your data across your own devices:</p>
-    <ul>
-      <li>Firebase Authentication (a Google service) receives your Google account's basic profile — name, email address, and profile photo — to identify you as the signed-in user. Omni Hub doesn't see or store your Google password.</li>
-      <li>These tools' content syncs to Cloud Firestore (also a Google service), scoped to your account, so it can reach your other signed-in devices: <strong>Notes</strong> (titles and text), <strong>Checklist</strong> (list names and items), <strong>Expense Tracker</strong> (amounts, categories, notes, dates), <strong>Budget</strong> (per-category limits), <strong>Subscription Calculator</strong>, <strong>Debt Tracker</strong> (amounts and names/notes you enter), and <strong>Alarms</strong> (time, label, repeat, sound choice, and backup settings — see <a href="#alarm">Alarm</a> below).</li>
-      <li>Your <strong>Vault</strong> notes sync too, but only as the same PIN-encrypted ciphertext already stored on your device — see <a href="#vault">Vault</a> below for exactly what that means.</li>
-    </ul>
-    <p>No advertising, analytics, or tracking SDKs are used, and nothing collected is ever sold or shared with third parties beyond the Google/Firebase infrastructure used to provide sync itself.</p>
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow">Sign-in optional</span>
+        <h1>Omni <span class="grad">Hub</span></h1>
+        <p class="tagline">26+ everyday tools. <em>One app.</em></p>
+        <p class="sub">Calculators, alarms, notes, a PIN-locked Vault, Sleep Mode and more, in one clean, fast app for Android. Everything you create stays on your phone unless you choose to sync it.</p>
+        <div class="actions">
+          <a class="btn" href="https://play.google.com/store/apps/details?id=com.syhuinc.omnihub">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.3 13.3 12 3.6 21.7c-.4-.2-.6-.6-.6-1.1V3.4c0-.5.2-.9.6-1.1Zm11.1 11.1 2.6 2.6-9.8 5.6c-.6.3-1.2.3-1.7 0l8.9-8.2Zm0-2.8L5.8 2.4c.5-.3 1.1-.3 1.7 0l9.8 5.6-2.6 2.6Zm1.4 1.4 3.4-1.9c1 .6 1 2.2 0 2.8l-3.4 1.9L14.7 12l1.4-1.4Z"/></svg>
+            Get it on Google Play
+          </a>
+          <a class="btn btn--ghost" href="#tools">See every tool</a>
+        </div>
+        <p class="note">Free. No account needed. No ads, no tracking.</p>
+      </div>
+      <div class="phone"><img src="site/shots/01-home.webp" alt="Omni Hub home screen showing phone status, pinned tools and search" width="540" height="1070" fetchpriority="high"></div>
+    </div>
   </section>
 
-  <section id="where">
-    <h2>Where your data lives</h2>
-    <p>Everything you enter into Omni Hub — notes, checklists, expenses, budgets, calculator history, pinned tools, and app settings — is stored <strong>on your device</strong> at minimum, using standard local browser storage (<code>localStorage</code>). The tools listed above are additionally copied to Google's Firebase servers only if, and for as long as, you're signed in.</p>
-    <ul>
-      <li>You can export a backup of this data at any time from <strong>Desk ▸ Data &amp; Sync ▸ Export Backup</strong>, which saves a JSON file to your device that only you control.</li>
-      <li>You can delete all local data at any time from <strong>Desk ▸ Data &amp; Sync ▸ Clear All Data</strong>.</li>
-      <li>Signing out (Desk ▸ Profile ▸ Sign Out) stops syncing but does not delete what's already on your device or already synced to your account.</li>
-      <li>Uninstalling the app deletes local data along with it; it does not delete anything already synced to your account — sign in again after reinstalling to get it back.</li>
-    </ul>
+  <section class="trust">
+    <div class="wrap">
+      <div class="trust-card">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2.5"/><path d="M11 18h2"/></svg></span>
+        <div><strong>Lives on your phone</strong><span>Notes, lists, budgets and alarms are stored on-device. Back them up to a file whenever you like.</span></div>
+      </div>
+      <div class="trust-card">
+        <span class="ic blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 .5-9 7 7 0 0 0-13.4 1.5A3.8 3.8 0 0 0 6 19h11.5Z"/></svg></span>
+        <div><strong>Sync only if you want</strong><span>Sign in with Google to keep your data on more than one device. Entirely optional, off by default.</span></div>
+      </div>
+      <div class="trust-card">
+        <span class="ic purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+        <div><strong>Nothing is tracked</strong><span>No analytics, no ads, nothing shared or sold. Every permission is used only for the feature it's for.</span></div>
+      </div>
+    </div>
   </section>
 
-  <section id="vault">
-    <h2>Vault</h2>
-    <p>Notes, photos, and files you save in the <strong>Vault</strong> are additionally encrypted on your device with a key derived from your PIN before being stored — notes alongside your other app data, and photos/files in a separate local database (<code>IndexedDB</code>) sized for larger content.</p>
-    <div class="callout"><strong>Your PIN, and any key derived from it, never leaves your device</strong> — not even if you sign in and sync. If you sign in, only the already-encrypted ciphertext of your Vault notes is copied to Firebase, in a form Omni Hub itself cannot read without your PIN; a second device only regains access to it by unlocking with the same PIN. Vault photos and files don't sync at all yet and stay device-only regardless of sign-in status.</div>
-    <p>Your PIN is never stored anywhere, on-device or in the cloud — only used to derive that key each time you unlock — so if you forget it, Vault content cannot be recovered and the Vault must be reset. Opening or saving a Vault photo/file decrypts a temporary copy for that action (e.g. to view an image or save it to your Downloads folder); that copy is no longer encrypted once it leaves the Vault. Vault photos and files are not included in the main <strong>Desk ▸ Data &amp; Sync ▸ Export Backup</strong> file; use <strong>Vault ▸ Photos &amp; Files ▸ Export</strong> instead, which decrypts them into a plain <code>.zip</code> file on your device — that zip is unencrypted, since it needs to be readable outside the app, so store or share it with the same care you'd give the original photos/files. Use <strong>Vault ▸ Photos &amp; Files ▸ Import</strong> to bring that zip back in (e.g. after reinstalling), which re-encrypts everything as it's added.</p>
-    <p>After 5 wrong PIN attempts, Vault locks itself out with an escalating delay (30s, then 1m, 2m, 5m, 10m, and 30m for every attempt after that) before you can try again — this never clears or wipes any Vault data, it only slows down guessing.</p>
+  <section class="block" id="tools">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">The toolbox</span>
+        <h2>Every tool, one place.</h2>
+        <p>Just start typing in the search bar. Omni Hub understands what you mean: "split" finds the bill splitter, "how old" the age calculator, "cm to inches" the converter.</p>
+      </div>
+
+      <div class="cat">
+        <h3>Essentials</h3>
+        <div class="tools">
+          <div class="tool"><img src="site/icons/calculator.webp" alt=""><strong>Calculator</strong><span>With a history of your past calculations.</span></div>
+          <div class="tool"><img src="site/icons/scientific-calculator.webp" alt=""><strong>Scientific Calculator</strong><span>Trig, logs, powers and constants.</span></div>
+          <div class="tool"><img src="site/icons/percentage-calculator.webp" alt=""><strong>Percentage Calculator</strong><span>X% of Y, percent change and more.</span></div>
+          <div class="tool"><img src="site/icons/unit-converter.webp" alt=""><strong>Unit Converter</strong><span>Length, weight, temperature, volume, speed, area, data.</span></div>
+          <div class="tool"><img src="site/icons/timer.webp" alt=""><strong>Timer</strong><span>A simple countdown with an alert when time's up.</span></div>
+          <div class="tool"><img src="site/icons/stopwatch.webp" alt=""><strong>Stopwatch</strong><span>With lap times.</span></div>
+          <div class="tool"><img src="site/icons/alarm.webp" alt=""><strong>Alarm</strong><span>Reliable alarms with backup re-rings, custom sounds and flash alerts.</span></div>
+          <div class="tool"><img src="site/icons/sleep-mode.webp" alt=""><strong>Sleep Mode</strong><span>Nags you to put the phone down and get some sleep.</span></div>
+        </div>
+      </div>
+
+      <div class="cat">
+        <h3>Utilities</h3>
+        <div class="tools">
+          <div class="tool"><img src="site/icons/compass.webp" alt=""><strong>Compass</strong><span>Heading, location, altitude and a level.</span></div>
+          <div class="tool"><img src="site/icons/flashlight.webp" alt=""><strong>Flashlight</strong><span>Your camera flash as a light, with optional flash alerts.</span></div>
+          <div class="tool"><img src="site/icons/qr-scanner.webp" alt=""><strong>QR Scanner</strong><span>Scan QR codes with your camera.</span></div>
+          <div class="tool"><img src="site/icons/barcode-scanner.webp" alt=""><strong>Barcode Scanner</strong><span>Scan product and other barcodes.</span></div>
+        </div>
+      </div>
+
+      <div class="cat">
+        <h3>Productivity</h3>
+        <div class="tools">
+          <div class="tool"><img src="site/icons/notes.webp" alt=""><strong>Notes</strong><span>Write, edit, pin and search your notes.</span></div>
+          <div class="tool"><img src="site/icons/checklist.webp" alt=""><strong>Checklist</strong><span>Multiple lists, check items off, reorder them.</span></div>
+          <div class="tool vault"><img src="site/icons/vault.webp" alt=""><div><strong>Vault</strong><br><span>A private, PIN-locked space for notes, photos and files. Opens with your fingerprint or face too. Your PIN never leaves the phone.</span></div></div>
+        </div>
+      </div>
+
+      <div class="cat">
+        <h3>Finance</h3>
+        <div class="tools">
+          <div class="tool"><img src="site/icons/expense-tracker.webp" alt=""><strong>Expense Tracker</strong><span>Log spending by category with a monthly chart.</span></div>
+          <div class="tool"><img src="site/icons/budget.webp" alt=""><strong>Budget</strong><span>Monthly limits per category, tracked against spending.</span></div>
+          <div class="tool"><img src="site/icons/tip-calculator.webp" alt=""><strong>Tip Calculator</strong><span>The tip and total in seconds.</span></div>
+          <div class="tool"><img src="site/icons/split-bill.webp" alt=""><strong>Split Bill</strong><span>Split evenly between any number of people.</span></div>
+          <div class="tool"><img src="site/icons/subscription-calculator.webp" alt=""><strong>Subscription Calculator</strong><span>Track your recurring subscription costs.</span></div>
+          <div class="tool"><img src="site/icons/debt-calculator.webp" alt=""><strong>Debt Tracker</strong><span>Who owes you, and who you owe.</span></div>
+        </div>
+      </div>
+
+      <div class="cat">
+        <h3>Time, date &amp; fun</h3>
+        <div class="tools">
+          <div class="tool"><img src="site/icons/age-calculator.webp" alt=""><strong>Age Calculator</strong><span>Exactly how old someone is, down to the day.</span></div>
+          <div class="tool"><img src="site/icons/date-calculator.webp" alt=""><strong>Date Calculator</strong><span>Days between dates, or add and subtract days.</span></div>
+          <div class="tool"><img src="site/icons/time-zone.webp" alt=""><strong>Time Zone</strong><span>A world clock across the cities you care about.</span></div>
+          <div class="tool"><img src="site/icons/time-difference.webp" alt=""><strong>Time Difference</strong><span>Hours ahead or behind, city to city.</span></div>
+          <div class="tool"><img src="site/icons/random-generator.webp" alt=""><strong>Random Generator</strong><span>Dice, coin, random number, pick from a list.</span></div>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <section id="permissions">
-    <h2>Permissions</h2>
-    <p>Omni Hub does not access your contacts. It requests these permissions, all used only to make features work (or reserved for a locked feature not yet available to use), never to collect or transmit data beyond what's described above:</p>
-    <ul>
-      <li><strong>Internet / network access</strong> — required only for the optional Google Sign-In and cloud sync described above, and for Sleep Mode AI (see below). Unused unless you sign in. Omni Hub separately checks (but does not use to connect anywhere) whether you currently have a Wi-Fi or mobile connection, to show connection status on the "My Phone" card and Phone Health Check.</li>
-      <li><strong>Vibrate</strong> — haptic feedback (tap and completion vibrations).</li>
-      <li><strong>Alarms, notifications, and background wake permissions</strong> (schedule alarms, post notifications, run in the foreground briefly while an alarm rings, keep the device awake for that, show the ringing screen over the lock screen, and restart alarms after the device reboots) — all used solely by the <strong>Alarm</strong> feature, so an alarm you set still rings even if Omni Hub is closed. None of this involves any network access.</li>
-      <li><strong>Biometrics</strong> (optional, off by default) — used only by the <strong>App Lock</strong> and <strong>Vault</strong> "Biometric Unlock" settings, so you can unlock with your fingerprint or face instead of typing your PIN. Android's own system prompt does the matching; Omni Hub only learns whether it succeeded and never sees, stores, or transmits your fingerprint or face data.</li>
-      <li><strong>Display over other apps</strong> — used only by <strong>Sleep Mode</strong>'s on-screen reminder card, so it can appear on top of whatever you're doing when a reminder fires, but only while your phone is unlocked and in active use. Without this permission granted, the same reminder still shows as a normal notification.</li>
-      <li><strong>Camera / flashlight</strong> — used by the <strong>QR Scanner</strong>, <strong>Barcode Scanner</strong>, and <strong>Flashlight</strong> tools, and by the <strong>Phone Health Check</strong>'s Front Camera and Rear Camera tests (Phone Center) to show you a live preview so you can confirm your cameras work. In every case the preview is shown to you only, entirely on your device — no photo, video, or scanned image is ever saved or transmitted; a scanned code's decoded text stays on-device too.</li>
-      <li><strong>Phone state</strong> (optional, off by default) — used only by the <strong>Flashlight</strong> tool's "Flash Alerts" setting to detect when your phone starts or stops ringing, so it can blink the flash for an incoming call. Omni Hub never reads phone numbers, call logs, or call content.</li>
-      <li><strong>Notification access</strong> (optional, off by default, granted separately in Android Settings) — used only by the same "Flash Alerts" setting to detect that some other app posted a notification, so it can blink the flash. Omni Hub never reads, stores, or transmits any notification's content.</li>
-      <li><strong>Location</strong> — used by the <strong>Compass</strong> tool's optional location, altitude, and accuracy display, and optionally by the <strong>Phone Center</strong>'s Connection card to show your Wi-Fi signal strength and link speed (Android requires location access to read these two specific Wi-Fi details; Omni Hub never reads or uses your actual location for this). Read entirely on-device; never stored, logged, or transmitted anywhere.</li>
-      <li><strong>Microphone and audio settings</strong> (not yet in use) — reserved for the <strong>Voice Changer</strong> tool's recording feature, which is currently locked and not yet available. When it launches, recording will only ever start when you tap record, will be processed entirely on your device, and will only ever be sent anywhere if you explicitly tap Share.</li>
-      <li><strong>Modify system settings</strong> (not yet in use) — reserved for Voice Changer's upcoming "Set as Ringtone" option, needed to change your device's default ringtone. Not used for anything else.</li>
-      <li><strong>Audio files</strong> (optional, requested only if you open <strong>Phone Center ▸ Storage Details</strong>) — used only to show how much space your audio files take up. Omni Hub reads file sizes and counts from your media library; it never opens, plays, uploads, or transmits the files themselves. Omni Hub does not request access to your photos or videos.</li>
-    </ul>
-    <p>Two more things Phone Center and Phone Health Check read, neither of which needs a permission prompt and neither of which is ever stored or transmitted: your device's battery level/temperature, total and free storage, total RAM, and Wi-Fi connection status (for the "My Phone" card and related screens); and motion-sensor readings like your accelerometer (only while you're actively running the Sensors test in Phone Health Check, to confirm the sensor responds when you move your phone).</p>
+  <section class="block" id="screens" style="padding-top: 0;">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">In the app</span>
+        <h2>Clean, fast, app-like.</h2>
+        <p>Dark or light theme, pinned tools on the Home screen, and nothing to manage unless you want it.</p>
+      </div>
+      <div class="screens">
+        <div class="screens-row">
+          <img src="site/shots/01-home.webp" alt="Home screen" loading="lazy" width="540" height="1070">
+          <img src="site/shots/02-tools.webp" alt="Hub with every tool" loading="lazy" width="540" height="1070">
+          <img src="site/shots/03-sleep-mode.webp" alt="Sleep Mode" loading="lazy" width="540" height="1070">
+          <img src="site/shots/04-sleep-sounds.webp" alt="Sleep sounds" loading="lazy" width="540" height="1070">
+          <img src="site/shots/05-time-difference.webp" alt="Time Difference" loading="lazy" width="540" height="1070">
+          <img src="site/shots/06-reminder.webp" alt="Sleep Mode reminder" loading="lazy" width="540" height="736">
+        </div>
+      </div>
+    </div>
   </section>
 
-  <section id="alarm">
-    <h2>Alarm</h2>
-    <p>Alarms you create are stored on your device (both in the app's own storage and, separately, in Android's system alarm scheduler so they still fire when the app isn't open) and are used only to ring at the time you set. If you're signed in, an alarm's time, label, repeat setting, chosen sound, and backup-ring settings sync the same way as the other tools listed above, so an alarm you set on one device also rings on your other signed-in devices; alarms don't sync at all if you're not signed in. If you pick a custom ringtone, Omni Hub only stores a reference to the sound file already on that device — it doesn't copy or transmit the audio itself, so a synced alarm using a custom sound falls back to the default alarm sound on a device that doesn't have that same file.</p>
+  <section class="block" id="privacy" style="padding-top: 0;">
+    <div class="wrap">
+      <div class="privacy-card">
+        <div>
+          <span class="kicker" style="font-size:12px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:var(--green)">Privacy</span>
+          <h2>Your data stays on your device, unless you choose otherwise.</h2>
+          <p>Omni Hub doesn't require an account. Signing in with Google is optional and only syncs your own data across your own devices.</p>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>No analytics, no ads, nothing sold or shared.</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>The Vault is encrypted with your PIN; only already-encrypted data ever syncs.</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>Delete your account and everything synced from inside the app, any time.</li>
+          </ul>
+        </div>
+        <div class="privacy-links">
+          <a class="plink" href="privacy-policy.html"><div><strong>Privacy Policy</strong><span>Exactly what each permission does and where data lives.</span></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a>
+          <a class="plink" href="delete-account.html"><div><strong>Delete your account</strong><span>How to remove your synced data and Google sign-in.</span></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a>
+          <a class="plink" href="mailto:syhu.inc@gmail.com"><div><strong>Contact</strong><span>syhu.inc@gmail.com</span></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a>
+        </div>
+      </div>
+    </div>
   </section>
+</main>
 
-  <section id="sleep-ai">
-    <h2>Sleep Mode AI</h2>
-    <p>Sleep Mode AI is available to anyone signed in, for the Gentle and Friendly personalities. When it generates your reminders, it sends only your chosen personality to Omni Hub's own Cloud Function (which requires your sign-in to call, so usage can be rate-limited), and the Cloud Function forwards that to Google's Gemini API to write the reminder text and a voice clip. Your name, work/school routine, and interests are never sent — Sleep Mode's "Personal" mode uses those only to fill in reminders on your own device, and they never leave it. Nothing from the Cloud Function request is stored by Omni Hub beyond the generated reminders already described for Sleep Mode above; it isn't used to train any model. Every other Sleep Mode personality, and Sleep Mode for anyone not signed in, runs entirely from reminders bundled with the app — nothing about those is ever sent anywhere.</p>
-  </section>
-
-  <section id="third-party">
-    <h2>Third-party services</h2>
-    <p>Signing in and syncing uses Google's Firebase platform (Firebase Authentication and Cloud Firestore). Sleep Mode AI (Gentle/Friendly, signed-in users — see above) additionally uses a Cloud Function, also on Firebase, which calls Google's Gemini API. We set Firebase's own flag to disable its automatic background data collection by default, so these libraries only act when a feature here actually calls them (signing in, syncing, or generating a Sleep Mode AI reminder) — never automatically. Google's own privacy policy governs how Google handles data on their servers: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>.</p>
-  </section>
-
-  <section id="children">
-    <h2>Children's privacy</h2>
-    <p>Omni Hub does not knowingly collect data from children. Cloud sync requires deliberately signing in with a Google account, which is not directed at or targeted toward children.</p>
-  </section>
-
-  <section id="changes">
-    <h2>Changes to this policy</h2>
-    <p>If this policy ever changes, the "Last updated" date above will change too.</p>
-  </section>
-
-  <section id="contact">
-    <h2>Contact</h2>
-    <p>Questions about this policy can be sent to the developer contact listed on the Omni Hub Google Play Store listing.</p>
-  </section>
-
-  <footer>
-    <span>Omni Hub, by Syhu Inc.</span>
-    <span>Privacy Policy</span>
-  </footer>
-</div>
-
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Syhu Inc. Omni Hub for Android.</span>
+    <nav>
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="delete-account.html">Delete account</a>
+      <a href="mailto:syhu.inc@gmail.com">Contact</a>
+      <a href="https://play.google.com/store/apps/details?id=com.syhuinc.omnihub">Google Play</a>
+    </nav>
+  </div>
+</footer>
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>

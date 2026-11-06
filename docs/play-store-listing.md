@@ -74,17 +74,17 @@ Download Omni Hub and get everyday things done, all in one place.
 ## Privacy Policy URL
 
 ```
-https://syhuinc.github.io/omnihub/
+https://omnihub.syhu.net/privacy-policy.html
 ```
 
-This is only for the Play Console field itself (Google requires a public URL there, reachable before someone installs the app). Served via GitHub Pages from `docs/index.html` in this repo — enable Pages under Settings ▸ Pages ▸ Source: Deploy from a branch ▸ `main` ▸ `/docs`, then it's live at that URL with no further upkeep.
+This is only for the Play Console field itself (Google requires a public URL there, reachable before someone installs the app). Served via GitHub Pages from `docs/` in this repo (custom domain `omnihub.syhu.net`, see `docs/CNAME`): Settings ▸ Pages ▸ Source: Deploy from a branch ▸ `main` ▸ `/docs`, custom domain `omnihub.syhu.net`, Enforce HTTPS. The landing page is `docs/index.html`; the policy is `docs/privacy-policy.html`.
 
 In-app, Desk ▸ Privacy ▸ Privacy Policy shows the same content natively (no external link, no network request) — that's the copy real users will read.
 
 ## Delete Account URL
 
 ```
-https://syhuinc.github.io/omnihub/delete-account.html
+https://omnihub.syhu.net/delete-account.html
 ```
 
 For Play Console's App content ▸ Data safety ▸ "Delete account URL" field. Served the same way as the privacy policy, from `docs/delete-account.html`. Describes the in-app "Delete My Account" flow (Desk ▸ Cloud Sync) plus an email fallback for users without the app installed.
