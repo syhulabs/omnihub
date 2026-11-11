@@ -6,7 +6,7 @@ Xcode, so **the first build on the Mac is the first real compile of the Swift co
 stand-ins for the Apple and Capacitor APIs (zero errors), which catches mistakes in the plugins' own
 logic but not a wrong assumption about an Apple API. Expect at most a few compiler complaints.
 
-Bundle ID `com.syhuinc.omnihub`, iPhone only, portrait only, iOS 15.0 or newer.
+Bundle ID `com.syhuinc.omnihub`, iPhone only, portrait only, iOS 15.5 or newer (the ML Kit scanners require 15.5).
 
 ## 1. One-time Mac setup
 
