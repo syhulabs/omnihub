@@ -104,6 +104,24 @@ export function Flashlight() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Back in the app with the screen saying ON: check the torch really is. A Flash Alert blink or
+  // the phone's own quick-settings tile can switch it off behind this screen's back.
+  const steadyOnRef = useRef(false);
+  steadyOnRef.current = on && mode === 'normal';
+  useEffect(() => {
+    const listener = CapacitorApp.addListener('resume', () => {
+      if (!steadyOnRef.current) return;
+      Torch.isEnabled()
+        .then(({ enabled }) => {
+          if (!enabled && steadyOnRef.current) setOn(false);
+        })
+        .catch(() => {});
+    });
+    return () => {
+      listener.then((l) => l.remove());
+    };
+  }, []);
+
   // Drive the physical torch from the `on` + `mode` state. Steady mode just
   // mirrors `on`; the animated modes step through a real enable/disable
   // pattern on the hardware torch itself (there's no separate "brightness"

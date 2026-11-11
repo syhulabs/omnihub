@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 
-export type OrientationStatus = 'checking' | 'unavailable' | 'needsPermission' | 'ready';
+export type OrientationStatus = 'checking' | 'unavailable' | 'needsPermission' | 'denied' | 'ready';
+
+/** Set once sensor access is granted, so switching between Compass and Level (each mounts its own
+ *  copy of this hook) doesn't ask again. */
+let grantedThisSession = false;
 
 export interface OrientationState {
   status: OrientationStatus;
@@ -10,6 +14,8 @@ export interface OrientationState {
   beta: number;
   /** Left-right tilt in degrees, -90..90, 0 = flat. */
   gamma: number;
+  /** True once tilt readings arrive, even on a phone with no magnetometer (no heading). */
+  tiltReady: boolean;
   requestPermission: () => Promise<void>;
 }
 
@@ -27,6 +33,7 @@ export function useDeviceOrientation(): OrientationState {
   const [heading, setHeading] = useState(0);
   const [beta, setBeta] = useState(0);
   const [gamma, setGamma] = useState(0);
+  const [tiltReady, setTiltReady] = useState(false);
   const listenerRef = useRef<((e: DeviceOrientationEvent) => void) | null>(null);
 
   function handleOrientation(e: CompassOrientationEvent) {
@@ -42,6 +49,7 @@ export function useDeviceOrientation(): OrientationState {
     }
     if (e.beta !== null) setBeta(e.beta);
     if (e.gamma !== null) setGamma(e.gamma);
+    if (e.beta !== null && e.gamma !== null) setTiltReady(true);
   }
 
   function attachListener() {
@@ -68,15 +76,39 @@ export function useDeviceOrientation(): OrientationState {
       DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<'granted' | 'denied'> }
     ).requestPermission;
 
-    if (typeof requestPermissionFn === 'function') {
-      setStatus('needsPermission');
-      return;
+    let cancelled = false;
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+    const start = () => {
+      if (cancelled) return;
+      setStatus('checking');
+      attachListener();
+      timeout = setTimeout(() => setStatus((s) => (s === 'checking' ? 'unavailable' : s)), 2500);
+    };
+
+    if (typeof requestPermissionFn === 'function' && !grantedThisSession) {
+      // The API exists on iOS and on newer Chromium builds. Ask quietly first: where access is
+      // already allowed this answers "granted" with no prompt and the tool just starts; where a
+      // tap is required (iOS) it refuses, and only then is the Enable button shown.
+      requestPermissionFn
+        .call(DeviceOrientationEvent)
+        .then((result) => {
+          if (result === 'granted') {
+            grantedThisSession = true;
+            start();
+          } else if (!cancelled) {
+            setStatus('needsPermission');
+          }
+        })
+        .catch(() => {
+          if (!cancelled) setStatus('needsPermission');
+        });
+    } else {
+      start();
     }
 
-    attachListener();
-    const timeout = setTimeout(() => setStatus((s) => (s === 'checking' ? 'unavailable' : s)), 2500);
     return () => {
-      clearTimeout(timeout);
+      cancelled = true;
+      if (timeout) clearTimeout(timeout);
       detachListener();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -87,17 +119,19 @@ export function useDeviceOrientation(): OrientationState {
       DeviceOrientationEvent as unknown as { requestPermission: () => Promise<'granted' | 'denied'> }
     ).requestPermission;
     try {
-      const result = await requestPermissionFn();
+      const result = await requestPermissionFn.call(DeviceOrientationEvent);
       if (result === 'granted') {
+        grantedThisSession = true;
         setStatus('checking');
         attachListener();
       } else {
-        setStatus('unavailable');
+        // Refused: that is not the same as the phone having no sensor.
+        setStatus('denied');
       }
     } catch {
-      setStatus('unavailable');
+      setStatus('denied');
     }
   }
 
-  return { status, heading, beta, gamma, requestPermission };
+  return { status, heading, beta, gamma, tiltReady, requestPermission };
 }

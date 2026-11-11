@@ -104,9 +104,31 @@ public class SleepModePlugin: CAPPlugin, CAPBridgedPlugin, NotificationHandlerPr
         data["iosScheduledIds"] = previous["iosScheduledIds"] ?? [String]()
         data["iosGeneration"] = previous["iosGeneration"] ?? 0
 
+        // During a running night a settings change must not restart it: that fired a reminder a
+        // second later for every tweak and undid "Stop for tonight" (same rule as Android). The
+        // session keeps its counters and its mute; the next reminder is one interval away.
+        let now = Date()
+        let sessionRunning = Self.bool(previous["enabled"], false) && Self.bool(data["enabled"], false)
+            && (Self.int64(previous["sessionStartMillis"]) ?? 0) > 0
+            && Self.isWithinSleepWindow(data, at: now)
+        if sessionRunning {
+            for key in ["sessionStartMillis", "nagCount", "lastNagMillis", "mutedUntilMillis", "iosCountedIds"] {
+                if let value = previous[key] {
+                    data[key] = value
+                }
+            }
+        }
+
         var armed = false
-        if Self.bool(data["enabled"], false) {
-            armed = rebuildSchedule(&data, from: Date().addingTimeInterval(1), startTier: 0)
+        if sessionRunning {
+            let interval = TimeInterval(max(1, Self.int(data["intervalMin"], 30)) * 60)
+            var start = now.addingTimeInterval(interval)
+            if let mutedUntil = Self.date(data["mutedUntilMillis"]), mutedUntil > start {
+                start = mutedUntil
+            }
+            armed = rebuildSchedule(&data, from: start, startTier: min(Self.tierCount - 1, Self.int(data["nagCount"]) + 1))
+        } else if Self.bool(data["enabled"], false) {
+            armed = rebuildSchedule(&data, from: now.addingTimeInterval(1), startTier: 0)
         } else {
             clearSchedule(&data)
             stopSpeaking()

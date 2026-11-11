@@ -1284,15 +1284,17 @@
   50% { transform: scale(1.25); }
 }
 
+/* On the always-dark breathing overlay: fixed light colours, not theme tokens (the light theme's
+   dark text was invisible here). */
 .wd__breathe-label {
   font-size: 15px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #f5f7fa;
 }
 
 .wd__breathe-hint {
   font-size: 12px;
-  color: var(--text-tertiary);
+  color: #9aa4b6;
 }
 
 .wd__dim-overlay {

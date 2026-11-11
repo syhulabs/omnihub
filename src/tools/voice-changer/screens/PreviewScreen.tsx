@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isShareCancel, saveOrShareFile } from '../../../share/saveFile';
 import { ScreenHeader } from '../../../components/ScreenHeader';
 import { Icon } from '../../../components/Icon';
@@ -37,6 +37,8 @@ function ClipRow({ label, buffer, playingId, id, onPlay }: { label: string; buff
 type ExportFormat = 'mp3' | 'wav';
 
 export function PreviewScreen({ api }: { api: VcApi }) {
+  // Leaving this screen stops its clip; it used to keep playing on the next screen with no stop control.
+  useEffect(() => () => stopPlayback(), []);
   const [fileName, setFileName] = useState('My Voice');
   const [format, setFormat] = useState<ExportFormat>('mp3');
   const [saveToDevice, setSaveToDevice] = useState(true);

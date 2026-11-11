@@ -406,6 +406,7 @@ public class AlarmPlugin: CAPPlugin, CAPBridgedPlugin, NotificationHandlerProtoc
                     // One-shot alarms switch themselves off once they have rung. Pending backups
                     // and a snooze stay in place while the ring window is still open.
                     alarm["enabled"] = false
+                    alarm["updatedAt"] = Self.nowMillis() // an edit for cloud sync, as on Android
                     if !inProgress {
                         alarm[Self.nextFireKey] = nil
                         disarm(id: Self.string(alarm["id"]), includeSnooze: false, includeBackups: true)
@@ -466,7 +467,10 @@ public class AlarmPlugin: CAPPlugin, CAPBridgedPlugin, NotificationHandlerProtoc
         // does, minus cancelling a snooze the user asked for earlier.
 
         if Self.string(alarm["repeatMode"]) == "today" {
-            alarm["enabled"] = false
+            if Self.bool(alarm["enabled"], true) {
+                alarm["enabled"] = false
+                alarm["updatedAt"] = Self.nowMillis()
+            }
         } else if !persist, let next = Self.nextFireDate(alarm, after: Date()) {
             // Arm the next ring's backups right away so they do not depend on the app being opened.
             alarm[Self.nextFireKey] = Self.millis(next)

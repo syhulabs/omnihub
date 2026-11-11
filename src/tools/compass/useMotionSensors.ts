@@ -13,11 +13,14 @@ export interface MotionSensorsState {
  * devicemotion event carrying each reading and times out to "unavailable" if none ever arrives,
  * the same approach the compass heading itself uses for the magnetometer.
  */
-export function useMotionSensors(): MotionSensorsState {
+export function useMotionSensors(enabled: boolean): MotionSensorsState {
   const [gyroscope, setGyroscope] = useState<SensorAvailability>('checking');
   const [accelerometer, setAccelerometer] = useState<SensorAvailability>('checking');
 
   useEffect(() => {
+    // Waits for sensor access: checked before the user had allowed it, both sensors timed out
+    // as "Unavailable" and stayed that way after access was granted.
+    if (!enabled) return;
     if (typeof DeviceMotionEvent === 'undefined') {
       setGyroscope('unavailable');
       setAccelerometer('unavailable');
@@ -38,26 +41,9 @@ export function useMotionSensors(): MotionSensorsState {
       window.addEventListener('devicemotion', handleMotion, true);
     }
 
-    const requestPermissionFn = (
-      DeviceMotionEvent as unknown as { requestPermission?: () => Promise<'granted' | 'denied'> }
-    ).requestPermission;
-
-    if (typeof requestPermissionFn === 'function') {
-      requestPermissionFn()
-        .then((result) => {
-          if (result === 'granted') attach();
-          else {
-            setGyroscope('unavailable');
-            setAccelerometer('unavailable');
-          }
-        })
-        .catch(() => {
-          setGyroscope('unavailable');
-          setAccelerometer('unavailable');
-        });
-    } else {
-      attach();
-    }
+    // No permission call here: on iOS it must come from a tap, which the compass's own Enable
+    // button provides (the grant covers motion events too), and this hook only starts after that.
+    attach();
 
     const timeout = setTimeout(() => {
       setGyroscope((s) => (s === 'checking' ? 'unavailable' : s));
@@ -68,7 +54,7 @@ export function useMotionSensors(): MotionSensorsState {
       clearTimeout(timeout);
       window.removeEventListener('devicemotion', handleMotion, true);
     };
-  }, []);
+  }, [enabled]);
 
   return { gyroscope, accelerometer };
 }

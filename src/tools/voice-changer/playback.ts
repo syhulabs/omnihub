@@ -30,6 +30,10 @@ function resumeWithTimeout(c: AudioContext, ms = 2000): Promise<void> {
 }
 
 export async function playBuffer(buffer: AudioBuffer, onEnded?: () => void): Promise<void> {
+  // The clip being replaced must not report "ended": its callback would land after the new clip
+  // has started and reset the screen's playing state, leaving a clip that plays with no way to
+  // stop it. (An explicit stopPlayback() still reports, as its callers expect.)
+  if (currentSource) currentSource.onended = null;
   stopPlayback();
   const c = getCtx();
   if (c.state === 'suspended') await resumeWithTimeout(c);

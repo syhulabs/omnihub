@@ -36,6 +36,14 @@
   width: min(72vw, 270px);
   aspect-ratio: 1;
   margin: 8px 0 4px;
+  /* The dial sits on a fixed night-sky backdrop in both themes, so it keeps the dark theme's
+     tokens: in light theme the white veil and dark-on-dark degree numbers were barely legible. */
+  --bg-elevated: #131a27;
+  --border: rgba(255, 255, 255, 0.08);
+  --text-primary: #f5f7fa;
+  --text-secondary: #9aa4b6;
+  --text-tertiary: #6b7484;
+  color: var(--text-primary);
 }
 
 .cp__dial-backdrop {

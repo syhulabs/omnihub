@@ -12,7 +12,10 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 export function LevelView() {
-  const { status, beta, gamma, requestPermission } = useDeviceOrientation();
+  const { status: orientationStatus, beta, gamma, tiltReady, requestPermission } = useDeviceOrientation();
+  // The level only needs tilt. A phone with no magnetometer never reports a heading, and was
+  // told it had no tilt sensor either.
+  const status = tiltReady ? 'ready' : orientationStatus;
   const wasFlatRef = useRef(false);
 
   // Normalize beta into the same -90..90 "how far from lying flat" range as gamma, since beta
@@ -38,6 +41,16 @@ export function LevelView() {
         <>
           <Icon name="info" size={32} className="lv__hint-icon" />
           <p className="lv__hint">This device doesn't have a tilt sensor.</p>
+        </>
+      )}
+
+      {status === 'denied' && (
+        <>
+          <Icon name="info" size={32} className="lv__hint-icon" />
+          <p className="lv__hint">
+            Motion access was turned down. Allow Motion &amp; Orientation for Omni Hub in your phone's Settings, then
+            open the Level again.
+          </p>
         </>
       )}
 

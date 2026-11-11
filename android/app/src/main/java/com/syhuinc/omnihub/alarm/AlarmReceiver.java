@@ -20,6 +20,9 @@ public class AlarmReceiver extends BroadcastReceiver {
             // One-shot "today" alarms disable themselves; repeating ones re-arm their next occurrence.
             if ("today".equals(alarm.repeatMode)) {
                 alarm.enabled = false;
+                // Counts as an edit for cloud sync: without the bump the cloud copy stayed
+                // "enabled", so a reinstall or a second phone re-armed every old one-shot alarm.
+                alarm.updatedAt = System.currentTimeMillis();
                 AlarmStore.upsert(context, alarm);
             } else {
                 AlarmStore.upsert(context, alarm);

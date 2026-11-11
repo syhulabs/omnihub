@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isShareCancel, saveOrShareFile } from '../../../share/saveFile';
 import { Capacitor } from '@capacitor/core';
 import { isIOS } from '../../../platform';
@@ -56,6 +56,8 @@ function formatDuration(seconds: number): string {
 }
 
 export function ShareScreen({ api }: { api: VcApi }) {
+  // Leaving this screen stops its clip; it used to keep playing on the next screen with no stop control.
+  useEffect(() => () => stopPlayback(), []);
   const isLight = useIsLightTheme();
   const shareTargetImages = isLight ? SHARE_TARGET_IMAGES_LIGHT : SHARE_TARGET_IMAGES;
   const clip = api.shareClip;

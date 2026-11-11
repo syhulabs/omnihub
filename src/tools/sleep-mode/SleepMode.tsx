@@ -1,4 +1,5 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
+import { isIOS } from '../../platform';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon } from '../../components/Icon';
 import { useRouter } from '../../app/Router';
@@ -397,7 +398,9 @@ export function SleepMode() {
                 <span className="sm__volume-value">{displayedVolume}%</span>
               </div>
               <p className="sm__volume-hint">
-                Always audible, even on silent or Do Not Disturb — set independently of your phone&rsquo;s own volume.
+                {isIOS
+                  ? 'Used when a reminder is spoken while Omni Hub is open. Notifications follow your iPhone’s own sound settings.'
+                  : 'Always audible, even on silent or Do Not Disturb — set independently of your phone’s own volume.'}
               </p>
             </div>
           </section>

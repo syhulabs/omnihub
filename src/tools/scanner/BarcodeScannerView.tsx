@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { App as CapacitorApp } from '@capacitor/app';
 import { BarcodeScanner, type Barcode, type BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
 import { Torch } from '@capawesome/capacitor-torch';
 import { Icon } from '../../components/Icon';
@@ -105,6 +106,20 @@ export function BarcodeScannerView({ title, formats }: BarcodeScannerViewProps) 
     startScanning();
     return () => {
       void stopScanning();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Back from "Open Settings": try again, so a camera permission granted there takes effect
+  // instead of the screen still saying it is needed.
+  const statusRef = useRef(status);
+  statusRef.current = status;
+  useEffect(() => {
+    const listener = CapacitorApp.addListener('resume', () => {
+      if (statusRef.current === 'denied') void startScanning();
+    });
+    return () => {
+      void listener.then((l) => l.remove());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

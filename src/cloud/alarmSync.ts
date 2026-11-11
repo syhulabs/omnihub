@@ -46,10 +46,13 @@ export async function startAlarmSync(uid: string, onChange: () => void): Promise
 }
 
 export async function stopAlarmSync(): Promise<void> {
-  await engine?.stop();
+  // Cleared before the await: leaving and re-entering Alarm quickly starts a new engine while
+  // this stop is still in flight, and clearing afterwards would wipe out the new one.
+  const stopping = engine;
   engine = null;
   currentUid = null;
   onRemoteChange = null;
+  await stopping?.stop();
 }
 
 /** Use instead of AlarmPlugin.schedule() for user-initiated edits, so the change also reaches other signed-in devices. */
@@ -58,7 +61,7 @@ export async function scheduleAlarmSynced(options: ScheduleOptions): Promise<{ i
   if (engine && currentUid) {
     const { alarms } = await AlarmPlugin.list();
     const saved = alarms.find((a) => a.id === result.id);
-    if (saved) await engine.pushUpsert(currentUid, saved);
+    if (saved) void engine.pushUpsert(currentUid, saved);
   }
   return result;
 }
@@ -67,6 +70,8 @@ export async function scheduleAlarmSynced(options: ScheduleOptions): Promise<{ i
 export async function cancelAlarmSynced(id: string): Promise<void> {
   await AlarmPlugin.cancel({ id });
   if (engine && currentUid) {
-    await engine.pushDelete(currentUid, id, Date.now());
+    // Not awaited: offline, Firestore only settles the write once the server acknowledges it, so
+    // waiting here left the editor open and the deleted alarm on screen until the phone was online.
+    void engine.pushDelete(currentUid, id, Date.now());
   }
 }

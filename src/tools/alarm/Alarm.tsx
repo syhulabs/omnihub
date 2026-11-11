@@ -133,6 +133,19 @@ export function Alarm() {
     const turningOn = !alarm.enabled;
     if (turningOn) {
       try {
+        // Same rule as saving in the editor: an alarm that can't post its notification can't
+        // ring properly, so the switch asks first and stays off if the answer is no.
+        let { granted } = await AlarmPlugin.checkNotificationPermission();
+        if (!granted) granted = (await AlarmPlugin.requestNotificationPermission()).granted;
+        if (!granted) {
+          hapticWarning();
+          setEditingId(alarm.id); // the editor explains what is missing when Save is tapped
+          return;
+        }
+      } catch {
+        // web fallback / unsupported platform — proceed anyway
+      }
+      try {
         const check = await AlarmPlugin.checkExactAlarmPermission();
         if (!check.granted) {
           hapticWarning();
@@ -207,7 +220,7 @@ export function Alarm() {
                 Cancel
               </button>
             </>
-          ) : (
+          ) : isIOS ? undefined : (
             <button
               type="button"
               className="alarm__debug-btn"

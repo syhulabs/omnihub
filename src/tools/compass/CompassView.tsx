@@ -38,7 +38,7 @@ interface CompassViewProps {
 
 export function CompassView({ geo, settings, locked }: CompassViewProps) {
   const { status, heading: liveHeading, requestPermission } = useDeviceOrientation();
-  const motion = useMotionSensors();
+  const motion = useMotionSensors(status === 'ready');
   const lastOctantRef = useRef<number | null>(null);
   const lockedHeadingRef = useRef(liveHeading);
   if (!locked) lockedHeadingRef.current = liveHeading;
@@ -94,6 +94,16 @@ export function CompassView({ geo, settings, locked }: CompassViewProps) {
         <>
           <Icon name="info" size={32} className="cp__hint-icon" />
           <p className="cp__hint">This device doesn't have a compass sensor.</p>
+        </>
+      )}
+
+      {status === 'denied' && (
+        <>
+          <Icon name="info" size={32} className="cp__hint-icon" />
+          <p className="cp__hint">
+            Motion access was turned down. Allow Motion &amp; Orientation for Omni Hub in your phone's Settings, then
+            open the Compass again.
+          </p>
         </>
       )}
 
@@ -171,7 +181,7 @@ export function CompassView({ geo, settings, locked }: CompassViewProps) {
               icon="activity"
               label="Speed"
               value={speedKmh !== null ? `${speedKmh.toFixed(1)} km/h` : '—'}
-              sublabel={speedKmh !== null && speedKmh > 0.5 ? 'Moving' : 'Stationary'}
+              sublabel={speedKmh === null ? 'No GPS fix' : speedKmh > 0.5 ? 'Moving' : 'Stationary'}
             />
           </div>
 

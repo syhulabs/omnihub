@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { DeviceStatsPlugin } from '../../device-stats/plugin';
 import { isIOS } from '../../platform';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon, type IconName } from '../../components/Icon';
@@ -61,6 +62,8 @@ export function AlarmEditor({ alarmId, initial, onClose, onDelete }: AlarmEditor
   const [presets, setPresets] = useState(loadPresets());
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [needsExactAlarmPermission, setNeedsExactAlarmPermission] = useState(false);
+  const [needsNotificationPermission, setNeedsNotificationPermission] = useState(false);
+  const savingRef = useRef(false);
   const [showRingtonePicker, setShowRingtonePicker] = useState(false);
 
   useBackHandler(() => {
@@ -142,11 +145,28 @@ export function AlarmEditor({ alarmId, initial, onClose, onDelete }: AlarmEditor
   }
 
   async function handleSave() {
+    // One save at a time: a double tap on a new alarm (no id yet) created two alarms.
+    if (savingRef.current) return;
+    savingRef.current = true;
     try {
-      const check = await AlarmPlugin.checkNotificationPermission();
-      if (!check.granted) {
-        await AlarmPlugin.requestNotificationPermission();
+      await save();
+    } finally {
+      savingRef.current = false;
+    }
+  }
+
+  async function save() {
+    try {
+      let { granted } = await AlarmPlugin.checkNotificationPermission();
+      if (!granted) granted = (await AlarmPlugin.requestNotificationPermission()).granted;
+      if (!granted) {
+        // Without notifications the alarm has no ringing screen and no Stop button on Android 13+
+        // (it would sound for ten minutes with nothing to tap), and on iOS it never fires at all.
+        hapticWarning();
+        setNeedsNotificationPermission(true);
+        return;
       }
+      setNeedsNotificationPermission(false);
     } catch {
       // web fallback / unsupported platform — proceed anyway
     }
@@ -226,6 +246,20 @@ export function AlarmEditor({ alarmId, initial, onClose, onDelete }: AlarmEditor
           )
         }
       />
+
+      {needsNotificationPermission && (
+        <div className="alarm-editor__confirm">
+          <p>
+            Alarms need notifications to ring and to show their Stop button. Allow notifications for Omni Hub in
+            Settings, then come back and tap Save again.
+          </p>
+          <div className="alarm-editor__confirm-actions">
+            <button type="button" onClick={() => DeviceStatsPlugin.openAppSettings().catch(() => {})}>
+              Open Settings
+            </button>
+          </div>
+        </div>
+      )}
 
       {needsExactAlarmPermission && (
         <div className="alarm-editor__confirm">

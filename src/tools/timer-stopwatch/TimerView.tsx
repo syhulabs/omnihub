@@ -224,7 +224,9 @@ export function TimerView() {
 
   const hoursNum = parseInt(hoursInput || '0', 10);
   const showHours = hoursNum > 0;
-  const displayTotalSec = Math.max(0, Math.floor(remaining / 1000));
+  // Rounded up, as countdowns are read: a 5:00 timer shows 05:00 for its first second and 00:00
+  // only when it is over (rounding down showed 04:59 at once and sat on 00:00 for a full second).
+  const displayTotalSec = Math.max(0, Math.ceil(remaining / 1000));
   const dispH = pad(Math.floor(displayTotalSec / 3600));
   const dispM = pad(Math.floor((displayTotalSec % 3600) / 60));
   const dispS = pad(displayTotalSec % 60);

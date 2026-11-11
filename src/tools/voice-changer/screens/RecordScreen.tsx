@@ -105,7 +105,13 @@ export function RecordScreen({ api }: { api: VcApi }) {
     timerRef.current = null;
   }
 
+  const startingRef = useRef(false);
+
   async function startRecording() {
+    // A second tap while the permission prompt or the mic is still opening would start a second
+    // stream and recorder; the first stream was then never stopped and the mic stayed on.
+    if (startingRef.current || mediaRecorderRef.current?.state === 'recording') return;
+    startingRef.current = true;
     setError(null);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -135,6 +141,8 @@ export function RecordScreen({ api }: { api: VcApi }) {
       autoStopRef.current = window.setTimeout(() => stopRecording(), MAX_RECORD_MS);
     } catch {
       setError("Couldn't access the microphone — check that Omni Hub has microphone permission.");
+    } finally {
+      startingRef.current = false;
     }
   }
 

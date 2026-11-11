@@ -41,16 +41,33 @@ public class SleepModePlugin extends Plugin {
         data.interests = call.getString("interests", null);
         data.customNotes = call.getString("customNotes", null);
 
-        // A settings change always (re)starts scheduling from now, rather than trying to preserve
-        // an in-progress nightly session's nag count/anti-repeat state across an edit.
-        data.sessionStartMillis = 0;
-        data.nagCount = 0;
-        data.recentKeysCsv = "";
+        // Outside a running night, a settings change (re)starts scheduling from scratch. During
+        // one it must not: restarting fired a spoken reminder a second later for every tweak
+        // (volume, personality, interval...) and silently undid "Stop for tonight". The running
+        // session keeps its counters and its mute, and the next check comes one interval from now.
+        SleepModeData previous = SleepModeStore.load(getContext());
+        long now = System.currentTimeMillis();
+        boolean sessionRunning = previous.enabled && data.enabled && previous.sessionStartMillis > 0
+                && SleepModeScheduler.isWithinSleepWindow(data, now)
+                && now < SleepModeScheduler.wakeMillisForSession(previous);
+        if (sessionRunning) {
+            data.sessionStartMillis = previous.sessionStartMillis;
+            data.nagCount = previous.nagCount;
+            data.lastNagMillis = previous.lastNagMillis;
+            data.recentKeysCsv = previous.recentKeysCsv;
+            data.mutedUntilMillis = previous.mutedUntilMillis;
+        } else {
+            data.sessionStartMillis = 0;
+            data.nagCount = 0;
+            data.recentKeysCsv = "";
+        }
 
         SleepModeStore.save(getContext(), data);
 
         boolean armed = false;
-        if (data.enabled) {
+        if (sessionRunning) {
+            armed = SleepModeScheduler.scheduleBeat(getContext(), now + Math.max(1, data.intervalMin) * 60_000L);
+        } else if (data.enabled) {
             armed = SleepModeScheduler.armBedtime(getContext(), data);
         } else {
             SleepModeScheduler.disarm(getContext());
