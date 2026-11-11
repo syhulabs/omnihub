@@ -1,8 +1,9 @@
 @import './theme/theme.css';
 
 #root {
-  height: 100svh;
-  height: 100vh;
+  /* Percent, not vh: Text Size is applied as `zoom` on <html>, and vh ignores zoom, so 100vh made
+     the app taller than the screen at Large (bottom nav pushed off-screen) and shorter at Small. */
+  height: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;

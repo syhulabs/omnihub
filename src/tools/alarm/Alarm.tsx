@@ -71,8 +71,8 @@ function AlarmHeroIllustration() {
       <circle cx="80" cy="88" r="52" fill="var(--bg-elevated)" stroke="url(#alarmBody)" strokeWidth="6" />
       <circle cx="80" cy="88" r="52" fill="none" stroke="var(--accent)" strokeWidth="1" opacity="0.4" />
       <rect x="70" y="22" width="20" height="12" rx="4" fill="url(#alarmBody)" />
-      <path d="M80 60 L80 90 L100 100" stroke="#fff" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="80" cy="88" r="4.5" fill="#fff" />
+      <path d="M80 60 L80 90 L100 100" stroke="var(--text-primary)" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="80" cy="88" r="4.5" fill="var(--text-primary)" />
     </svg>
   );
 }

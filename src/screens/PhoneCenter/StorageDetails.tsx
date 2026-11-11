@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { App as CapacitorApp } from '@capacitor/app';
 import { isIOS } from '../../platform';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon, type IconName } from '../../components/Icon';
@@ -29,14 +30,34 @@ export function StorageDetails() {
       .catch(() => setPermission('denied'));
   }, []);
 
+  // Coming back from the Settings page: pick up a permission granted there.
+  useEffect(() => {
+    const listener = CapacitorApp.addListener('appStateChange', ({ isActive }) => {
+      if (!isActive) return;
+      DeviceStatsPlugin.checkMediaPermission()
+        .then(({ granted }) => setPermission(granted ? 'granted' : 'denied'))
+        .catch(() => {});
+    });
+    return () => {
+      void listener.then((l) => l.remove());
+    };
+  }, []);
+
   useEffect(() => {
     if (permission !== 'granted') return;
     DeviceStatsPlugin.getStorageBreakdown().then(setBreakdown).catch(() => {});
   }, [permission]);
 
   async function grantAccess() {
-    const { granted } = await DeviceStatsPlugin.requestMediaPermission();
-    setPermission(granted ? 'granted' : 'denied');
+    try {
+      const { granted } = await DeviceStatsPlugin.requestMediaPermission();
+      setPermission(granted ? 'granted' : 'denied');
+      // After two refusals Android stops showing its dialog and answers "denied" at once, which
+      // made this button look dead. The app's Settings page is then the only place to allow it.
+      if (!granted) await DeviceStatsPlugin.openAppSettings();
+    } catch {
+      // plugin unavailable
+    }
   }
 
   const usedBytes = stats ? stats.storageTotalBytes - stats.storageFreeBytes : 0;

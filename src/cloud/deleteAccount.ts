@@ -59,7 +59,14 @@ export async function deleteAccountAndData(
     throw new Error("Couldn't confirm your Google account. Nothing was deleted.");
   }
   if (confirmedUid !== uid) {
-    throw new Error('That is a different Google account. Sign in with the account you want to delete.');
+    // The chooser has just signed this phone in as that other account. Staying signed in would
+    // merge this phone's data into it the next time a synced tool is opened.
+    try {
+      await FirebaseAuthentication.signOut();
+    } catch {
+      // best-effort
+    }
+    throw new Error('That is a different Google account, so nothing was deleted and you have been signed out. Sign in with the account you want to delete.');
   }
 
   for (const collection of SYNCED_COLLECTIONS) {

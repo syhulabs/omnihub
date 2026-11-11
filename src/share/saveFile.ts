@@ -27,6 +27,19 @@ function downloadInBrowser(blob: Blob, filename: string) {
   setTimeout(() => URL.revokeObjectURL(url), 4000);
 }
 
+/** Removes every file this module wrote for sharing. They can't be deleted right after the share
+ *  sheet closes (the receiving app may still be reading), so they are cleared at the next app
+ *  start and whenever the user wipes their data: decrypted Vault files and plain backups must not
+ *  sit in the cache forever. */
+export async function purgeSharedCache(): Promise<void> {
+  if (!Capacitor.isNativePlatform()) return;
+  try {
+    await Filesystem.rmdir({ path: 'shared', directory: Directory.Cache, recursive: true });
+  } catch {
+    // nothing was ever shared
+  }
+}
+
 /** True when the user cancelled the share sheet (not an error worth showing). */
 export function isShareCancel(err: unknown): boolean {
   const message = err instanceof Error ? err.message : String(err ?? '');

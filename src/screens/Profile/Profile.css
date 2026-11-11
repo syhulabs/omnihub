@@ -677,6 +677,25 @@
   background: #0499ad;
 }
 
+/* The sub-screens (App Lock, Vault Security) reuse the generic tinted variants. Inside Settings the
+   glyph is white, so they need the same solid tiles as the rows above or the icon disappears on
+   the pale tint in light theme. */
+.pf__body--settings .pf__row-icon--purple {
+  background: #3425a6;
+}
+
+.pf__body--settings .pf__row-icon--blue {
+  background: #0143a3;
+}
+
+.pf__body--settings .pf__row-icon--orange {
+  background: #e67e03;
+}
+
+.pf__body--settings .pf__row-icon--teal {
+  background: #0499ad;
+}
+
 .pf__body--settings .pf__row-text {
   gap: 3px;
 }

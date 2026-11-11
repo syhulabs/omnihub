@@ -97,8 +97,8 @@
 }
 
 .tc__tip-chip {
-  flex: 1;
-  min-width: 56px;
+  flex: 1 0 auto; /* sized by its label, so "Custom" isn't squeezed to the width of "10%" */
+  min-width: 52px;
   padding: 12px 8px;
   min-height: 44px;
   border-radius: var(--radius-md);

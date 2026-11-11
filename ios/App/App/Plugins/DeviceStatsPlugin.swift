@@ -212,20 +212,19 @@ public class DeviceStatsPlugin: CAPPlugin, CAPBridgedPlugin {
 
         var pointer: UnsafeMutablePointer<ifaddrs>? = first
         while let current = pointer {
-            let flags = Int32(current.pointee.ifa_flags)
-            let family = current.pointee.ifa_addr.pointee.sa_family
-            if (flags & (IFF_UP | IFF_RUNNING)) == (IFF_UP | IFF_RUNNING), family == UInt8(AF_INET) {
-                let interfaceName = String(cString: current.pointee.ifa_name)
-                if interfaceName == name {
-                    var host = [CChar](repeating: 0, count: Int(NI_MAXHOST))
-                    let length = socklen_t(current.pointee.ifa_addr.pointee.sa_len)
-                    if getnameinfo(current.pointee.ifa_addr, length, &host, socklen_t(host.count), nil, 0, NI_NUMERICHOST) == 0 {
-                        address = String(cString: host)
-                        break
-                    }
-                }
-            }
             pointer = current.pointee.ifa_next
+            // ifa_addr is NULL for some interfaces; reading through it would crash.
+            guard let socketAddress = current.pointee.ifa_addr else { continue }
+            let flags = Int32(current.pointee.ifa_flags)
+            guard (flags & (IFF_UP | IFF_RUNNING)) == (IFF_UP | IFF_RUNNING),
+                  socketAddress.pointee.sa_family == UInt8(AF_INET),
+                  String(cString: current.pointee.ifa_name) == name else { continue }
+            var host = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+            let length = socklen_t(socketAddress.pointee.sa_len)
+            if getnameinfo(socketAddress, length, &host, socklen_t(host.count), nil, 0, NI_NUMERICHOST) == 0 {
+                address = String(cString: host)
+                break
+            }
         }
         return address
     }

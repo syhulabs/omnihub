@@ -19,6 +19,13 @@ interface SettingsContextValue {
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 
+/** Text Size is a page zoom. --text-scale mirrors it so fixed-geometry chrome (the bottom nav,
+ *  drawn to an exact mockup) can cancel the zoom and keep its proportions. */
+function applyTextScale(scale: number) {
+  document.documentElement.style.zoom = String(scale);
+  document.documentElement.style.setProperty('--text-scale', String(scale));
+}
+
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [hapticsEnabled, setHapticsEnabledState] = useState(() => storageGet(StorageKeys.hapticsEnabled, true));
   const [keepAwakeEnabled, setKeepAwakeEnabledState] = useState(() =>
@@ -41,7 +48,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   function setTextScale(scale: TextScale) {
     setTextScaleState(scale);
     storageSet(StorageKeys.textScale, scale);
-    document.documentElement.style.zoom = String(scale);
+    applyTextScale(scale);
   }
 
   // Apply the persisted settings to their native/CSS side effects once on startup -- the
@@ -49,7 +56,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     applyHapticsEnabled(hapticsEnabled);
     setKeepAwake(keepAwakeEnabled);
-    document.documentElement.style.zoom = String(textScale);
+    applyTextScale(textScale);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

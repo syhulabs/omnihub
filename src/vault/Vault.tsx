@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { App as CapacitorApp } from '@capacitor/app';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { Icon } from '../components/Icon';
 import { useRouter } from '../app/Router';
@@ -22,9 +23,9 @@ import {
 import { PinPad, PIN_LENGTH } from './PinPad';
 import { VaultNoteEditor } from './VaultNoteEditor';
 import { VaultFiles } from './VaultFiles';
-import { clearAllFiles, getAllFiles, putFile } from './fileStore';
+import { clearAllFiles, getAllFiles, putFiles, type VaultFileRecord } from './fileStore';
 import type { VaultNote, VaultNoteRecord } from './types';
-import { forgetVaultKey, parkVaultKey, resumeVaultKey } from './session';
+import { consumeVaultExternalActivity, forgetVaultKey, parkVaultKey, resumeVaultKey, shouldLockAfterBackground } from './session';
 import { clearVaultFailedAttempts, formatLockoutRemaining, recordVaultFailedAttempt, vaultLockedUntil } from './lockout';
 import { BiometricPlugin } from '../biometric/plugin';
 import {
@@ -60,7 +61,10 @@ export function Vault() {
   const [changingPin, setChangingPin] = useState(false);
   const [confirmingReset, setConfirmingReset] = useState(false);
   const [tab, setTab] = useState<Tab>('notes');
-  const [lockedUntil, setLockedUntil] = useState(() => storageGet(StorageKeys.vaultLockedUntil, 0));
+  const [lockedUntil, setLockedUntil] = useState(() => vaultLockedUntil());
+  const [securing, setSecuring] = useState(false);
+  const securingRef = useRef(false);
+  const [confirmingForgotPin, setConfirmingForgotPin] = useState(false);
   const [nowTick, setNowTick] = useState(() => Date.now());
   const [biometricReady, setBiometricReady] = useState(false);
   const biometricPromptedRef = useRef(false);
@@ -116,9 +120,13 @@ export function Vault() {
     setNotes(decrypted);
   }
 
-  const hasNestedState = settingsOpen || (changingPin && (status === 'setupPin' || status === 'confirmPin'));
+  const hasNestedState =
+    confirmingForgotPin || settingsOpen || (changingPin && (status === 'setupPin' || status === 'confirmPin'));
   useBackHandler(() => {
-    if (confirmingReset) {
+    if (securingRef.current) return; // a PIN change is being committed; leaving now would abandon it
+    if (confirmingForgotPin) {
+      setConfirmingForgotPin(false);
+    } else if (confirmingReset) {
       setConfirmingReset(false);
     } else if (settingsOpen) {
       setSettingsOpen(false);
@@ -141,6 +149,45 @@ export function Vault() {
   // Leaving the screen while unlocked parks the key for the auto-lock grace period (Settings >
   // Vault Security); "Immediately" (the default) parks nothing, so this is a no-op then.
   useEffect(() => () => parkVaultKey(keyRef.current), []);
+
+  // An open Vault also locks when the app itself is left: Android keeps the WebView alive in the
+  // background for hours, so without this the Vault stayed open for whoever picked the phone up.
+  const lockFromBackgroundRef = useRef<() => void>(() => {});
+  lockFromBackgroundRef.current = () => {
+    if (!keyRef.current || securingRef.current) return;
+    // Keep a note that was being written rather than dropping it with the key.
+    if (draft && (draft.title.trim() || draft.body.trim())) {
+      void persistNotes([draft, ...notes], keyRef.current).then(lock);
+    } else {
+      lock();
+    }
+  };
+  // A new note exists only in memory until its editor closes; Android may kill a backgrounded
+  // app at any time, so it is written out the moment the app is left.
+  const saveDraftRef = useRef<() => void>(() => {});
+  saveDraftRef.current = () => {
+    if (!keyRef.current || !draft || !(draft.title.trim() || draft.body.trim())) return;
+    setDraft(null); // from here on it is an ordinary stored note, still open in the editor
+    void persistNotes([draft, ...notes], keyRef.current);
+  };
+  useEffect(() => {
+    let backgroundedAt: number | null = null;
+    const listener = CapacitorApp.addListener('appStateChange', ({ isActive }) => {
+      if (!isActive) {
+        backgroundedAt = Date.now();
+        saveDraftRef.current();
+        return;
+      }
+      const since = backgroundedAt;
+      backgroundedAt = null;
+      if (since === null) return;
+      if (consumeVaultExternalActivity()) return;
+      if (shouldLockAfterBackground(Date.now() - since)) lockFromBackgroundRef.current();
+    });
+    return () => {
+      void listener.then((l) => l.remove());
+    };
+  }, []);
 
   useEffect(() => {
     if (!isVaultBiometricEnabled()) return;
@@ -207,32 +254,51 @@ export function Vault() {
   }, [pinInput]);
 
   async function completeSetup(pin: string) {
-    const salt = randomSalt();
-    const keyBits = await deriveVaultKeyBits(pin, salt);
-    const derivedKey = await importVaultKey(keyBits);
-    const canary = await encryptText(derivedKey, CANARY_TEXT);
-    forgetVaultKey();
-    if (changingPin) {
-      // Re-encrypt the existing notes and files with the new key rather than losing them. The
-      // new salt/canary are committed only afterwards, so a crash mid-way leaves the old PIN
-      // still able to open everything instead of stranding half-converted data.
-      await persistNotes(notes, derivedKey, { pushAll: true });
-      if (key) await reencryptFiles(key, derivedKey);
-    } else {
-      encryptedRecordsRef.current = [];
-      storageSet(StorageKeys.vaultNotes, []);
-      setNotes([]);
+    // Re-encrypting a Vault with large files takes seconds. A second run started by an impatient
+    // tap would pick a different salt and the two would corrupt each other, so only one may run
+    // and the pad is disabled meanwhile.
+    if (securingRef.current) return;
+    securingRef.current = true;
+    setSecuring(true);
+    try {
+      const salt = randomSalt();
+      const keyBits = await deriveVaultKeyBits(pin, salt);
+      const derivedKey = await importVaultKey(keyBits);
+      const canary = await encryptText(derivedKey, CANARY_TEXT);
+      forgetVaultKey();
+      if (changingPin) {
+        // Re-encrypt the existing files in memory first; nothing stored has changed yet, so a
+        // crash or a full disk up to here leaves the old PIN opening everything. Then commit:
+        // the files in a single transaction, and the notes, salt and PIN check right after it.
+        const reencrypted = key ? await reencryptFiles(key, derivedKey) : [];
+        await putFiles(reencrypted);
+        await persistNotes(notes, derivedKey, { pushAll: true });
+      } else {
+        encryptedRecordsRef.current = [];
+        storageSet(StorageKeys.vaultNotes, []);
+        setNotes([]);
+      }
+      storageSet(StorageKeys.vaultSalt, salt);
+      storageSet(StorageKeys.vaultCanary, canary);
+      if (changingPin) await refreshVaultBiometricSecret(keyBits);
+      setKey(derivedKey);
+      setError('');
+      setPinInput('');
+      setPendingPin('');
+      setChangingPin(false);
+      hapticSuccess();
+      setStatus('unlocked');
+    } catch {
+      // Nothing was committed (see above): the Vault still opens with the PIN it had.
+      setError(changingPin ? "Couldn't change the PIN. Your Vault is unchanged." : "Couldn't set up the Vault. Try again.");
+      hapticWarning();
+      setPinInput('');
+      setPendingPin('');
+      setStatus('setupPin');
+    } finally {
+      securingRef.current = false;
+      setSecuring(false);
     }
-    storageSet(StorageKeys.vaultSalt, salt);
-    storageSet(StorageKeys.vaultCanary, canary);
-    if (changingPin) await refreshVaultBiometricSecret(keyBits);
-    setKey(derivedKey);
-    setError('');
-    setPinInput('');
-    setPendingPin('');
-    setChangingPin(false);
-    hapticSuccess();
-    setStatus('unlocked');
   }
 
   async function attemptUnlock(pin: string) {
@@ -326,13 +392,16 @@ export function Vault() {
     }
   }
 
-  async function reencryptFiles(oldKey: CryptoKey, newKey: CryptoKey) {
+  /** Every stored file re-encrypted under `newKey`, in memory; the caller writes them in one go. */
+  async function reencryptFiles(oldKey: CryptoKey, newKey: CryptoKey): Promise<VaultFileRecord[]> {
     const files = await getAllFiles();
+    const next: VaultFileRecord[] = [];
     for (const f of files) {
       const plain = await decryptBytes(oldKey, f.iv, f.data);
       const { iv, data } = await encryptBytes(newKey, plain);
-      await putFile({ ...f, iv, data });
+      next.push({ ...f, iv, data });
     }
+    return next;
   }
 
   function lock() {
@@ -407,11 +476,15 @@ export function Vault() {
     // Tombstone the cloud copies too — otherwise the next sync (with a new PIN, and so a new
     // key) would pull these back in as undecryptable "Could not decrypt" entries, resurrecting
     // exactly what "Delete Everything" is supposed to remove.
-    const engine = syncEngineRef.current;
-    const uid = syncUidRef.current;
+    // From the lock screen ("Forgot PIN?") no sync engine is running, since sync needs the key; a
+    // bare one is enough to send tombstones.
+    const uid = syncUidRef.current ?? user?.uid ?? null;
+    const engine =
+      syncEngineRef.current ??
+      (uid ? createSyncEngine<VaultNoteRecord>({ collection: 'vault', getLocal: () => [], setLocal: () => {} }) : null);
     if (engine && uid) {
       for (const rec of encryptedRecordsRef.current) {
-        engine.pushDelete(uid, rec.id, Date.now());
+        void engine.pushDelete(uid, rec.id, Date.now());
       }
     }
     encryptedRecordsRef.current = [];
@@ -430,6 +503,7 @@ export function Vault() {
     setEditingId(null);
     setSettingsOpen(false);
     setConfirmingReset(false);
+    setConfirmingForgotPin(false);
     setLockedUntil(0);
     setPinInput('');
     setPendingPin('');
@@ -459,7 +533,14 @@ export function Vault() {
       return (
         <div className="screen">
           <ScreenHeader title="Vault" onBack={() => setStatus('unlocked')} />
-          <PinPad title="Confirm New PIN" subtitle="Enter it again" value={pinInput} onChange={setPinInput} error={error} />
+          <PinPad
+            title="Confirm New PIN"
+            subtitle={securing ? 'Re-encrypting your Vault. Keep the app open…' : 'Enter it again'}
+            value={pinInput}
+            onChange={setPinInput}
+            error={error}
+            disabled={securing}
+          />
         </div>
       );
     }
@@ -476,6 +557,7 @@ export function Vault() {
           value={pinInput}
           onChange={setPinInput}
           error={error}
+          disabled={securing}
         />
       </div>
     );
@@ -496,12 +578,36 @@ export function Vault() {
           error={isLockedOut ? undefined : error}
           disabled={isLockedOut}
           action={
-            biometricReady && !isLockedOut ? (
-              <button type="button" className="vault-pin__action-btn" onClick={() => void tryBiometricUnlock()}>
-                <Icon name="fingerprint" size={18} />
-                Use fingerprint or face
-              </button>
-            ) : undefined
+            <>
+              {biometricReady && !isLockedOut && (
+                <button type="button" className="vault-pin__action-btn" onClick={() => void tryBiometricUnlock()}>
+                  <Icon name="fingerprint" size={18} />
+                  Use fingerprint or face
+                </button>
+              )}
+              {/* The PIN is the encryption key, so it can't be recovered; without this the only way
+                  out of a forgotten PIN was wiping every tool with Clear All Data. */}
+              {confirmingForgotPin ? (
+                <div className="vault__reset-confirm vault__reset-confirm--locked">
+                  <p>
+                    A forgotten PIN can't be recovered. Resetting deletes all private notes, photos and files in the
+                    Vault so you can set a new PIN. This can't be undone.
+                  </p>
+                  <div className="vault-editor__confirm-actions">
+                    <button type="button" onClick={() => setConfirmingForgotPin(false)}>
+                      Cancel
+                    </button>
+                    <button type="button" className="vault-editor__confirm-delete" onClick={resetVault}>
+                      Reset Vault
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button type="button" className="vault-pin__forgot" onClick={() => setConfirmingForgotPin(true)}>
+                  Forgot PIN?
+                </button>
+              )}
+            </>
           }
         />
       </div>

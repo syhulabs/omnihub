@@ -5,12 +5,18 @@ import { encryptBytes, decryptBytes } from './crypto';
 import { putFile, getAllFiles, deleteFile, type VaultFileRecord } from './fileStore';
 import { exportFilesZip, importFilesZip } from './backup';
 import { hapticSuccess, hapticWarning } from '../haptics';
+import { useBackHandler } from '../app/useBackHandler';
+import { expectVaultExternalActivity } from './session';
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
+
+/** A file is read, encrypted and stored as whole in-memory copies; past this size that runs the
+ *  WebView out of memory and takes the app down with it. */
+const MAX_FILE_BYTES = 100 * 1024 * 1024;
 
 function isImage(mime: string): boolean {
   return mime.startsWith('image/');
@@ -59,24 +65,48 @@ export function VaultFiles({ vaultKey }: VaultFilesProps) {
   async function handleFilesSelected(fileList: FileList | null) {
     if (!fileList || fileList.length === 0) return;
     setBusy(true);
-    for (const file of Array.from(fileList)) {
-      const bytes = await file.arrayBuffer();
-      const { iv, data } = await encryptBytes(vaultKey, bytes);
-      const record: VaultFileRecord = {
-        id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-        name: file.name,
-        mime: file.type || 'application/octet-stream',
-        size: file.size,
-        iv,
-        data,
-        createdAt: Date.now(),
-      };
-      await putFile(record);
-      setFiles((prev) => [record, ...prev]);
+    let added = 0;
+    let tooBig = 0;
+    let failed = 0;
+    try {
+      for (const file of Array.from(fileList)) {
+        if (file.size > MAX_FILE_BYTES) {
+          tooBig++;
+          continue;
+        }
+        try {
+          const bytes = await file.arrayBuffer();
+          const { iv, data } = await encryptBytes(vaultKey, bytes);
+          const record: VaultFileRecord = {
+            id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            name: file.name,
+            mime: file.type || 'application/octet-stream',
+            size: file.size,
+            iv,
+            data,
+            createdAt: Date.now(),
+          };
+          await putFile(record);
+          setFiles((prev) => [record, ...prev]);
+          added++;
+        } catch {
+          failed++; // usually the phone's storage quota
+        }
+      }
+    } finally {
+      // Always release the screen: a failed save used to leave +, Export and Import disabled.
+      setBusy(false);
+      if (inputRef.current) inputRef.current.value = '';
     }
-    setBusy(false);
-    hapticSuccess();
-    if (inputRef.current) inputRef.current.value = '';
+    if (tooBig > 0) {
+      setStatus(`${tooBig === 1 ? 'One file is' : `${tooBig} files are`} over 100 MB and can't be stored in the Vault.`);
+      hapticWarning();
+    } else if (failed > 0) {
+      setStatus(`Couldn't save ${failed === 1 ? 'that file' : `${failed} files`}. Your phone may be out of space.`);
+      hapticWarning();
+    } else if (added > 0) {
+      hapticSuccess();
+    }
   }
 
   async function openFile(record: VaultFileRecord) {
@@ -84,21 +114,30 @@ export function VaultFiles({ vaultKey }: VaultFilesProps) {
     try {
       const plain = await decryptBytes(vaultKey, record.iv, record.data);
       const blob = new Blob([plain], { type: record.mime });
-      const url = URL.createObjectURL(blob);
       if (isImage(record.mime)) {
-        setPreview({ url, name: record.name });
+        setPreview({ url: URL.createObjectURL(blob), name: record.name });
       } else {
-        URL.revokeObjectURL(url);
-        try {
-          await saveOrShareFile(blob, record.name, record.name);
-        } catch (err) {
-          if (!isShareCancel(err)) throw err;
-        }
+        expectVaultExternalActivity();
+        await saveOrShareFile(blob, record.name, record.name);
+      }
+    } catch (err) {
+      if (!isShareCancel(err)) {
+        setStatus("Couldn't open that file.");
+        hapticWarning();
       }
     } finally {
       setBusy(false);
     }
   }
+
+  function closePreview() {
+    if (preview) URL.revokeObjectURL(preview.url);
+    setPreview(null);
+  }
+
+  // Hardware back closes the photo or the delete confirmation instead of leaving the Vault.
+  useBackHandler(closePreview, !!preview);
+  useBackHandler(() => setConfirmingDeleteId(null), !preview && confirmingDeleteId !== null);
 
   async function handleDelete(id: string) {
     await deleteFile(id);
@@ -110,12 +149,16 @@ export function VaultFiles({ vaultKey }: VaultFilesProps) {
   async function handleExport() {
     setBusy(true);
     try {
+      expectVaultExternalActivity();
       const { count } = await exportFilesZip(vaultKey);
-      setStatus(count === 0 ? 'No files to export yet.' : `Exported ${count} file${count === 1 ? '' : 's'} to your Downloads.`);
+      setStatus(count === 0 ? 'No files to export yet.' : `Export ready: ${count} file${count === 1 ? '' : 's'} in one zip.`);
       if (count > 0) hapticSuccess();
-    } catch {
-      setStatus('Export failed. Try again.');
-      hapticWarning();
+    } catch (err) {
+      // Closing the share sheet without choosing anything is not a failure.
+      if (!isShareCancel(err)) {
+        setStatus('Export failed. Try again.');
+        hapticWarning();
+      }
     } finally {
       setBusy(false);
     }
@@ -145,10 +188,7 @@ export function VaultFiles({ vaultKey }: VaultFilesProps) {
         <button
           type="button"
           className="vault-preview__close"
-          onClick={() => {
-            URL.revokeObjectURL(preview.url);
-            setPreview(null);
-          }}
+          onClick={closePreview}
           aria-label="Close preview"
         >
           <Icon name="x" size={20} />
@@ -184,7 +224,10 @@ export function VaultFiles({ vaultKey }: VaultFilesProps) {
         <button
           type="button"
           className="vault-files__toolbar-btn"
-          onClick={() => backupInputRef.current?.click()}
+          onClick={() => {
+            expectVaultExternalActivity();
+            backupInputRef.current?.click();
+          }}
           disabled={busy}
         >
           <Icon name="upload" size={15} />
@@ -236,7 +279,10 @@ export function VaultFiles({ vaultKey }: VaultFilesProps) {
       <button
         type="button"
         className={`vault__fab${busy ? ' vault__fab--busy' : ''}`}
-        onClick={() => inputRef.current?.click()}
+        onClick={() => {
+          expectVaultExternalActivity();
+          inputRef.current?.click();
+        }}
         aria-label="Add photos or files"
         disabled={busy}
       >

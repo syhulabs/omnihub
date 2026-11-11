@@ -9,7 +9,8 @@ import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon } from '../../components/Icon';
 import { PinPad } from '../../vault/PinPad';
 import { useRouter } from '../../app/Router';
-import { storageGet, storageSet, StorageKeys, exportBackup, importBackup, clearAllData } from '../../storage/db';
+import { storageGet, storageRemove, storageSet, StorageKeys, exportBackup, importBackup, clearAllData } from '../../storage/db';
+import { formatLockoutRemaining, lockoutMsFor } from '../../vault/lockout';
 import { clearAllFiles } from '../../vault/fileStore';
 import { hapticWarning, hapticSuccess } from '../../haptics';
 import { useAuth } from '../../cloud/AuthContext';
@@ -72,6 +73,9 @@ export function ProfileAccount() {
   const [confirmingDeleteAccount, setConfirmingDeleteAccount] = useState(false);
   const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
 
+  // Leaving mid-deletion and opening a synced tool would upload this phone's data again.
+  useBackHandler(() => {}, deletingAccount);
+
   async function handleDeleteAccount() {
     hapticWarning();
     setDeleteAccountError(null);
@@ -88,7 +92,7 @@ export function ProfileAccount() {
 
   return (
     <div className="screen">
-      <ScreenHeader title="Profile" subtitle="Your account, devices and personal settings." onBack={back} />
+      <ScreenHeader title="Profile" subtitle="Your account, devices and personal settings." onBack={deletingAccount ? () => {} : back} />
       <div className="pf__body">
         <section className="pf__section">
           <div className="pf__card">
@@ -193,7 +197,7 @@ export function ProfileAccount() {
                 </span>
                 <span className="pf__row-text">
                   <strong>{signingIn ? 'Signing in…' : 'Sign in with Google'}</strong>
-                  <span>Optional — first step toward syncing your data across devices</span>
+                  <span>Optional — syncs your data across your devices</span>
                 </span>
                 <Icon name="chevron-right" size={18} className="pf__row-chevron" />
               </button>
@@ -432,6 +436,7 @@ export function ProfileAppearance() {
 
 export function ProfileDataSync() {
   const { back } = useRouter();
+  const { user, signOut } = useAuth();
   const [importStatus, setImportStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [confirmingClear, setConfirmingClear] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -480,9 +485,12 @@ export function ProfileDataSync() {
     reader.onload = () => {
       try {
         const json = JSON.parse(String(reader.result));
-        const { imported } = importBackup(json);
-        setImportStatus({ type: 'success', message: `Restored ${imported} item${imported === 1 ? '' : 's'}. Reloading…` });
-        setTimeout(() => window.location.reload(), 800);
+        const { imported, vaultSkipped } = importBackup(json);
+        setImportStatus({
+          type: 'success',
+          message: `Restored ${imported} item${imported === 1 ? '' : 's'}.${vaultSkipped ? ' Your Vault was left as it is.' : ''} Reloading…`,
+        });
+        setTimeout(() => window.location.reload(), vaultSkipped ? 2200 : 800);
       } catch (err) {
         setImportStatus({ type: 'error', message: err instanceof Error ? err.message : 'Could not read that file.' });
       }
@@ -493,6 +501,9 @@ export function ProfileDataSync() {
 
   async function handleClearData() {
     hapticWarning();
+    // Staying signed in would undo the wipe: the next tool opened would pull every synced item
+    // straight back from the account.
+    if (user) await signOut();
     clearAllData();
     await clearAllFiles();
     await clearNativeState();
@@ -559,6 +570,9 @@ export function ProfileDataSync() {
                   This will permanently delete everything stored on this device — notes, lists,
                   expenses, alarms, your Vault (including its PIN-locked photos and files), and
                   settings. This can't be undone.
+                  {user
+                    ? ' You will be signed out. Data already synced to your account stays there and returns when you sign in again; to remove it too, use Delete My Account in Profile.'
+                    : ''}
                 </p>
                 <div className="pf__confirm-actions">
                   <button type="button" onClick={() => setConfirmingClear(false)}>
@@ -957,7 +971,7 @@ export function ProfileNotifications() {
   );
 }
 
-type AppLockStep = 'settings' | 'setupPin' | 'confirmPin';
+type AppLockStep = 'settings' | 'verifyPin' | 'setupPin' | 'confirmPin';
 
 export function ProfileAppLock() {
   const { back } = useRouter();
@@ -970,6 +984,61 @@ export function ProfileAppLock() {
   const [pinInput, setPinInput] = useState('');
   const [pendingPin, setPendingPin] = useState('');
   const [error, setError] = useState('');
+  // Turning App Lock off or changing its PIN first asks for the current PIN, so someone holding
+  // the unlocked phone can't lock the owner out with a PIN of their own.
+  const [afterVerify, setAfterVerify] = useState<'disable' | 'change'>('disable');
+  const [lockedUntil, setLockedUntil] = useState(() => storageGet(StorageKeys.appLockLockedUntil, 0));
+  const [now, setNow] = useState(() => Date.now());
+  const isLockedOut = lockedUntil > now;
+
+  useEffect(() => {
+    if (!isLockedOut) return;
+    const id = window.setInterval(() => setNow(Date.now()), 500);
+    return () => window.clearInterval(id);
+  }, [isLockedOut]);
+
+  function startVerify(next: 'disable' | 'change') {
+    setAfterVerify(next);
+    setStep('verifyPin');
+    setPinInput('');
+    setError('');
+  }
+
+  async function verifyCurrentPin(value: string) {
+    if (storageGet(StorageKeys.appLockLockedUntil, 0) > Date.now()) {
+      setPinInput('');
+      return;
+    }
+    const salt = storageGet<string>(StorageKeys.appLockPinSalt, '');
+    const storedHash = storageGet<string>(StorageKeys.appLockPinHash, '');
+    if ((await hashPin(value, salt)) === storedHash) {
+      storageSet(StorageKeys.appLockFailedAttempts, 0);
+      storageRemove(StorageKeys.appLockLockedUntil);
+      if (afterVerify === 'disable') {
+        disable();
+        setStep('settings');
+        setPinInput('');
+      } else {
+        startEnable();
+      }
+      return;
+    }
+    // Same escalating lockout as the lock screen itself; this entry point must not be a way around it.
+    const failed = storageGet(StorageKeys.appLockFailedAttempts, 0) + 1;
+    storageSet(StorageKeys.appLockFailedAttempts, failed);
+    const lockoutMs = lockoutMsFor(failed);
+    if (lockoutMs > 0) {
+      const until = Date.now() + lockoutMs;
+      storageSet(StorageKeys.appLockLockedUntil, until);
+      setLockedUntil(until);
+      setNow(Date.now());
+      setError('');
+    } else {
+      setError('Incorrect PIN');
+    }
+    hapticWarning();
+    setPinInput('');
+  }
 
   async function completeSetup(pin: string) {
     const salt = randomSalt();
@@ -986,7 +1055,15 @@ export function ProfileAppLock() {
 
   function onPinChange(value: string) {
     setPinInput(value);
-    if (value.length !== 4) return;
+    if (value.length !== 4) {
+      if (error && step === 'verifyPin') setError('');
+      return;
+    }
+
+    if (step === 'verifyPin') {
+      void verifyCurrentPin(value);
+      return;
+    }
 
     if (step === 'setupPin') {
       setPendingPin(value);
@@ -1055,6 +1132,28 @@ export function ProfileAppLock() {
       : biometricUnavailableReason(biometrics);
   const biometricPossible = enabled && !!biometrics?.available;
 
+  if (step === 'verifyPin') {
+    return (
+      <div className="screen">
+        <ScreenHeader title="App Lock" onBack={() => setStep('settings')} />
+        <PinPad
+          title="Enter current PIN"
+          subtitle={
+            isLockedOut
+              ? `Too many attempts. Try again in ${formatLockoutRemaining(lockedUntil, now)}`
+              : afterVerify === 'disable'
+                ? 'Confirm it to turn App Lock off'
+                : 'Confirm it before choosing a new one'
+          }
+          value={pinInput}
+          onChange={onPinChange}
+          error={error}
+          disabled={isLockedOut}
+        />
+      </div>
+    );
+  }
+
   if (step === 'setupPin') {
     return (
       <div className="screen">
@@ -1089,7 +1188,7 @@ export function ProfileAppLock() {
             <button
               type="button"
               className={`pf__switch${enabled ? ' pf__switch--on' : ''}`}
-              onClick={() => (enabled ? disable() : startEnable())}
+              onClick={() => (enabled ? startVerify('disable') : startEnable())}
               aria-label="Toggle app lock"
             >
               <span className="pf__switch-knob" />
@@ -1117,7 +1216,7 @@ export function ProfileAppLock() {
           {enabled && (
             <>
               <div className="pf__divider" />
-              <button type="button" className="pf__row" onClick={startEnable}>
+              <button type="button" className="pf__row" onClick={() => startVerify('change')}>
                 <span className="pf__row-icon pf__row-icon--orange">
                   <Icon name="lock" size={18} />
                 </span>

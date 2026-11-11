@@ -36,6 +36,20 @@ export async function putFile(record: VaultFileRecord): Promise<void> {
   });
 }
 
+/** Writes every record in one transaction: either all of them land or none do. */
+export async function putFiles(records: VaultFileRecord[]): Promise<void> {
+  if (records.length === 0) return;
+  const db = await openDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const store = tx.objectStore(STORE_NAME);
+    for (const record of records) store.put(record);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(tx.error);
+  });
+}
+
 export async function getAllFiles(): Promise<VaultFileRecord[]> {
   const db = await openDb();
   return new Promise((resolve, reject) => {

@@ -9,6 +9,9 @@
   width: 100%;
   aspect-ratio: 1220 / 272;
   margin-bottom: var(--safe-bottom);
+  /* Cancels the Text Size page zoom: the bar is drawn to the mockup's geometry, so its icons and
+     labels must not grow inside the fixed frame. */
+  zoom: calc(1 / var(--text-scale, 1));
   z-index: 2;
 }
 
@@ -85,3 +88,17 @@
   user-select: none;
 }
 
+
+/* Light theme: the mockup's pale greys are drawn for a dark backdrop and wash out on a light one
+   (under 2:1 contrast), so the icons and labels use darker tones of the same hues there. */
+:root[data-theme='light'] .bottom-nav__item {
+  color: #5f6f8c;
+}
+
+:root[data-theme='light'] .bottom-nav__item--active {
+  color: #2f6fe8;
+}
+
+:root[data-theme='light'] .bottom-nav__item--brand .bottom-nav__label {
+  color: #7a54f0;
+}

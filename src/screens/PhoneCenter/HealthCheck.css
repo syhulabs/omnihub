@@ -116,7 +116,8 @@
   align-items: center;
   justify-content: center;
   gap: 20px;
-  padding: 20px;
+  /* Full-screen, so its hint and buttons must clear the status bar and the system nav bar. */
+  padding: calc(20px + var(--safe-top)) 20px calc(20px + var(--safe-bottom));
 }
 
 .hct__overlay--dark {

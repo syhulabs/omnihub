@@ -105,9 +105,28 @@ export interface BackupPayload {
   data: Record<string, unknown>;
 }
 
+/** Never written to a backup file or restored from one. The App Lock PIN hash is trivially
+ *  brute-forced once it leaves the phone (10,000 possible PINs), and lockout counters and the
+ *  biometric flags describe this install, not the user's data. */
+const BACKUP_EXCLUDED_KEYS = new Set<string>([
+  StorageKeys.appLockEnabled,
+  StorageKeys.appLockPinHash,
+  StorageKeys.appLockPinSalt,
+  StorageKeys.appLockBiometricEnabled,
+  StorageKeys.appLockFailedAttempts,
+  StorageKeys.appLockLockedUntil,
+  StorageKeys.vaultFailedAttempts,
+  StorageKeys.vaultLockedUntil,
+  StorageKeys.vaultBiometricEnabled,
+]);
+
+/** The Vault's PIN salt, PIN check and encrypted notes: one unit, only meaningful together. */
+const VAULT_KEYS = new Set<string>([StorageKeys.vaultSalt, StorageKeys.vaultCanary, StorageKeys.vaultNotes]);
+
 export function exportBackup(): BackupPayload {
   const data: Record<string, unknown> = {};
   for (const key of allOmniHubKeys()) {
+    if (BACKUP_EXCLUDED_KEYS.has(key)) continue;
     const raw = localStorage.getItem(key);
     if (raw === null) continue;
     try {
@@ -124,7 +143,19 @@ export function exportBackup(): BackupPayload {
   };
 }
 
-export function importBackup(payload: unknown): { imported: number } {
+/** Synced lists hold `{ id, updatedAt }` items. A restored item gets a fresh updatedAt so it wins
+ *  the next cloud merge: otherwise a newer cloud tombstone (the very deletion the user is undoing
+ *  by restoring) would remove it again the moment its tool is opened. */
+function restampSyncedItems(value: unknown, now: number): unknown {
+  if (!Array.isArray(value)) return value;
+  return value.map((item) =>
+    item && typeof item === 'object' && typeof (item as { id?: unknown }).id === 'string' && typeof (item as { updatedAt?: unknown }).updatedAt === 'number'
+      ? { ...item, updatedAt: now }
+      : item,
+  );
+}
+
+export function importBackup(payload: unknown): { imported: number; vaultSkipped: boolean } {
   if (
     typeof payload !== 'object' ||
     payload === null ||
@@ -134,13 +165,26 @@ export function importBackup(payload: unknown): { imported: number } {
     throw new Error('This file is not a valid Omni Hub backup.');
   }
   const { data } = payload as BackupPayload;
+  // A Vault already set up on this phone keeps its own PIN and contents: restoring another salt
+  // over it would leave its files (encrypted under the current PIN) impossible to open.
+  const hasLocalVault = storageGet<string | null>(StorageKeys.vaultSalt, null) !== null;
+  const now = Date.now();
   let imported = 0;
+  let vaultSkipped = false;
   for (const [key, value] of Object.entries(data)) {
-    if (!key.startsWith(PREFIX)) continue;
-    storageSet(key, value);
+    if (!key.startsWith(PREFIX) || BACKUP_EXCLUDED_KEYS.has(key)) continue;
+    if (VAULT_KEYS.has(key)) {
+      if (hasLocalVault) {
+        vaultSkipped = true;
+        continue;
+      }
+      storageSet(key, value);
+    } else {
+      storageSet(key, restampSyncedItems(value, now));
+    }
     imported++;
   }
-  return { imported };
+  return { imported, vaultSkipped };
 }
 
 export function clearAllData(): void {

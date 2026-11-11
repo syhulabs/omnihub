@@ -337,6 +337,15 @@ export function SensorTest({ onComplete, onCancel }: TestProps) {
         if (variance > SENSOR_VARIANCE_THRESHOLD) setDetected(true);
       }
     }
+    // iOS only delivers motion events after this permission call, which must come from a tap;
+    // this test mounts straight from the "Tap to test" tap. Android has no such gate.
+    const requestPermission = (DeviceMotionEvent as unknown as { requestPermission?: () => Promise<'granted' | 'denied'> })
+      .requestPermission;
+    if (typeof requestPermission === 'function') {
+      requestPermission.call(DeviceMotionEvent).catch(() => {
+        // refused or not allowed here: the listener below simply never fires and the test times out
+      });
+    }
     window.addEventListener('devicemotion', handleMotion);
     return () => window.removeEventListener('devicemotion', handleMotion);
   }, []);

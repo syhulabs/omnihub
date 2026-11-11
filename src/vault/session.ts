@@ -35,6 +35,33 @@ export function resumeVaultKey(): CryptoKey | null {
   return parked.key;
 }
 
+/** Shortest time in the background that locks an open Vault, even on "Immediately": a moment in
+ *  the app switcher or a system dialog shouldn't throw the user out mid-note. */
+const MIN_BACKGROUND_LOCK_MS = 10_000;
+
+/** Whether an open Vault should lock after `backgroundMs` with the app in the background. */
+export function shouldLockAfterBackground(backgroundMs: number): boolean {
+  const minutes = vaultAutoLockMinutes();
+  if (minutes === NEVER) return false;
+  return backgroundMs >= Math.max(minutes * 60_000, MIN_BACKGROUND_LOCK_MS);
+}
+
+/* The Vault's own file picker and share sheet send the app to the background while the user is
+   still working in the Vault. Locking on the way back would drop the key the picked file is about
+   to be encrypted with, so those flows announce themselves first. */
+let externalActivityUntil = 0;
+
+export function expectVaultExternalActivity() {
+  externalActivityUntil = Date.now() + 5 * 60_000;
+}
+
+/** True once per announced picker/share round trip. */
+export function consumeVaultExternalActivity(): boolean {
+  const expected = Date.now() < externalActivityUntil;
+  externalActivityUntil = 0;
+  return expected;
+}
+
 /** Explicit lock, PIN change or reset: nothing may survive it. */
 export function forgetVaultKey() {
   parked = null;

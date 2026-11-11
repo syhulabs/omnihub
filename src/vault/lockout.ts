@@ -14,9 +14,17 @@ export function lockoutMsFor(failedAttempts: number): number {
   return LOCKOUT_SCHEDULE_SEC[tier] * 1000;
 }
 
+const MAX_LOCKOUT_MS = LOCKOUT_SCHEDULE_SEC[LOCKOUT_SCHEDULE_SEC.length - 1] * 1000;
+
+/** A stored lock-until time, never further away than the longest lockout: if the phone's clock was
+ *  ahead when the lockout started and is corrected afterwards, the wait must not grow with it. */
+export function clampLockedUntil(until: number): number {
+  return Math.min(until, Date.now() + MAX_LOCKOUT_MS);
+}
+
 /** Epoch millis until which PIN entry is refused, or 0. */
 export function vaultLockedUntil(): number {
-  return storageGet(StorageKeys.vaultLockedUntil, 0);
+  return clampLockedUntil(storageGet(StorageKeys.vaultLockedUntil, 0));
 }
 
 export function isVaultLockedOut(): boolean {

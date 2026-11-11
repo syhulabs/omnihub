@@ -222,6 +222,10 @@
 }
 
 .rg__action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   min-height: 52px;
   border-radius: var(--radius-pill);
   background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 85%, white 10%), var(--accent));

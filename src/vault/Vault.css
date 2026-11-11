@@ -115,6 +115,26 @@
 /* Optional row under the keypad: biometric unlock */
 .vault-pin__action {
   margin-top: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.vault-pin__forgot {
+  min-height: 36px;
+  padding: 0 12px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.vault__reset-confirm--locked {
+  max-width: 340px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  text-align: left;
 }
 
 .vault-pin__action-btn {
