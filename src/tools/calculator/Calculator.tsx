@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useBackHandler } from '../../app/useBackHandler';
 import { Icon } from '../../components/Icon';
 import { useRouter } from '../../app/Router';
 import { storageGet, storageSet, StorageKeys } from '../../storage/db';
@@ -17,6 +18,9 @@ export function Calculator() {
   const [expression, setExpression] = useState('');
   const [showHistory, setShowHistory] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
+
+  // Hardware back closes an open sheet or panel instead of leaving the tool.
+  useBackHandler(() => setShowHistory(false), showHistory);
   const [history, setHistory] = useState<CalculatorHistoryEntry[]>(() =>
     storageGet(StorageKeys.calculatorHistory, []),
   );
@@ -50,11 +54,24 @@ export function Calculator() {
   }
 
   function inputPercent() {
-    setDisplay((d) => (d === 'Error' ? '0' : formatResult(parseFloat(d) / 100)));
+    if (display === 'Error') {
+      setDisplay('0');
+      return;
+    }
+    const value = parseFloat(display);
+    // As on a phone's own calculator: after + or -, the percentage is of the first number
+    // (200 + 10 % = 220), otherwise it is a plain hundredth (200 x 10 % = 20).
+    const relative = storedValue !== null && (operator === '+' || operator === '-') && !waitingForNewValue;
+    setDisplay(formatResult(relative ? (storedValue * value) / 100 : value / 100));
   }
 
   function backspace() {
-    setDisplay((d) => (d === 'Error' || d.length <= 1 ? '0' : d.slice(0, -1)));
+    setDisplay((d) => {
+      if (d === 'Error' || d.length <= 1) return '0';
+      const next = d.slice(0, -1);
+      // "-5" must not become a bare "-", which then evaluates to Error.
+      return next === '-' || next === '-0' ? '0' : next;
+    });
   }
 
   function chooseOperator(nextOp: Operator) {

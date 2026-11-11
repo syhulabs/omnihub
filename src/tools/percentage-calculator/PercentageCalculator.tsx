@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useBackHandler } from '../../app/useBackHandler';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon, type IconName } from '../../components/Icon';
 import { useRouter } from '../../app/Router';
@@ -46,6 +47,9 @@ const MAX_HISTORY = 20;
 
 function formatNumber(n: number): string {
   if (!Number.isFinite(n)) return '—';
+  // Two decimals for ordinary results; small ones keep their leading digits instead of showing 0
+  // (0.05% of 5 is 0.0025, not 0).
+  if (n !== 0 && Math.abs(n) < 0.01) return n.toLocaleString(undefined, { maximumSignificantDigits: 3 });
   return n.toLocaleString(undefined, { maximumFractionDigits: 2 });
 }
 
@@ -54,7 +58,9 @@ function compute(mode: Mode, a: number, b: number): number | null {
   if (mode === 'of') return (a / 100) * b;
   if (mode === 'isWhatPercent') return b === 0 ? null : (a / b) * 100;
   if (a === 0) return null;
-  return ((b - a) / a) * 100;
+  // Relative to the size of the starting value: going from -50 to 50 is a rise (+200%), and
+  // dividing by a negative start reported it as a fall.
+  return ((b - a) / Math.abs(a)) * 100;
 }
 
 export function PercentageCalculator() {
@@ -64,6 +70,9 @@ export function PercentageCalculator() {
   const [bText, setBText] = useState('');
   const [computed, setComputed] = useState<number | null>(null);
   const [showHistory, setShowHistory] = useState(false);
+
+  // Hardware back closes an open sheet or panel instead of leaving the tool.
+  useBackHandler(() => setShowHistory(false), showHistory);
   const [history, setHistory] = useState<HistoryEntry[]>(() => storageGet(StorageKeys.percentageHistory, []));
 
   const a = parseFloat(aText);

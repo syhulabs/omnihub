@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useBackHandler } from '../../app/useBackHandler';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon } from '../../components/Icon';
 import { SwipeToDelete } from '../../components/SwipeToDelete';
@@ -6,6 +7,7 @@ import { useRouter } from '../../app/Router';
 import { storageGet, storageSet, StorageKeys } from '../../storage/db';
 import { useCloudSync } from '../../cloud/useCloudSync';
 import { hapticSelect, hapticTap } from '../../haptics';
+import { isShareCancel, saveOrShareFile } from '../../share/saveFile';
 import { CURRENCIES, DEFAULT_CURRENCY, appDefaultCurrency, formatMoney } from '../shared/currencies';
 import { CalendarPicker } from '../age-date/CalendarPicker';
 import { parseISODate, toISODate } from '../age-date/dateMath';
@@ -49,6 +51,14 @@ export function DebtCalculator() {
   const [showCalendarSheet, setShowCalendarSheet] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [exportStatus, setExportStatus] = useState<string | null>(null);
+
+  // Hardware back closes an open sheet or panel instead of leaving the tool.
+  useBackHandler(() => setShowMenu(false), showMenu);
+  useBackHandler(() => setShowStats(false), showStats);
+  useBackHandler(() => setShowCalendarSheet(false), showCalendarSheet);
+  useBackHandler(() => setShowSettings(false), showSettings);
+  useBackHandler(() => setShowCurrencySheet(false), showCurrencySheet);
+  useBackHandler(() => setShowDueCalendar(false), showDueCalendar);
 
   function rawPersist(next: DebtEntry[]) {
     setDebts(next);
@@ -106,6 +116,10 @@ export function DebtCalculator() {
   }, [owedToMeDebts, iOweDebts, debts, currency]);
 
   const currencyOption = CURRENCIES.find((c) => c.code === currency);
+  // Two debts from the same friend are one person, not two.
+  const countPeople = (list: DebtEntry[]) => new Set(list.map((d) => d.person.trim().toLowerCase())).size;
+  const owedToMePeople = countPeople(owedToMeDebts);
+  const iOwePeople = countPeople(iOweDebts);
 
   function exportCsv() {
     hapticTap();
@@ -124,14 +138,13 @@ export function DebtCalculator() {
         .join(','),
     );
     const csv = [header, ...rows].join('\n');
-    if (navigator.share) {
-      navigator
-        .share({ title: 'Debt Tracker Export', text: csv })
-        .then(() => setExportStatus('Shared.'))
-        .catch(() => {});
-    } else if (navigator.clipboard) {
-      navigator.clipboard.writeText(csv).then(() => setExportStatus('Copied CSV to clipboard.'));
-    }
+    // A real .csv file through the system share sheet (a download in a browser); the Web Share
+    // API used before isn't available in the Android WebView.
+    saveOrShareFile(new Blob([csv], { type: 'text/csv' }), 'debts.csv', 'Debt Tracker Export')
+      .then(() => setExportStatus('Export ready.'))
+      .catch((err) => {
+        if (!isShareCancel(err)) setExportStatus("Couldn't export. Try again.");
+      });
   }
 
   const upcoming = useMemo(
@@ -161,7 +174,7 @@ export function DebtCalculator() {
             <div>
               <span>Owed to You</span>
               <strong className="dc__summary-value--green">{formatMoney(owedToMe, currency)}</strong>
-              <em>{owedToMeDebts.length} {owedToMeDebts.length === 1 ? 'person owes' : 'people owe'} you</em>
+              <em>{owedToMePeople} {owedToMePeople === 1 ? 'person owes' : 'people owe'} you</em>
             </div>
           </div>
           <div className="dc__summary-item dc__summary-item--red">
@@ -171,7 +184,7 @@ export function DebtCalculator() {
             <div>
               <span>You Owe</span>
               <strong className="dc__summary-value--red">{formatMoney(iOwe, currency)}</strong>
-              <em>{iOweDebts.length} {iOweDebts.length === 1 ? 'person' : 'people'} you owe</em>
+              <em>{iOwePeople} {iOwePeople === 1 ? 'person' : 'people'} you owe</em>
             </div>
           </div>
         </div>
@@ -535,7 +548,8 @@ function DebtGroup({
   totalCurrency: string;
 }) {
   if (debts.length === 0) return null;
-  const total = debts.reduce((sum, d) => sum + d.amount, 0);
+  // Only the amounts in the currency the total is shown in: RM100 + $50 is not "$150".
+  const total = debts.filter((d) => (d.currency ?? DEFAULT_CURRENCY) === totalCurrency).reduce((sum, d) => sum + d.amount, 0);
   return (
     <div className="dc__group">
       <div className="dc__group-header">
@@ -561,7 +575,7 @@ function DebtGroup({
                         {tone === 'green' ? 'Owes you' : 'You owe'}
                       </span>
                     </span>
-                    <span className="dc__row-note">{debt.debtName ?? debt.note ?? ''}</span>
+                    <span className="dc__row-note">{[debt.debtName, debt.note].filter(Boolean).join(' · ')}</span>
                     {debt.dueAt && (
                       <span className="dc__row-due">
                         <Icon name="calendar" size={11} /> {formatDue(debt.dueAt)}

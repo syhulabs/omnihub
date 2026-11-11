@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useBackHandler } from '../../app/useBackHandler';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon } from '../../components/Icon';
 import { SearchBar } from '../../components/SearchBar';
@@ -7,6 +8,7 @@ import { storageGet, storageSet, StorageKeys } from '../../storage/db';
 import { useCloudSync } from '../../cloud/useCloudSync';
 import { hapticSelect, hapticTap } from '../../haptics';
 import { AddExpense } from './AddExpense';
+import { isShareCancel, saveOrShareFile } from '../../share/saveFile';
 import { EXPENSE_CATEGORIES, getCategory } from './categories';
 import { currentMonthKey, formatMonthLabel, shiftMonthKey } from './month';
 import { CURRENCIES, appDefaultCurrency, currencySymbol, formatMoney } from '../shared/currencies';
@@ -39,6 +41,10 @@ export function ExpenseTracker() {
   const [currency, setCurrency] = useState(() => storageGet(StorageKeys.expenseDefaultCurrency, appDefaultCurrency()));
   const [toast, setToast] = useState<string | null>(null);
 
+  // Hardware back closes an open sheet or panel instead of leaving the tool.
+  useBackHandler(() => setShowMenu(false), showMenu);
+  useBackHandler(() => setShowCurrencySheet(false), showCurrencySheet);
+
   function selectCurrency(code: string) {
     hapticSelect();
     setCurrency(code);
@@ -54,7 +60,12 @@ export function ExpenseTracker() {
   const { persist } = useCloudSync('expenses', expenses, rawPersist);
 
   const monthExpenses = useMemo(
-    () => expenses.filter((e) => e.dateISO.slice(0, 7) === monthKey).sort((a, b) => (a.dateISO < b.dateISO ? 1 : -1)),
+    // Newest day first, and within a day the most recently entered first. (The old comparator
+    // returned -1 for equal dates, which reversed each day and hid the expense just added.)
+    () =>
+      expenses
+        .filter((e) => e.dateISO.slice(0, 7) === monthKey)
+        .sort((a, b) => b.dateISO.localeCompare(a.dateISO) || (b.updatedAt ?? 0) - (a.updatedAt ?? 0)),
     [expenses, monthKey],
   );
 
@@ -123,12 +134,20 @@ export function ExpenseTracker() {
         .join(','),
     );
     const csv = [header, ...rows].join('\n');
-    if (navigator.share) {
-      navigator.share({ title: `Expenses — ${formatMonthLabel(monthKey)}`, text: csv }).catch(() => {});
-    } else if (navigator.clipboard) {
-      navigator.clipboard.writeText(csv).then(() => setToast('Copied CSV to clipboard.'));
-    }
+    // A real .csv file through the system share sheet (a download in a browser). The Web Share
+    // API this used before isn't available in the Android WebView, so Export only ever copied text.
+    saveOrShareFile(new Blob([csv], { type: 'text/csv' }), `expenses-${monthKey}.csv`, `Expenses — ${formatMonthLabel(monthKey)}`).catch(
+      (err) => {
+        if (!isShareCancel(err)) setToast("Couldn't export. Try again.");
+      },
+    );
     setShowMenu(false);
+  }
+
+  function changeMonth(delta: number) {
+    setMonthKey(shiftMonthKey(monthKey, delta));
+    // A category filter from another month would show "No matching transactions" with no chip lit.
+    setHistoryFilter(null);
   }
 
   if (adding) {
@@ -156,12 +175,12 @@ export function ExpenseTracker() {
       />
 
       <div className="et__month-nav">
-        <button type="button" onClick={() => setMonthKey(shiftMonthKey(monthKey, -1))} aria-label="Previous month">
+        <button type="button" onClick={() => changeMonth(-1)} aria-label="Previous month">
           <Icon name="chevron-right" size={18} className="et__prev-icon" />
         </button>
         <Icon name="calendar" size={14} />
         <span>{formatMonthLabel(monthKey)}</span>
-        <button type="button" onClick={() => setMonthKey(shiftMonthKey(monthKey, 1))} aria-label="Next month">
+        <button type="button" onClick={() => changeMonth(1)} aria-label="Next month">
           <Icon name="chevron-right" size={18} />
         </button>
       </div>

@@ -48,10 +48,29 @@ export function PersonEditor({ person, isMe, onSave, onDelete, onClose }: Person
   const breakdown = birth && !isFuture ? ageBreakdown(birth, today) : null;
   const next = birth && !isFuture ? nextBirthday(birth, today) : null;
 
+  /** Stores the photo as a small centre-cropped JPEG (about 20 KB). The original was kept as a
+   *  full-size data URL in localStorage: one 4 MB camera photo filled the WebView's entire quota,
+   *  failed to save, and left every other tool unable to save either. */
   function pickPhoto(file: File) {
-    const reader = new FileReader();
-    reader.onload = () => setPhoto(String(reader.result));
-    reader.readAsDataURL(file);
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const size = 256;
+      const scale = Math.max(size / img.width, size / img.height);
+      const width = img.width * scale;
+      const height = img.height * scale;
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(img, (size - width) / 2, (size - height) / 2, width, height);
+        setPhoto(canvas.toDataURL('image/jpeg', 0.82));
+      }
+      URL.revokeObjectURL(url);
+    };
+    img.onerror = () => URL.revokeObjectURL(url);
+    img.src = url;
   }
 
   function save() {

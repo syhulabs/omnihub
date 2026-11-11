@@ -17,8 +17,15 @@ interface ChecklistDetailProps {
 
 interface DragState {
   id: string;
-  items: ChecklistItem[];
+  /** Index of the dragged row when the drag began, and where it would land if dropped now. */
+  startIndex: number;
+  targetIndex: number;
   offsetY: number;
+  startY: number;
+  /** Height of one row plus the gap between rows. */
+  slot: number;
+  /** Vertical centre of every row as it lay when the drag began. */
+  mids: number[];
 }
 
 function formatDue(ts: number): string {
@@ -50,7 +57,9 @@ export function ChecklistDetail({ list, onChange, onDelete, onClose, onDuplicate
   const [dragState, setDragState] = useState<DragState | null>(null);
 
   const itemRefs = useRef<Record<string, HTMLLIElement | null>>({});
-  const dragStartY = useRef(0);
+  const dragRef = useRef<DragState | null>(null);
+  const listRef = useRef(list);
+  listRef.current = list;
 
   useBackHandler(() => {
     if (confirmingDelete) setConfirmingDelete(false);
@@ -134,43 +143,78 @@ export function ChecklistDetail({ list, onChange, onDelete, onClose, onDuplicate
     setShowMore(false);
   }
 
+  /* Reordering keeps the DOM order untouched while a row is dragged: the dragged row follows the
+     finger by transform and the rows it passes slide one slot aside, and the list is only
+     rewritten on drop. Moving the row in the DOM mid-drag (the earlier approach) made the browser
+     drop the pointer capture, which froze the drag and lost the new order. The listeners live on
+     the window for the same reason: they must not depend on any one element surviving. */
   function startDrag(id: string, e: ReactPointerEvent<HTMLButtonElement>) {
-    e.currentTarget.setPointerCapture(e.pointerId);
-    dragStartY.current = e.clientY;
-    setDragState({ id, items: list.items, offsetY: 0 });
+    const startIndex = list.items.findIndex((i) => i.id === id);
+    if (startIndex < 0 || dragRef.current) return;
+    const rects = list.items.map((i) => itemRefs.current[i.id]?.getBoundingClientRect() ?? null);
+    const own = rects[startIndex];
+    if (!own) return;
+    // One slot = the dragged row plus the gap between rows.
+    const next = rects[startIndex + 1];
+    const prev = rects[startIndex - 1];
+    const gap = next ? next.top - own.bottom : prev ? own.top - prev.bottom : 0;
+    const drag: DragState = {
+      id,
+      startIndex,
+      targetIndex: startIndex,
+      offsetY: 0,
+      startY: e.clientY,
+      slot: own.height + gap,
+      mids: rects.map((r) => (r ? r.top + r.height / 2 : 0)),
+    };
+    dragRef.current = drag;
+    setDragState(drag);
     hapticTap();
+
+    const onMove = (ev: PointerEvent) => {
+      const current = dragRef.current;
+      if (!current) return;
+      const offsetY = ev.clientY - current.startY;
+      const draggedMid = current.mids[current.startIndex] + offsetY;
+      let targetIndex = 0;
+      current.mids.forEach((mid, index) => {
+        if (index !== current.startIndex && draggedMid > mid) targetIndex++;
+      });
+      if (targetIndex !== current.targetIndex) hapticSelect();
+      const nextState = { ...current, offsetY, targetIndex };
+      dragRef.current = nextState;
+      setDragState(nextState);
+    };
+    const onEnd = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onEnd);
+      window.removeEventListener('pointercancel', onEnd);
+      const current = dragRef.current;
+      dragRef.current = null;
+      setDragState(null);
+      if (!current || current.targetIndex === current.startIndex) return;
+      const items = [...listRef.current.items];
+      const from = items.findIndex((i) => i.id === current.id);
+      if (from < 0) return;
+      const [moved] = items.splice(from, 1);
+      items.splice(Math.min(current.targetIndex, items.length), 0, moved);
+      update({ items });
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onEnd);
+    window.addEventListener('pointercancel', onEnd);
   }
 
-  function moveDrag(e: ReactPointerEvent<HTMLButtonElement>) {
-    if (!dragState) return;
-    const offsetY = e.clientY - dragStartY.current;
-    const others = dragState.items.filter((i) => i.id !== dragState.id);
-    let targetIndex = 0;
-    for (const it of others) {
-      const rect = itemRefs.current[it.id]?.getBoundingClientRect();
-      if (!rect) continue;
-      const mid = rect.top + rect.height / 2;
-      if (e.clientY > mid) targetIndex++;
-    }
-    const currentIndex = dragState.items.findIndex((i) => i.id === dragState.id);
-    let items = dragState.items;
-    if (targetIndex !== currentIndex) {
-      items = [...dragState.items];
-      const [moved] = items.splice(currentIndex, 1);
-      items.splice(targetIndex, 0, moved);
-      hapticSelect();
-    }
-    setDragState({ id: dragState.id, items, offsetY });
-  }
-
-  function endDrag() {
-    if (!dragState) return;
-    update({ items: dragState.items });
-    setDragState(null);
+  /** Where a row sits while a drag is in progress: with the finger, or one slot aside. */
+  function dragTransform(index: number): string | undefined {
+    if (!dragState) return undefined;
+    if (index === dragState.startIndex) return `translateY(${dragState.offsetY}px)`;
+    if (dragState.startIndex < index && index <= dragState.targetIndex) return `translateY(${-dragState.slot}px)`;
+    if (dragState.targetIndex <= index && index < dragState.startIndex) return `translateY(${dragState.slot}px)`;
+    return undefined;
   }
 
   const doneCount = list.items.filter((i) => i.checked).length;
-  const displayItems = dragState?.items ?? list.items;
 
   return (
     <div className="screen">
@@ -186,10 +230,10 @@ export function ChecklistDetail({ list, onChange, onDelete, onClose, onDuplicate
             aria-label="Delete list"
           >
             <Icon name="trash" size={18} />
-      {copiedNotice && <p className="cl__copied">Copied to clipboard</p>}
           </button>
         }
       />
+      {copiedNotice && <p className="cl__copied">Copied to clipboard</p>}
 
       {confirmingDelete && (
         <div className="cl-detail__confirm">
@@ -258,14 +302,14 @@ export function ChecklistDetail({ list, onChange, onDelete, onClose, onDuplicate
           <p className="cl-detail__empty">No items yet. Add your first one above.</p>
         ) : (
           <ul className="cl-detail__items">
-            {displayItems.map((item) => (
+            {list.items.map((item, index) => (
               <li
                 key={item.id}
                 ref={(el) => {
                   itemRefs.current[item.id] = el;
                 }}
                 className={`cl-detail__item${dragState?.id === item.id ? ' cl-detail__item--dragging' : ''}`}
-                style={dragState?.id === item.id ? { transform: `translateY(${dragState.offsetY}px)` } : undefined}
+                style={dragState ? { transform: dragTransform(index) } : undefined}
               >
                 <button
                   type="button"
@@ -312,9 +356,6 @@ export function ChecklistDetail({ list, onChange, onDelete, onClose, onDuplicate
                     type="button"
                     className="cl-detail__handle"
                     onPointerDown={(e) => startDrag(item.id, e)}
-                    onPointerMove={moveDrag}
-                    onPointerUp={endDrag}
-                    onPointerCancel={endDrag}
                     aria-label="Drag to reorder"
                   >
                     <Icon name="sort" size={15} />

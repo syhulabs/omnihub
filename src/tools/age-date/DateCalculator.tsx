@@ -69,8 +69,11 @@ export function DateCalculator() {
   const shiftDate = parseISODate(shiftDateISO);
   const shiftResult = useMemo(() => {
     if (!shiftDate) return null;
-    const amount = parseInt(shiftAmount, 10) || 0;
-    return addDays(shiftDate, amount * shiftDirection);
+    // Capped at 1,000 years either way: beyond the range of a JS Date the result printed as
+    // "undefined, undefined NaN, NaN".
+    const amount = Math.min(parseInt(shiftAmount, 10) || 0, 365_250);
+    const result = addDays(shiftDate, Math.max(amount, 0) * shiftDirection);
+    return Number.isNaN(result.getTime()) ? null : result;
   }, [shiftDate, shiftAmount, shiftDirection]);
 
   return (

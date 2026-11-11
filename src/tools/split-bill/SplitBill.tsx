@@ -7,15 +7,13 @@ import './SplitBill.css';
 
 const TIP_PRESETS = [0, 10, 15, 20];
 
-const CURRENCY = appDefaultCurrency();
-const SYMBOL = currencySymbol(CURRENCY);
-
-function formatMoney(amount: number): string {
-  return sharedFormatMoney(Number.isFinite(amount) ? amount : 0, CURRENCY);
-}
-
 export function SplitBill() {
   const { back } = useRouter();
+  // Read on every visit, not once when the app loads: changing Default Currency in Settings used
+  // to leave this tool on the old symbol until the app was force-closed.
+  const CURRENCY = appDefaultCurrency();
+  const SYMBOL = currencySymbol(CURRENCY);
+  const formatMoney = (amount: number) => sharedFormatMoney(Number.isFinite(amount) ? amount : 0, CURRENCY);
   const [billText, setBillText] = useState('');
   const [tipPercent, setTipPercent] = useState(0);
   const [people, setPeople] = useState(2);
@@ -28,7 +26,9 @@ export function SplitBill() {
     return {
       tipAmount: tip,
       total: grandTotal,
-      totalPerPerson: grandTotal / people,
+      // Rounded up to the cent so the shares always cover the bill: $100 between 3 is $33.34 each,
+      // not $33.33 (which collects $99.99).
+      totalPerPerson: Math.ceil((grandTotal * 100) / people - 1e-9) / 100,
       tipPerPerson: tip / people,
     };
   }, [bill, tipPercent, people]);

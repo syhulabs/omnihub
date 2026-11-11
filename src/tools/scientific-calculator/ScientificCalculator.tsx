@@ -4,14 +4,31 @@ import { useRouter } from '../../app/Router';
 import { evaluateExpression, type AngleMode } from './evaluate';
 import './ScientificCalculator.css';
 
+/** Twelve significant digits: hides binary rounding noise without flattening small results to 0
+ *  (rounding to ten decimal places turned 10^-11 into 0 and 10^300 into Infinity). */
 function roundResult(n: number): number {
-  return Math.round(n * 1e10) / 1e10;
+  return Number(n.toPrecision(12));
+}
+
+/** How a result is written back into the expression: plain digits, with a capital E for the
+ *  exponent form JS uses for very large and very small numbers ("5E-7"), which the evaluator
+ *  reads back as one number. A lowercase e there was re-read as "times the constant e". */
+function toExpressionText(n: number): string {
+  return String(roundResult(n)).replace('e', 'E');
 }
 
 /** Display form with thousands separators; never fed back into the expression (see equals). */
 function formatResult(n: number): string {
   if (!Number.isFinite(n)) return 'Error';
-  return roundResult(n).toLocaleString(undefined, { maximumFractionDigits: 10 });
+  const rounded = roundResult(n);
+  const magnitude = Math.abs(rounded);
+  if (magnitude !== 0 && (magnitude < 1e-9 || magnitude >= 1e15)) return rounded.toExponential().replace('e', 'E');
+  return rounded.toLocaleString(undefined, { maximumFractionDigits: 10 });
+}
+
+/** The expression as shown: the keys say π, × and ÷, so the display does too. */
+function displayExpression(expression: string): string {
+  return expression.replace(/pi/g, 'π').replace(/\*/g, '×').replace(/\//g, '÷');
 }
 
 export function ScientificCalculator() {
@@ -38,7 +55,8 @@ export function ScientificCalculator() {
   }
 
   function backspace() {
-    setExpression((prev) => prev.slice(0, -1));
+    // "Error" is a state, not text to edit: one backspace clears it instead of leaving "Erro".
+    setExpression((prev) => (prev === 'Error' ? '' : prev.endsWith('pi') ? prev.slice(0, -2) : prev.slice(0, -1)));
   }
 
   function equals() {
@@ -46,7 +64,7 @@ export function ScientificCalculator() {
     try {
       const result = evaluateExpression(expression, angleMode);
       // Plain digits only: a locale-formatted "2,000" would not parse as the next input.
-      setExpression(Number.isFinite(result) ? String(roundResult(result)) : 'Error');
+      setExpression(Number.isFinite(result) ? toExpressionText(result) : 'Error');
     } catch {
       setExpression('Error');
     }
@@ -60,7 +78,7 @@ export function ScientificCalculator() {
 
       <div className="sci__body">
         <div className="sci__display">
-          <div className="sci__expression">{expression || '0'}</div>
+          <div className="sci__expression">{displayExpression(expression) || '0'}</div>
           {preview !== null && <div className="sci__preview">= {preview}</div>}
         </div>
 

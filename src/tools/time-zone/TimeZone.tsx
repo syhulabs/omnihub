@@ -18,6 +18,7 @@ import {
   formatZoneLabel,
   friendlyZoneName,
   offsetHoursForSort,
+  sameZone,
 } from './offset';
 import { getSunTimes } from './sunTimes';
 import { EarthGlobe } from './EarthGlobe';
@@ -138,7 +139,7 @@ export function TimeZone() {
   }, [convHour, convMinute, now]);
 
   function renderRow(city: City) {
-    const isLocal = city.timeZone === localTimeZone;
+    const isLocal = sameZone(city.timeZone, localTimeZone);
     const isFavorite = favoriteIds.includes(city.id);
     const time = formatClockDate(now, city.timeZone);
     const dateLabel = formatRowDate(now, city.timeZone);

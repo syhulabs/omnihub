@@ -112,7 +112,7 @@ export function AgeCalculator() {
           <button
             type="button"
             className="pe__save-check ac__header-btn"
-            onClick={() => setEditingId(me ? ME_ID : 'new')}
+            onClick={() => setEditingId(ME_ID)}
             aria-label="My details"
           >
             <Icon name="settings" size={18} />
@@ -273,9 +273,11 @@ export function AgeCalculator() {
                         )}
                       </div>
                       {stats && (
-                        <span className={`ac__next-badge${stats.next.daysUntil <= 7 ? ' ac__next-badge--soon' : ''}`}>
-                          <strong>{stats.next.daysUntil}</strong>
-                          <span>days left</span>
+                        <span
+                          className={`ac__next-badge${stats.next.daysUntil <= 7 && (p.reminderEnabled ?? true) ? ' ac__next-badge--soon' : ''}`}
+                        >
+                          <strong>{stats.next.daysUntil === 0 ? '🎂' : stats.next.daysUntil}</strong>
+                          <span>{stats.next.daysUntil === 0 ? 'Today' : stats.next.daysUntil === 1 ? 'day left' : 'days left'}</span>
                           <em>{formatShort(toISODate(stats.next.date))}</em>
                         </span>
                       )}
@@ -336,9 +338,11 @@ function CalendarTab({
   for (const p of people) {
     const birth = parseISODate(p.birthISO);
     if (!birth || birth.getMonth() !== month) continue;
-    const list = birthdaysByDay.get(birth.getDate()) ?? [];
+    // A 29 February birthday is marked on the 28th in a common year instead of on no day at all.
+    const day = Math.min(birth.getDate(), daysInMonth);
+    const list = birthdaysByDay.get(day) ?? [];
     list.push(p);
-    birthdaysByDay.set(birth.getDate(), list);
+    birthdaysByDay.set(day, list);
   }
   const monthBirthdays = [...birthdaysByDay.entries()].sort(([a], [b]) => a - b);
 

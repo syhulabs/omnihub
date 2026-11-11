@@ -1,3 +1,5 @@
+import { sameZone } from './offset';
+
 export interface City {
   id: string;
   name: string;
@@ -45,5 +47,5 @@ export function getCityById(id: string): City | undefined {
 
 /** Finds a curated city whose IANA zone matches, for resolving "this device's" city. */
 export function getCityByTimeZone(timeZone: string): City | undefined {
-  return CITIES.find((c) => c.timeZone === timeZone);
+  return CITIES.find((c) => sameZone(c.timeZone, timeZone));
 }

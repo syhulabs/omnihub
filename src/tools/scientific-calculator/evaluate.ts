@@ -17,7 +17,16 @@ function tokenize(input: string): Token[] {
     if (/[0-9.]/.test(ch)) {
       let j = i;
       while (j < input.length && /[0-9.]/.test(input[j])) j++;
-      tokens.push(parseFloat(input.slice(i, j)));
+      // A result fed back as input can be in exponent form ("5E-7"). The capital E keeps it apart
+      // from the constant e, which the letter branch below handles.
+      if (input[j] === 'E' && /^E[+-]?[0-9]/.test(input.slice(j, j + 3))) {
+        j += input[j + 1] === '+' || input[j + 1] === '-' ? 2 : 1;
+        while (j < input.length && /[0-9]/.test(input[j])) j++;
+      }
+      const literal = input.slice(i, j);
+      // parseFloat would quietly read "1.2.3" as 1.2.
+      if (!/^(\d+\.?\d*|\.\d+)(E[+-]?\d+)?$/.test(literal)) throw new Error(`Malformed number: ${literal}`);
+      tokens.push(parseFloat(literal));
       i = j;
       continue;
     }
@@ -41,13 +50,19 @@ function tokenize(input: string): Token[] {
 function applyFunction(name: string, arg: number, mode: AngleMode): number {
   const toRad = (deg: number) => (deg * Math.PI) / 180;
   const toDeg = (rad: number) => (rad * 180) / Math.PI;
+  // sin(180°) and cos(90°) come out as 1e-16 instead of 0 because π is not exact in binary.
+  const snap = (v: number) => (Math.abs(v) < 1e-15 ? 0 : v);
+  const angle = mode === 'deg' ? toRad(arg) : arg;
   switch (name) {
     case 'sin':
-      return Math.sin(mode === 'deg' ? toRad(arg) : arg);
+      return snap(Math.sin(angle));
     case 'cos':
-      return Math.cos(mode === 'deg' ? toRad(arg) : arg);
-    case 'tan':
-      return Math.tan(mode === 'deg' ? toRad(arg) : arg);
+      return snap(Math.cos(angle));
+    case 'tan': {
+      // tan(90°) is undefined, not sixteen quadrillion.
+      if (snap(Math.cos(angle)) === 0) throw new Error('tan is undefined here');
+      return snap(Math.sin(angle)) === 0 ? 0 : Math.tan(angle);
+    }
     case 'asin':
       return mode === 'deg' ? toDeg(Math.asin(arg)) : Math.asin(arg);
     case 'acos':
@@ -86,7 +101,10 @@ export function evaluateExpression(input: string, angleMode: AngleMode): number 
     while (peek() === '+' || peek() === '-') {
       const op = advance();
       const rhs = parseTerm();
-      value = op === '+' ? value + rhs : value - rhs;
+      const sum = op === '+' ? value + rhs : value - rhs;
+      // 0.1 + 0.2 - 0.3 leaves 5.5e-17 of binary rounding; a result that small next to its
+      // operands is that residue, not an answer.
+      value = Math.abs(sum) < 1e-12 * Math.max(Math.abs(value), Math.abs(rhs)) ? 0 : sum;
     }
     return value;
   }

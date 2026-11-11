@@ -10,7 +10,7 @@ import { hapticSelect, hapticTap, hapticWarning } from '../../haptics';
 import { useCloudSync } from '../../cloud/useCloudSync';
 import { NoteEditor } from './NoteEditor';
 import type { Note } from './types';
-import { formatClockDate } from '../../settings/formats';
+import { formatClockDate, formatNumericDate } from '../../settings/formats';
 import './Notes.css';
 
 type Tab = 'all' | 'pinned' | 'favorites' | 'trash';
@@ -27,6 +27,13 @@ function newNote(): Note {
 function preview(body: string): string {
   const trimmed = body.trim();
   return trimmed.length > 80 ? `${trimmed.slice(0, 80)}…` : trimmed;
+}
+
+/** The time for a note touched today, the date otherwise: a note edited three weeks ago and one
+ *  edited a minute ago used to both read "1:21 PM". */
+function formatCardTime(timestamp: number): string {
+  const date = new Date(timestamp);
+  return date.toDateString() === new Date().toDateString() ? formatClockDate(date) : formatNumericDate(date);
 }
 
 export function Notes() {
@@ -97,7 +104,15 @@ export function Notes() {
 
   function handleChange(updated: Note) {
     if (draft?.id === updated.id) {
-      setDraft(updated);
+      // A new note is stored as soon as it has content, then saves per keystroke like any other.
+      // It used to live only in memory until the editor closed, so Android killing the app in
+      // the background lost everything typed.
+      if (updated.title.trim() || updated.body.trim()) {
+        persist([updated, ...notes]);
+        setDraft(null);
+      } else {
+        setDraft(updated);
+      }
     } else {
       persist(notes.map((n) => (n.id === updated.id ? updated : n)));
     }
@@ -250,7 +265,7 @@ export function Notes() {
                       </span>
                       {note.body && <span className="notes__card-preview">{preview(note.body)}</span>}
                       <span className="notes__card-time">
-                        {formatClockDate(new Date(tab === 'trash' ? note.trashedAt ?? note.updatedAt : note.updatedAt))}
+                        {formatCardTime(tab === 'trash' ? note.trashedAt ?? note.updatedAt : note.updatedAt)}
                       </span>
                     </span>
                   </button>

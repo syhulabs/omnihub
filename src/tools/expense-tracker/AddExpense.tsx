@@ -42,11 +42,9 @@ export function AddExpense({ initialCategoryId, currencySymbol, onSave, onClose 
     onSave(expense);
   }
 
-  useBackHandler(() => {
-    const expense = buildExpense();
-    if (expense) onSave(expense);
-    else onClose();
-  }, true);
+  // Hardware back cancels, exactly like the header's back arrow; only the Save button saves.
+  // (It used to save whatever was typed, so backing out of a mistake recorded an expense.)
+  useBackHandler(onClose, true);
 
   return (
     <div className="screen">

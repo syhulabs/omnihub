@@ -26,8 +26,9 @@ function defaultUnits(categoryId: string): [string, string] {
 
 function formatNumber(value: number): string {
   if (Number.isNaN(value) || !Number.isFinite(value)) return '—';
-  const rounded = Math.round(value * 1e6) / 1e6;
-  return rounded.toString();
+  // Seven significant digits rather than six decimal places: 1 byte in GB or 1 mg in tons used to
+  // round to a flat 0, while the factors' own rounding showed up as 10.000008.
+  return Number(value.toPrecision(7)).toString();
 }
 
 export function UnitConverter() {

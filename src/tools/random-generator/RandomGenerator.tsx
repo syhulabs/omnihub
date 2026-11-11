@@ -94,8 +94,9 @@ export function RandomGenerator() {
   function generateNumber() {
     const min = parseInt(minText, 10);
     const max = parseInt(maxText, 10);
-    if (Number.isNaN(min) || Number.isNaN(max) || min > max) return;
-    setNumberResult(randomInt(min, max));
+    if (Number.isNaN(min) || Number.isNaN(max)) return;
+    // Min and Max the wrong way round still mean the same range; the button used to do nothing.
+    setNumberResult(randomInt(Math.min(min, max), Math.max(min, max)));
   }
 
   function addItem() {
@@ -238,6 +239,9 @@ export function RandomGenerator() {
                       onClick={() => {
                         hapticTap();
                         setDieSides(n);
+                        // The last roll belongs to the old die: a 17 from a D20 is not a D6 face.
+                        setDiceResults([]);
+                        setDiceTilts([]);
                         setShowSidesSheet(false);
                       }}
                     >
@@ -280,7 +284,12 @@ export function RandomGenerator() {
 
           {numberResult !== null && <div className="rg__number-result">{numberResult}</div>}
 
-          <button type="button" className="rg__action-btn" onClick={generateNumber}>
+          <button
+            type="button"
+            className="rg__action-btn"
+            onClick={generateNumber}
+            disabled={Number.isNaN(parseInt(minText, 10)) || Number.isNaN(parseInt(maxText, 10))}
+          >
             Generate
           </button>
         </div>

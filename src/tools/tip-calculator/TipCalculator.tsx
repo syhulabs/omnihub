@@ -7,15 +7,13 @@ import './TipCalculator.css';
 
 const TIP_PRESETS = [10, 15, 18, 20, 25];
 
-const CURRENCY = appDefaultCurrency();
-const SYMBOL = currencySymbol(CURRENCY);
-
-function formatMoney(amount: number): string {
-  return sharedFormatMoney(Number.isFinite(amount) ? amount : 0, CURRENCY);
-}
-
 export function TipCalculator() {
   const { back } = useRouter();
+  // Read on every visit, not once when the app loads: changing Default Currency in Settings used
+  // to leave this tool on the old symbol until the app was force-closed.
+  const CURRENCY = appDefaultCurrency();
+  const SYMBOL = currencySymbol(CURRENCY);
+  const formatMoney = (amount: number) => sharedFormatMoney(Number.isFinite(amount) ? amount : 0, CURRENCY);
   const [billText, setBillText] = useState('');
   const [tipPercent, setTipPercent] = useState(15);
   const [customTip, setCustomTip] = useState('');

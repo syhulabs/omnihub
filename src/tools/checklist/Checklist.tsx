@@ -92,7 +92,14 @@ export function Checklist() {
 
   function handleChange(updated: ChecklistType) {
     if (draft?.id === updated.id) {
-      setDraft(updated);
+      // Stored as soon as it has a name or an item (see Notes): a new list used to exist only in
+      // memory until Back was pressed.
+      if (updated.name.trim() || updated.items.length > 0) {
+        persist([updated, ...lists]);
+        setDraft(null);
+      } else {
+        setDraft(updated);
+      }
     } else {
       persist(lists.map((l) => (l.id === updated.id ? updated : l)));
     }

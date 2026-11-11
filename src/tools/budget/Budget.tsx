@@ -52,6 +52,9 @@ export function Budget() {
   useBackHandler(() => setShowMenu(false), showMenu);
   useBackHandler(() => setConfirmingResetAll(false), confirmingResetAll);
 
+  // Hardware back closes an open sheet or panel instead of leaving the tool.
+  useBackHandler(() => setShowCurrencySheet(false), showCurrencySheet);
+
   function rawPersist(next: BudgetLimit[]) {
     setBudgets(next);
     storageSet(StorageKeys.budgets, next);

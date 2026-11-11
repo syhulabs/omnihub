@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
+import { useBackHandler } from '../../app/useBackHandler';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon, type IconName } from '../../components/Icon';
 import { SwipeToDelete } from '../../components/SwipeToDelete';
@@ -49,6 +50,9 @@ export function SubscriptionCalculator() {
   const [sortMode, setSortMode] = useState<SortMode>('newest');
   const [showCurrencySheet, setShowCurrencySheet] = useState(false);
   const [showAllExamples, setShowAllExamples] = useState(false);
+
+  // Hardware back closes an open sheet or panel instead of leaving the tool.
+  useBackHandler(() => setShowCurrencySheet(false), showCurrencySheet);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
   function rawPersist(next: Subscription[]) {
@@ -322,7 +326,7 @@ export function SubscriptionCalculator() {
                 </span>
                 <span className="sc__example-info">
                   <strong>{ex.name}</strong>
-                  <span>{formatMoney(ex.amount)} / month</span>
+                  <span>{formatMoney(ex.amount, currency)} / month</span>
                 </span>
                 <Icon name="plus" size={16} className="sc__example-plus" />
               </button>
@@ -380,7 +384,7 @@ export function SubscriptionCalculator() {
                   </span>
                   <span className="sc__example-info">
                     <strong>{ex.name}</strong>
-                    <span>{formatMoney(ex.amount)} / month</span>
+                    <span>{formatMoney(ex.amount, currency)} / month</span>
                   </span>
                   <Icon name="plus" size={16} className="sc__example-plus" />
                 </button>

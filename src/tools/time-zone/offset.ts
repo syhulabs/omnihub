@@ -1,9 +1,47 @@
 import { formatClockDate } from '../../settings/formats';
 
+const wallClockFormatters = new Map<string, Intl.DateTimeFormat>();
+
+/** The zone's wall-clock reading of `date`, as if it were UTC. Built from formatToParts: the
+ *  earlier `new Date(date.toLocaleString(...))` relied on Date parsing a locale string, which only
+ *  Chromium does reliably (WebKit, i.e. the iOS app, can return an invalid date). */
+function wallClockAsUtc(timeZone: string, date: Date): number {
+  let formatter = wallClockFormatters.get(timeZone);
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone,
+      hourCycle: 'h23',
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+    });
+    wallClockFormatters.set(timeZone, formatter);
+  }
+  const part: Record<string, number> = {};
+  for (const { type, value } of formatter.formatToParts(date)) part[type] = Number(value);
+  return Date.UTC(part.year, part.month - 1, part.day, part.hour % 24, part.minute, part.second);
+}
+
 export function getOffsetMinutes(timeZone: string, date: Date): number {
-  const utcDate = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }));
-  const tzDate = new Date(date.toLocaleString('en-US', { timeZone }));
-  return (tzDate.getTime() - utcDate.getTime()) / 60000;
+  const wholeSeconds = Math.floor(date.getTime() / 1000) * 1000;
+  return Math.round((wallClockAsUtc(timeZone, date) - wholeSeconds) / 60000);
+}
+
+/** The engine's canonical name for a zone, so aliases compare equal: Chromium reports India as
+ *  "Asia/Calcutta" while the city list says "Asia/Kolkata". */
+function canonicalZone(timeZone: string): string {
+  try {
+    return new Intl.DateTimeFormat('en-US', { timeZone }).resolvedOptions().timeZone;
+  } catch {
+    return timeZone;
+  }
+}
+
+export function sameZone(a: string, b: string): boolean {
+  return a === b || canonicalZone(a) === canonicalZone(b);
 }
 
 /** "-12 hours" / "+1 hour" / "-2h 30m" / "Same time" — matches the World Clock row style. */
@@ -45,7 +83,8 @@ export function formatZoneLabel(timeZone: string, now: Date): string {
   } catch {
     abbr = '';
   }
-  if (!abbr || /^GMT[+-]/.test(abbr) || abbr === 'UTC') return gmt;
+  // A bare "GMT" adds nothing either: London in winter read "GMT+0 (GMT)".
+  if (!abbr || /^GMT([+-]|$)/.test(abbr) || abbr === 'UTC') return gmt;
   return `${gmt} (${abbr})`;
 }
 

@@ -24,7 +24,10 @@ export function ageBreakdown(birth: Date, asOf: Date): AgeBreakdown {
   const to = stripTime(asOf);
   let years = to.getFullYear() - from.getFullYear();
   let months = to.getMonth() - from.getMonth();
-  if (to.getDate() < from.getDate()) months -= 1;
+  // "Has this month's anniversary passed?" uses the same clamp as the anchor below: for someone
+  // born on the 31st, 28 Feb is the anniversary in February, so that day reads "1 month 0 days"
+  // (unclamped it read "0 months 28 days" and "1 month 0 days" never appeared at all).
+  if (to.getDate() < clampDay(to.getFullYear(), to.getMonth(), from.getDate())) months -= 1;
   if (months < 0) {
     years -= 1;
     months += 12;
@@ -39,10 +42,18 @@ export function ageBreakdown(birth: Date, asOf: Date): AgeBreakdown {
   return { years, months, days, totalDays: daysBetween(from, to) };
 }
 
+/** `day` limited to the length of that month: the 31st in a 30-day month, 29 Feb in a common year. */
+export function clampDay(year: number, month: number, day: number): number {
+  return Math.min(day, new Date(year, month + 1, 0).getDate());
+}
+
 export function nextBirthday(birth: Date, asOf: Date): { date: Date; daysUntil: number } {
-  let next = new Date(asOf.getFullYear(), birth.getMonth(), birth.getDate());
+  // A 29 February birthday falls on 28 February in a common year. Unclamped, JS rolled it over
+  // to 1 March, a day after the age had already ticked up.
+  const birthdayIn = (year: number) => new Date(year, birth.getMonth(), clampDay(year, birth.getMonth(), birth.getDate()));
+  let next = birthdayIn(asOf.getFullYear());
   if (next.getTime() < stripTime(asOf).getTime()) {
-    next = new Date(asOf.getFullYear() + 1, birth.getMonth(), birth.getDate());
+    next = birthdayIn(asOf.getFullYear() + 1);
   }
   const daysUntil = Math.round((next.getTime() - stripTime(asOf).getTime()) / 86400000);
   return { date: next, daysUntil };

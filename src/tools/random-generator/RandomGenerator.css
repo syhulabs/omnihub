@@ -176,6 +176,7 @@
 
 .rg__range-field {
   flex: 1;
+  min-width: 0; /* lets the two fields share the row; the Max input used to run off the edge */
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -189,6 +190,9 @@
 }
 
 .rg__range-field input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   background: linear-gradient(160deg, var(--bg-elevated-2), var(--bg-elevated));
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-md);
@@ -222,6 +226,7 @@
 }
 
 .rg__action-btn {
+  align-self: stretch; /* full width on every tab, including Coin's centred column */
   display: flex;
   align-items: center;
   justify-content: center;
