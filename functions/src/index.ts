@@ -1,4 +1,5 @@
 import { onRequest } from 'firebase-functions/v2/https';
+import * as functionsV1 from 'firebase-functions/v1';
 import { defineSecret } from 'firebase-functions/params';
 import * as logger from 'firebase-functions/logger';
 import { initializeApp } from 'firebase-admin/app';
@@ -106,7 +107,8 @@ async function synthesizeLine(ai: GoogleGenAI, personality: Personality, text: s
 }
 
 export const generateSleepReminders = onRequest(
-  { secrets: [geminiApiKey], cors: true, region: 'us-central1' },
+  // One text call plus four voice clips can outlast the default 60 s.
+  { secrets: [geminiApiKey], cors: true, region: 'us-central1', timeoutSeconds: 120 },
   async (req, res) => {
     if (req.method !== 'POST') {
       res.status(405).json({ error: 'Method not allowed' });
@@ -217,6 +219,20 @@ Rules for every line:
       if (tiers.some((t) => t.length === 0)) throw new Error('One or more tiers came back empty');
     } catch (err) {
       logger.error('Gemini generation failed', err);
+      // Give the attempt back: the cap is counted up front (so parallel requests can't overshoot
+      // it), and a failed generation used to cost a use anyway. Ten errors locked a user out for
+      // the day with nothing generated.
+      try {
+        await db.runTransaction(async (tx) => {
+          const snap = await tx.get(usageRef);
+          const data = snap.exists ? snap.data() : null;
+          if (data && data.date === todayKey() && (data.count as number) > 0) {
+            tx.set(usageRef, { date: data.date, count: (data.count as number) - 1 }, { merge: true });
+          }
+        });
+      } catch (refundErr) {
+        logger.warn('Could not refund a failed generation', refundErr);
+      }
       res.status(502).json({ error: "Couldn't generate reminders right now. Please try again." });
       return;
     }
@@ -230,3 +246,18 @@ Rules for every line:
     res.status(200).json({ tiers, audioClips, generatedAt: Date.now() });
   },
 );
+
+/**
+ * When an account is deleted, removes everything left under users/{uid}. The app deletes the
+ * synced collections itself before deleting the account, but it cannot touch sleepAiMeta (the
+ * rules reserve it for this server code), and a second signed-in device can still upload for up
+ * to an hour on its old token. This makes "all removed from our servers" true either way.
+ */
+export const cleanupDeletedUser = functionsV1
+  .region('us-central1')
+  .auth.user()
+  .onDelete(async (user) => {
+    const db = getFirestore();
+    await db.recursiveDelete(db.doc(`users/${user.uid}`));
+    logger.info('Removed remaining data for a deleted account');
+  });

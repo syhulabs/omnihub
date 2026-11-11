@@ -1,9 +1,10 @@
 # Building Omni Hub for iOS
 
 The iOS project lives in `ios/` (Capacitor, CocoaPods). It was written in the cloud, where there is no
-Xcode, so **the first build on the Mac is the first compile of the Swift code** in
-`ios/App/App/Plugins/`. Expect to fix a handful of compiler complaints there before it runs; the code
-is small and conservative on purpose.
+Xcode, so **the first build on the Mac is the first real compile of the Swift code** in
+`ios/App/App/Plugins/`. That code has been type-checked with the Swift compiler on Linux against
+stand-ins for the Apple and Capacitor APIs (zero errors), which catches mistakes in the plugins' own
+logic but not a wrong assumption about an Apple API. Expect at most a few compiler complaints.
 
 Bundle ID `com.syhuinc.omnihub`, iPhone only, portrait only, iOS 15.0 or newer.
 

@@ -22,7 +22,7 @@ The owner's approved designs. Match these exactly (see CLAUDE.md). Newest refere
 ## Settings screen (built Oct 10, not yet reviewed on device)
 Mockup: `settings-reference.jpg`. Matched on the 436px grid: 17px card inset, 50px rows, 36px solid icon
 tiles, 14.4/11.6px row text, 44x26 switches, full-width dividers (`.pf__body--settings` in `Profile.css`).
-- General: Haptic Feedback, Keep Screen Awake (native `KeepAwakePlugin`), 3D Nav Icon toggles.
+- General: Haptic Feedback, Keep Screen Awake (native `KeepAwakePlugin`).
 - Appearance: Text Size (app-wide `zoom`, 0.9-1.3); Language row is static "English (for now)" by the owner's choice.
 - Time & Formats (`src/settings/formats.ts`): 12/24-hour clock (Alarm list + wheel picker, Sleep Mode,
   Time Zone, Time Difference, Notes and Checklist timestamps), date format (Date Calculator's numeric dates),
@@ -53,6 +53,29 @@ tiles, 14.4/11.6px row text, 44x26 switches, full-width dividers (`.pf__body--se
     filter, biometric prompt guards) compile for the first time in the owner's next local build.
 - Before shipping: the owner's on-device check of every Settings sub-screen in both themes, App Lock
   (set PIN, relaunch, wrong PIN, right PIN), 12/24h and currency, then the APK routine.
+
+## Second whole-app review (Nov 11): left for the owner to decide
+Everything else that review found was fixed (see the Nov 11 commits). These need a product decision, a
+mockup, or a deploy only the owner can do:
+- **Deploy**: `firebase deploy --only functions` (failed AI generations are refunded, 120 s timeout, and a
+  new `cleanupDeletedUser` function that removes everything under `users/{uid}` when an account is deleted).
+- Desk copy that promises more than the screens hold, kept because it matches the Desk mockup: Profile
+  "Your account, devices and personal settings.", About "Version, support and credits.", Data & Sync
+  "Cloud sync…", Privacy & Security "Permissions, data controls and security options."
+- Sleep Mode AI tab: signed-in users see Teasing/Strict/Savage as unlocked but can only preview them, and the
+  perks list an "AI wake-up companion" and "Smart snooze reactions" that don't exist. Sleep Insights' Month
+  and Year tabs never change the view.
+- Compass: the red needle tip points up (your heading), not at north; the dial's N marks north.
+- Budget counts spending in categories that have no budget toward the ring, and keeps its own currency
+  separate from Expense Tracker.
+- Notes' B/I/U buttons insert raw `**` / `_` markers that are never rendered. Checklist categories can't be
+  changed after creation or removed; new category and Remove Person use the system prompt/confirm dialogs.
+- Add Debt, Add Subscription do nothing on invalid input (no message). The Date Format setting only applies
+  to Date Calculator's numeric dates.
+- A timer that finishes while another screen is open doesn't beep until its screen is opened again.
+- Android Auto Backup still includes native SharedPreferences (alarms, Sleep Mode profile).
+- Voice Changer (locked): imported audio has no length cap, so a long song freezes the effects screens.
+- Scientific calculator leaves a centred gap between the mode row and the keys on tall screens.
 
 ## iOS (project scaffolded Nov 6, never built on a Mac yet)
 `ios/` is a Capacitor CocoaPods project; `docs/ios-build.md` has the Mac steps. Open items before an App Store

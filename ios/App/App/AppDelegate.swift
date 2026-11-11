@@ -46,6 +46,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
 
+    // Hands URL opens (the Google Sign-In return trip) to Capacitor, as the Firebase
+    // Authentication plugin's setup asks for. With scenes, iOS normally delivers these to
+    // SceneDelegate, which forwards them too; this covers the app-delegate path.
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
+    }
+
     func application(_ application: UIApplication,
                      configurationForConnecting connectingSceneSession: UISceneSession,
                      options: UIScene.ConnectionOptions) -> UISceneConfiguration {

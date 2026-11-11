@@ -25,6 +25,20 @@ The owner tests on a Motorola Edge 60 Fusion and reviews every change visually, 
 - Keep unfinished work out of commits that ship. Commit only the files for the change at hand.
 - Language setting: English only for now; the Language row stays static.
 
+## Art department (GPT via Codex CLI)
+
+When you need a reference image, concept art, icon, sprite or UI mockup, do not draw it yourself. Run:
+
+```
+codex exec -C "$(pwd)" -s workspace-write --skip-git-repo-check \
+  "Use the image generation tool to create <detailed brief>, save it as ./assets/ref/<name>.png"
+```
+
+Then open the saved file, check it against the brief, and re-request with corrections if it is wrong.
+Never overwrite existing files. Follow the style rules in `./STYLE.md` for every brief.
+(As of Nov 11 the `codex` CLI is not installed in the cloud session and `STYLE.md` and `assets/ref/` do not
+exist yet: say so rather than drawing a substitute.)
+
 ## Build & ship an APK (the owner's established routine)
 
 1. Bump `versionCode` in `android/app/build.gradle`.
@@ -52,7 +66,11 @@ git-ignored on purpose and are **not in the repo**; the owner keeps them private
   `ios/App/App/Plugins/`, registered in `OmniBridgeViewController.capacitorDidLoad()`. The message bank
   is generated from the Java one (`scripts/gen-sleep-message-bank.py`). Android-only features are hidden
   on iOS with `isIOS` from `src/platform.ts`, never left as dead controls. The cloud session has no Xcode
-  either: Swift ships uncompiled, say so. Setup, limitations and the App Store checklist: `docs/ios-build.md`.
+  either: Swift ships without a real build, say so. It can be type-checked on Linux (download the Swift
+  toolchain from swift.org and compile the plugins against stand-in declarations of the Apple/Capacitor
+  APIs). Setup, limitations and the App Store checklist: `docs/ios-build.md`.
+- Keep `@capacitor/core`, `android`, `ios` and `cli` on the same version; `npx cap sync` warns when they differ.
+- Text Size is a page `zoom` on `<html>`: size full-height things in `%`, not `vh` (vh ignores zoom).
 
 ## Open work and plans
 

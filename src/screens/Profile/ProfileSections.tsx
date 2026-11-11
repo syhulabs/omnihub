@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { App as CapacitorApp } from '@capacitor/app';
 import { useBackHandler } from '../../app/useBackHandler';
+import { isIOS } from '../../platform';
 import { clearNativeState } from '../../storage/clearNative';
 import { Capacitor } from '@capacitor/core';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
@@ -942,29 +943,34 @@ export function ProfileNotifications() {
               </button>
             )}
           </div>
-          <div className="pf__divider" />
-          <div className="pf__row pf__row--static">
-            <span className="pf__row-text">
-              <strong>Alarms &amp; Reminders</strong>
-              <span>Lets Omni Hub schedule alarms that ring at the exact time.</span>
-            </span>
-            {exactAlarmGranted === null ? (
-              <span className="pf__row-value">—</span>
-            ) : exactAlarmGranted ? (
-              <span className="pf__row-value" style={{ color: 'var(--green)' }}>
-                Allowed
-              </span>
-            ) : (
-              <button
-                type="button"
-                className="pf__row-value"
-                style={{ color: 'var(--accent)' }}
-                onClick={requestExactAlarm}
-              >
-                Allow
-              </button>
-            )}
-          </div>
+          {/* Android's exact-alarm permission; iOS has no such setting, so the row would always read "Allowed". */}
+          {!isIOS && (
+            <>
+              <div className="pf__divider" />
+              <div className="pf__row pf__row--static">
+                <span className="pf__row-text">
+                  <strong>Alarms &amp; Reminders</strong>
+                  <span>Lets Omni Hub schedule alarms that ring at the exact time.</span>
+                </span>
+                {exactAlarmGranted === null ? (
+                  <span className="pf__row-value">—</span>
+                ) : exactAlarmGranted ? (
+                  <span className="pf__row-value" style={{ color: 'var(--green)' }}>
+                    Allowed
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    className="pf__row-value"
+                    style={{ color: 'var(--accent)' }}
+                    onClick={requestExactAlarm}
+                  >
+                    Allow
+                  </button>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

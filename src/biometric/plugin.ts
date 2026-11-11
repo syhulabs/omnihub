@@ -1,4 +1,5 @@
 import { registerPlugin, WebPlugin } from '@capacitor/core';
+import { isIOS } from '../platform';
 
 export type BiometryType = 'fingerprint' | 'face' | 'iris' | 'multiple' | 'unknown' | 'none';
 
@@ -59,9 +60,9 @@ export function biometricErrorCode(err: unknown): BiometricErrorCode | undefined
 export function biometricLabel(type: BiometryType | undefined): string {
   switch (type) {
     case 'fingerprint':
-      return 'Fingerprint';
+      return isIOS ? 'Touch ID' : 'Fingerprint';
     case 'face':
-      return 'Face unlock';
+      return isIOS ? 'Face ID' : 'Face unlock';
     case 'iris':
       return 'Iris unlock';
     default:

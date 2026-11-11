@@ -1,5 +1,6 @@
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { useRouter } from '../../app/Router';
+import { isIOS } from '../../platform';
 import './PrivacyPolicy.css';
 
 export function PrivacyPolicy() {
@@ -7,7 +8,7 @@ export function PrivacyPolicy() {
 
   return (
     <div className="screen">
-      <ScreenHeader title="Privacy Policy" subtitle="Last updated October 2026" onBack={back} />
+      <ScreenHeader title="Privacy Policy" subtitle="Last updated November 2026" onBack={back} />
 
       <div className="pp__body">
         <p className="pp__lede">
@@ -103,7 +104,7 @@ export function PrivacyPolicy() {
             <strong>Your PIN, and any key derived from it, never leaves your device</strong> — not
             even if you sign in and sync. If you sign in, only the already-encrypted ciphertext of
             your Vault notes is copied to Firebase, in a form Omni Hub itself cannot read without
-            your PIN; a second device only regains access to it by unlocking with the same PIN.
+            your PIN. For now those notes can only be opened on the device that encrypted them; opening them on a second device isn't supported yet.
             Vault photos and files don't sync at all yet and stay device-only regardless of
             sign-in status.
           </div>
@@ -111,8 +112,7 @@ export function PrivacyPolicy() {
             Your PIN is never stored anywhere, on-device or in the cloud — only used to derive
             that key each time you unlock — so if you forget it, Vault content cannot be recovered
             and the Vault must be reset. Opening or saving a Vault photo/file decrypts a temporary
-            copy for that action (e.g. to view an image or save it to your Downloads folder); that
-            copy is no longer encrypted once it leaves the Vault. Vault photos and files are not
+            copy for that action (e.g. to view an image, or to hand it to another app through your phone's share sheet); that copy is no longer encrypted once it leaves the Vault, and Omni Hub deletes its own cached copy the next time the app starts. Vault photos and files are not
             included in the main <strong>Desk ▸ Data & Sync ▸ Export Backup</strong> file; use{' '}
             <strong>Vault ▸ Photos &amp; Files ▸ Export</strong> instead, which decrypts them into a
             plain <code>.zip</code> file on your device — that zip is unencrypted, since it needs
@@ -124,92 +124,141 @@ export function PrivacyPolicy() {
 
         <section className="pp__section">
           <h2>Permissions</h2>
-          <p>
-            Omni Hub does not access your contacts. It requests these permissions, all used only
-            to make features work (or reserved for a locked feature not yet available to use),
-            never to collect or transmit data beyond what's described above:
-          </p>
-          <ul>
-            <li>
-              <strong>Internet / network access</strong> — required only for the optional Google
-              Sign-In and cloud sync described above. Unused unless you sign in. Omni Hub
-              separately checks (but does not use to connect anywhere) whether you currently have
-              a Wi-Fi or mobile connection, to show connection status on the "My Phone" card and
-              Phone Health Check.
-            </li>
-            <li>
-              <strong>Vibrate</strong> — haptic feedback (tap and completion vibrations).
-            </li>
-            <li>
-              <strong>Alarms, notifications, and background wake permissions</strong> (schedule
-              alarms, post notifications, run in the foreground briefly while an alarm rings, keep
-              the device awake for that, show the ringing screen over the lock screen, and restart
-              alarms after the device reboots) — all used solely by the <strong>Alarm</strong>{' '}
-              feature, so an alarm you set still rings even if Omni Hub is closed. None of this
-              involves any network access.
-            </li>
-            <li>
-              <strong>Biometrics</strong> (optional, off by default) — used only by the{' '}
-              <strong>App Lock</strong> and <strong>Vault</strong> "Biometric Unlock" settings, so you can
-              unlock with your fingerprint or face instead of typing your PIN. Android's own system
-              prompt does the matching; Omni Hub only learns whether it succeeded and never sees,
-              stores, or transmits your fingerprint or face data.
-            </li>
-            <li>
-              <strong>Display over other apps</strong> — used only by <strong>Sleep Mode</strong>
-              's on-screen reminder card, so it can appear on top of whatever you're doing when a
-              reminder fires, but only while your phone is unlocked and in active use. Without
-              this permission granted, the same reminder still shows as a normal notification.
-            </li>
-            <li>
-              <strong>Camera / flashlight</strong> — used by the <strong>QR Scanner</strong>,{' '}
-              <strong>Barcode Scanner</strong>, and <strong>Flashlight</strong> tools, and by the{' '}
-              <strong>Phone Health Check</strong>'s Front Camera and Rear Camera tests (Phone
-              Center) to show you a live preview so you can confirm your cameras work. In every
-              case the preview is shown to you only, entirely on your device — no photo, video, or
-              scanned image is ever saved or transmitted; a scanned code's decoded text stays
-              on-device too.
-            </li>
-            <li>
-              <strong>Phone state</strong> (optional, off by default) — used only by the{' '}
-              <strong>Flashlight</strong> tool's "Flash Alerts" setting to detect when your phone
-              starts or stops ringing, so it can blink the flash for an incoming call. Omni Hub
-              never reads phone numbers, call logs, or call content.
-            </li>
-            <li>
-              <strong>Notification access</strong> (optional, off by default, granted separately in
-              Android Settings) — used only by the same "Flash Alerts" setting to detect that some
-              other app posted a notification, so it can blink the flash. Omni Hub never reads,
-              stores, or transmits any notification's content.
-            </li>
-            <li>
-              <strong>Location</strong> — used by the <strong>Compass</strong> tool's optional
-              location, altitude, and accuracy display, and optionally by the{' '}
-              <strong>Phone Center</strong>'s Connection card to show your Wi-Fi signal strength
-              and link speed (Android requires location access to read these two specific Wi-Fi
-              details; Omni Hub never reads or uses your actual location for this). Read entirely
-              on-device; never stored, logged, or transmitted anywhere.
-            </li>
-            <li>
-              <strong>Microphone and audio settings</strong> (not yet in use) — reserved for the{' '}
-              <strong>Voice Changer</strong> tool's recording feature, which is currently locked
-              and not yet available. When it launches, recording will only ever start when you
-              tap record, will be processed entirely on your device, and will only ever be sent
-              anywhere if you explicitly tap Share.
-            </li>
-            <li>
-              <strong>Modify system settings</strong> (not yet in use) — reserved for Voice
-              Changer's upcoming "Set as Ringtone" option, needed to change your device's default
-              ringtone. Not used for anything else.
-            </li>
-            <li>
-              <strong>Audio files</strong> (optional, requested only if you open{' '}
-              <strong>Phone Center ▸ Storage Details</strong>) — used only to show how much space
-              your audio files take up. Omni Hub reads file sizes and counts from your media
-              library; it never opens, plays, uploads, or transmits the files themselves. Omni Hub
-              does not request access to your photos or videos.
-            </li>
-          </ul>
+          {isIOS ? (
+            <>
+              <p>
+                Omni Hub does not access your contacts, photos, or other apps. On iPhone it asks for these, each only
+                when you first use the feature that needs it, and never to collect or transmit data beyond what's
+                described above:
+              </p>
+              <ul>
+                <li>
+                  <strong>Internet / network access</strong> — required only for the optional Google Sign-In and cloud
+                  sync described above, and for Sleep Mode AI (see below). Unused unless you sign in.
+                </li>
+                <li>
+                  <strong>Notifications</strong> — used by <strong>Alarm</strong> and <strong>Sleep Mode</strong>, which
+                  ring and remind you through notifications scheduled on your own device. None of this involves any
+                  network access.
+                </li>
+                <li>
+                  <strong>Face ID / Touch ID</strong> (optional, off by default) — used only by the{' '}
+                  <strong>App Lock</strong> and <strong>Vault</strong> "Biometric Unlock" settings. iOS does the
+                  matching; Omni Hub only learns whether it succeeded and never sees, stores, or transmits your face or
+                  fingerprint data.
+                </li>
+                <li>
+                  <strong>Camera / flashlight</strong> — used by the <strong>QR Scanner</strong>,{' '}
+                  <strong>Barcode Scanner</strong>, the <strong>Calculator</strong>'s number scanner, and{' '}
+                  <strong>Flashlight</strong> tools, and by the <strong>Phone Health Check</strong>'s camera tests. The
+                  preview is shown to you only, entirely on your device — no photo, video, or scanned image is ever kept
+                  or transmitted.
+                </li>
+                <li>
+                  <strong>Location</strong> (while using the app) — used only by the <strong>Compass</strong> tool's
+                  optional location, altitude, and accuracy display. Read on-device; never stored, logged, or
+                  transmitted.
+                </li>
+                <li>
+                  <strong>Motion &amp; orientation</strong> — used by the <strong>Compass</strong> and{' '}
+                  <strong>Level</strong> tools and the <strong>Phone Health Check</strong>'s Sensors test. Never stored
+                  or transmitted.
+                </li>
+                <li>
+                  <strong>Microphone</strong> (not yet in use) — reserved for the <strong>Voice Changer</strong> tool's
+                  recording feature, which is currently locked. When it launches, recording will only start when you tap
+                  record and will be processed entirely on your device.
+                </li>
+              </ul>
+            </>
+          ) : (
+            <>
+              <p>
+                Omni Hub does not access your contacts. It requests these permissions, all used only
+                to make features work (or reserved for a locked feature not yet available to use),
+                never to collect or transmit data beyond what's described above:
+              </p>
+              <ul>
+                <li>
+                  <strong>Internet / network access</strong> — required only for the optional Google Sign-In and cloud sync described above, and for Sleep Mode AI (see below). Unused unless you sign in. Omni Hub
+                  separately checks (but does not use to connect anywhere) whether you currently have
+                  a Wi-Fi or mobile connection, to show connection status on the "My Phone" card and
+                  Phone Health Check.
+                </li>
+                <li>
+                  <strong>Vibrate</strong> — haptic feedback (tap and completion vibrations).
+                </li>
+                <li>
+                  <strong>Alarms, notifications, and background wake permissions</strong> (schedule
+                  alarms, post notifications, run in the foreground briefly while an alarm rings, keep
+                  the device awake for that, show the ringing screen over the lock screen, and restart
+                  alarms after the device reboots) — all used solely by the <strong>Alarm</strong>{' '}
+                  feature, so an alarm you set still rings even if Omni Hub is closed. None of this
+                  involves any network access.
+                </li>
+                <li>
+                  <strong>Biometrics</strong> (optional, off by default) — used only by the{' '}
+                  <strong>App Lock</strong> and <strong>Vault</strong> "Biometric Unlock" settings, so you can
+                  unlock with your fingerprint or face instead of typing your PIN. Android's own system
+                  prompt does the matching; Omni Hub only learns whether it succeeded and never sees,
+                  stores, or transmits your fingerprint or face data.
+                </li>
+                <li>
+                  <strong>Display over other apps</strong> — used only by <strong>Sleep Mode</strong>
+                  's on-screen reminder card, so it can appear on top of whatever you're doing when a
+                  reminder fires, but only while your phone is unlocked and in active use. Without
+                  this permission granted, the same reminder still shows as a normal notification.
+                </li>
+                <li>
+                  <strong>Camera / flashlight</strong> — used by the <strong>QR Scanner</strong>,{' '}
+                  <strong>Barcode Scanner</strong>, the <strong>Calculator</strong>'s number scanner, and{' '}
+                  <strong>Flashlight</strong> tools, and by the{' '}
+                  <strong>Phone Health Check</strong>'s Front Camera and Rear Camera tests (Phone
+                  Center) to show you a live preview so you can confirm your cameras work. In every
+                  case the preview is shown to you only, entirely on your device — no photo, video, or scanned image is ever kept or transmitted (the number scanner takes one still to read the digits from and deletes it straight away); a scanned code's decoded text stays on-device too.
+                </li>
+                <li>
+                  <strong>Phone state</strong> (optional, off by default) — used only by the{' '}
+                  <strong>Flashlight</strong> tool's "Flash Alerts" setting to detect when your phone
+                  starts or stops ringing, so it can blink the flash for an incoming call. Omni Hub
+                  never reads phone numbers, call logs, or call content.
+                </li>
+                <li>
+                  <strong>Notification access</strong> (optional, off by default, granted separately in
+                  Android Settings) — used only by the same "Flash Alerts" setting to detect that some
+                  other app posted a notification, so it can blink the flash. Omni Hub never reads,
+                  stores, or transmits any notification's content.
+                </li>
+                <li>
+                  <strong>Location</strong> — used by the <strong>Compass</strong> tool's optional
+                  location, altitude, and accuracy display, and optionally by the{' '}
+                  <strong>Phone Center</strong>'s Connection card to show your Wi-Fi signal strength
+                  and link speed (Android requires location access to read these two specific Wi-Fi
+                  details; Omni Hub never reads or uses your actual location for this). Read entirely
+                  on-device; never stored, logged, or transmitted anywhere.
+                </li>
+                <li>
+                  <strong>Microphone and audio settings</strong> (not yet in use) — reserved for the{' '}
+                  <strong>Voice Changer</strong> tool's recording feature, which is currently locked
+                  and not yet available. When it launches, recording will only ever start when you
+                  tap record, will be processed entirely on your device, and will only ever be sent
+                  anywhere if you explicitly tap Share.
+                </li>
+                <li>
+                  <strong>Modify system settings</strong> (not yet in use) — reserved for Voice
+                  Changer's upcoming "Set as Ringtone" option, needed to change your device's default
+                  ringtone. Not used for anything else.
+                </li>
+                <li>
+                  <strong>Audio files</strong> (optional, requested only if you open{' '}
+                  <strong>Phone Center ▸ Storage Details</strong>) — used only to show how much space
+                  your audio files take up. Omni Hub reads file sizes and counts from your media
+                  library; it never opens, plays, uploads, or transmits the files themselves. Omni Hub
+                  does not request access to your photos or videos.
+                </li>
+              </ul>
+            </>
+          )}
           <p>
             Two more things Phone Center and Phone Health Check read, neither of which needs a
             permission prompt and neither of which is ever stored or transmitted: your device's
@@ -224,8 +273,7 @@ export function PrivacyPolicy() {
           <h2>Alarm</h2>
           <p>
             Alarms you create are stored on your device (both in the app's own storage and,
-            separately, in Android's system alarm scheduler so they still fire when the app isn't
-            open) and are used only to ring at the time you set. If you're signed in, an alarm's
+            separately, with your phone's own alarm or notification scheduler so they still fire when the app isn't open) and are used only to ring at the time you set. If you're signed in, an alarm's
             time, label, repeat setting, chosen sound, and backup-ring settings sync the same way
             as the other tools listed above, so an alarm you set on one device also rings on your
             other signed-in devices; alarms don't sync at all if you're not signed in. If you pick
@@ -245,9 +293,7 @@ export function PrivacyPolicy() {
             usage can be rate-limited), and the Cloud Function forwards that to Google's Gemini
             API to write the reminder text and a voice clip. Your name, work/school routine, and
             interests are never sent — Sleep Mode's "Personal" mode uses those only to fill in
-            reminders on your own device, and they never leave it. Nothing from the Cloud
-            Function request is stored by Omni Hub beyond the generated reminders already
-            described for Sleep Mode above; it isn't used to train any model. Every other Sleep
+            reminders on your own device, and they never leave it. Omni Hub stores nothing from the Cloud Function request beyond the generated reminders already described for Sleep Mode above and a count of how many times you've generated them today, kept with your account to enforce the daily limit; none of it is used to train any model. Every other Sleep
             Mode personality, and Sleep Mode for anyone not signed in, runs entirely from
             reminders bundled with the app — nothing about those is ever sent anywhere.
           </p>
@@ -293,8 +339,7 @@ export function PrivacyPolicy() {
         <section className="pp__section pp__section--last">
           <h2>Contact</h2>
           <p>
-            Questions about this policy can be sent to the developer contact listed on the Omni
-            Hub Google Play Store listing.
+            Questions about this policy can be sent to the developer contact on Omni Hub's store listing (Google Play or the App Store).
           </p>
         </section>
       </div>
