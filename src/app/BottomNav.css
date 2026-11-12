@@ -13,6 +13,33 @@
      labels must not grow inside the fixed frame. */
   zoom: calc(1 / var(--text-scale, 1));
   z-index: 2;
+  /* The same ground on every tab: the app's own background. Without it the bar took on whatever
+     each page put behind it (the AI scene ran underneath, and Craft's and Desk's page colours
+     stopped in a hard seam above it), so it looked like a different bar on those three tabs. */
+  background: var(--bg);
+}
+
+/* Page content dissolves into that ground over the last few pixels instead of being cut off. */
+.bottom-nav::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 26px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg) 0%, transparent), var(--bg));
+  pointer-events: none;
+}
+
+/* The strip under the bar (the phone's gesture area) is part of the same ground. */
+.bottom-nav::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: var(--safe-bottom);
+  background: var(--bg);
 }
 
 .bottom-nav__frame {
@@ -35,6 +62,18 @@
   border: 0;
   color: #adbbcf;
   -webkit-tap-highlight-color: transparent;
+  /* No press animation at all: see the :active rule below. */
+  transition: none;
+}
+
+/* The app-wide rule for pressed buttons (theme.css) sets `transform: scale(0.96)` with a springy
+   transition and dims the button. On a tab that replaced the translateX(-50%) centring, so a
+   touched tab jumped half its width sideways, shrank, and bounced back on release. Tabs keep their
+   place, size and brightness when pressed. */
+.bottom-nav .bottom-nav__item:active:not(:disabled) {
+  transform: translateX(-50%);
+  opacity: 1;
+  transition: none;
 }
 
 /* icon centre at y = 139/272 (27 units below the accent line, as in the mockup); label centre 205/272 */
