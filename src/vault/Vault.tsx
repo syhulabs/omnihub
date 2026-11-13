@@ -5,6 +5,7 @@ import { Icon } from '../components/Icon';
 import { useRouter } from '../app/Router';
 import { useBackHandler } from '../app/useBackHandler';
 import { useAuth } from '../cloud/AuthContext';
+import { FirebaseFirestore } from '@capacitor-firebase/firestore';
 import { createSyncEngine, type SyncEngine } from '../cloud/sync';
 import { storageGet, storageSet, storageRemove, StorageKeys } from '../storage/db';
 import { hapticSuccess, hapticWarning } from '../haptics';
@@ -181,7 +182,7 @@ export function Vault() {
       const since = backgroundedAt;
       backgroundedAt = null;
       if (since === null) return;
-      if (consumeVaultExternalActivity()) return;
+      if (consumeVaultExternalActivity(since)) return;
       if (shouldLockAfterBackground(Date.now() - since)) lockFromBackgroundRef.current();
     });
     return () => {
@@ -417,13 +418,19 @@ export function Vault() {
     setStatus('locked');
   }
 
+  // The note created by the editor that is open now (it may already be stored if the app went to
+  // the background mid-edit). Emptied again before closing, it is discarded, not kept empty.
+  const newVaultNoteIdRef = useRef<string | null>(null);
+
   function openNew() {
     const note = newNote();
+    newVaultNoteIdRef.current = note.id;
     setDraft(note);
     setEditingId(note.id);
   }
 
   function openExisting(note: VaultNote) {
+    newVaultNoteIdRef.current = null;
     setDraft(null);
     setEditingId(note.id);
   }
@@ -446,7 +453,12 @@ export function Vault() {
         void persistNotes([draft, ...notes], key);
       }
       setDraft(null);
+    } else if (key && editingId && editingId === newVaultNoteIdRef.current) {
+      // A new note saved early (the app went to the background) and then emptied is not kept.
+      const saved = notes.find((n) => n.id === editingId);
+      if (saved && !saved.title.trim() && !saved.body.trim()) void persistNotes(notes.filter((n) => n.id !== editingId), key);
     }
+    newVaultNoteIdRef.current = null;
     setEditingId(null);
   }
 
@@ -483,9 +495,20 @@ export function Vault() {
       syncEngineRef.current ??
       (uid ? createSyncEngine<VaultNoteRecord>({ collection: 'vault', getLocal: () => [], setLocal: () => {} }) : null);
     if (engine && uid) {
-      for (const rec of encryptedRecordsRef.current) {
-        void engine.pushDelete(uid, rec.id, Date.now());
-      }
+      const known = new Set(encryptedRecordsRef.current.map((r) => r.id));
+      for (const id of known) void engine.pushDelete(uid, id, Date.now());
+      // Notes added on another device since this one last unlocked are only in the cloud. They are
+      // encrypted under the PIN being given up, so they must go too, or the next sync would bring
+      // them back as "Could not decrypt".
+      void FirebaseFirestore.getCollection<VaultNoteRecord>({ reference: `users/${uid}/vault` })
+        .then(({ snapshots }) => {
+          for (const doc of snapshots) {
+            if (doc.data && !doc.data.deletedAt && !known.has(doc.id)) void engine.pushDelete(uid, doc.id, Date.now());
+          }
+        })
+        .catch(() => {
+          // offline: those notes stay undecryptable in the cloud until a later reset; nothing to do here
+        });
     }
     encryptedRecordsRef.current = [];
     storageRemove(StorageKeys.vaultSalt);
@@ -522,7 +545,7 @@ export function Vault() {
   if (status === 'setupPin' && changingPin) {
     return (
       <div className="screen">
-        <ScreenHeader title="Vault" onBack={() => setStatus('unlocked')} />
+        <ScreenHeader title="Vault" onBack={securing ? () => {} : () => setStatus('unlocked')} />
         <PinPad title="New PIN" subtitle="Choose a new 4-digit PIN" value={pinInput} onChange={setPinInput} error={error} />
       </div>
     );
@@ -532,7 +555,7 @@ export function Vault() {
     if (status === 'confirmPin' && changingPin) {
       return (
         <div className="screen">
-          <ScreenHeader title="Vault" onBack={() => setStatus('unlocked')} />
+          <ScreenHeader title="Vault" onBack={securing ? () => {} : () => setStatus('unlocked')} />
           <PinPad
             title="Confirm New PIN"
             subtitle={securing ? 'Re-encrypting your Vault. Keep the app open…' : 'Enter it again'}

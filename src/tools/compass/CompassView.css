@@ -173,7 +173,7 @@
 .cp__needle-half--north {
   top: 0;
   height: 50%;
-  background: linear-gradient(to top, color-mix(in srgb, var(--red) 55%, transparent), var(--red));
+  background: linear-gradient(to top, color-mix(in srgb, var(--red-fill) 55%, transparent), var(--red-fill));
   clip-path: polygon(50% 0%, 100% 88%, 0% 88%);
 }
 
@@ -238,7 +238,7 @@
   align-items: center;
   gap: 5px;
   color: var(--purple);
-  background: color-mix(in srgb, var(--purple) 16%, transparent);
+  background: color-mix(in srgb, var(--purple-fill) 16%, transparent);
   border: 1px solid color-mix(in srgb, var(--purple) 30%, transparent);
   border-radius: var(--radius-pill);
   padding: 4px 12px;
@@ -340,7 +340,7 @@
 }
 
 .cp__sensor-overall--ok .cp__sensor-dot {
-  background: var(--green);
+  background: var(--green-fill);
 }
 
 .cp__sensor-row {
@@ -372,7 +372,7 @@
 
 .cp__sensor-chip--available .cp__sensor-chip-icon {
   color: var(--green);
-  background: color-mix(in srgb, var(--green) 16%, transparent);
+  background: color-mix(in srgb, var(--green-fill) 16%, transparent);
 }
 
 .cp__sensor-chip--unavailable .cp__sensor-chip-icon {

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { fillColor } from '../../theme/fill';
 import { useBackHandler } from '../../app/useBackHandler';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon, type IconName } from '../../components/Icon';
@@ -140,7 +141,7 @@ export function HealthCheck() {
               cy="70"
               r={RING_R}
               fill="none"
-              stroke={failedCount === 0 ? 'var(--green)' : 'var(--blue)'}
+              stroke={fillColor(failedCount === 0 ? 'var(--green)' : 'var(--blue)')}
               strokeWidth="10"
               strokeLinecap="round"
               strokeDasharray={RING_C}

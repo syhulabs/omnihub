@@ -48,18 +48,23 @@ export function shouldLockAfterBackground(backgroundMs: number): boolean {
 
 /* The Vault's own file picker and share sheet send the app to the background while the user is
    still working in the Vault. Locking on the way back would drop the key the picked file is about
-   to be encrypted with, so those flows announce themselves first. */
-let externalActivityUntil = 0;
+   to be encrypted with, so those flows announce themselves first. The announcement only covers a
+   trip to the background that starts within a few seconds of it: a picker or sheet that never
+   leaves the app (iOS, a cancelled Android sheet, an export with nothing to export) must not
+   leave the Vault exempt from locking when the user later puts the phone away. */
+const EXTERNAL_ACTIVITY_WINDOW_MS = 8_000;
+let externalActivityAt = 0;
 
 export function expectVaultExternalActivity() {
-  externalActivityUntil = Date.now() + 5 * 60_000;
+  externalActivityAt = Date.now();
 }
 
-/** True once per announced picker/share round trip. */
-export function consumeVaultExternalActivity(): boolean {
-  const expected = Date.now() < externalActivityUntil;
-  externalActivityUntil = 0;
-  return expected;
+/** True when the app went to the background at `backgroundedAt` because of an announced picker or
+ *  share sheet. Each announcement is used at most once. */
+export function consumeVaultExternalActivity(backgroundedAt: number): boolean {
+  const since = backgroundedAt - externalActivityAt;
+  externalActivityAt = 0;
+  return since >= 0 && since <= EXTERNAL_ACTIVITY_WINDOW_MS;
 }
 
 /** Explicit lock, PIN change or reset: nothing may survive it. */

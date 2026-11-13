@@ -42,11 +42,11 @@
 }
 
 .tdiff__card-badge--from {
-  background: var(--blue);
+  background: var(--blue-fill);
 }
 
 .tdiff__card-badge--to {
-  background: var(--purple);
+  background: var(--purple-fill);
 }
 
 .tdiff__card-city {
@@ -217,14 +217,14 @@
   align-items: center;
   justify-content: center;
   color: var(--yellow);
-  background: color-mix(in srgb, var(--yellow) 20%, var(--bg));
+  background: color-mix(in srgb, var(--yellow-fill) 20%, var(--bg));
   box-shadow: var(--shadow-sm);
   margin-bottom: 2px;
 }
 
 .wmarc__label-icon--night {
   color: var(--blue);
-  background: color-mix(in srgb, var(--blue) 20%, var(--bg));
+  background: color-mix(in srgb, var(--blue-fill) 20%, var(--bg));
 }
 
 .wmarc__label strong {
@@ -322,7 +322,7 @@
   gap: 8px;
   min-height: 52px;
   border-radius: var(--radius-pill);
-  background: linear-gradient(120deg, var(--blue), var(--purple));
+  background: linear-gradient(120deg, var(--blue-fill), var(--purple-fill));
   color: #fff;
   font-size: 15px;
   font-weight: 700;
@@ -390,11 +390,11 @@
 }
 
 .tdiff__seg--good {
-  background: var(--green);
+  background: var(--green-fill);
 }
 
 .tdiff__seg--ok {
-  background: color-mix(in srgb, var(--yellow) 55%, var(--bg-active));
+  background: color-mix(in srgb, var(--yellow-fill) 55%, var(--bg-active));
 }
 
 .tdiff__seg--poor {
@@ -434,11 +434,11 @@
 }
 
 .tdiff__legend-dot--good {
-  background: var(--green);
+  background: var(--green-fill);
 }
 
 .tdiff__legend-dot--ok {
-  background: color-mix(in srgb, var(--yellow) 55%, var(--bg-active));
+  background: color-mix(in srgb, var(--yellow-fill) 55%, var(--bg-active));
 }
 
 .tdiff__legend-dot--now {

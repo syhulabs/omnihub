@@ -113,20 +113,20 @@
 }
 
 .calc__key--eq {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--green) 85%, white 10%), var(--green));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--green-fill) 85%, white 10%), var(--green-fill));
   border: none;
   color: #fff;
   font-weight: 500;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--green) 30%, transparent), 0 4px 18px -4px color-mix(in srgb, var(--green) 60%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--green-fill) 30%, transparent), 0 4px 18px -4px color-mix(in srgb, var(--green-fill) 60%, transparent);
 }
 
 .calc__key--clear {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--red) 85%, white 10%), var(--red));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--red-fill) 85%, white 10%), var(--red-fill));
   border: none;
   color: #fff;
   font-weight: 600;
   font-size: 20px;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--red) 30%, transparent), 0 4px 18px -4px color-mix(in srgb, var(--red) 60%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--red-fill) 30%, transparent), 0 4px 18px -4px color-mix(in srgb, var(--red-fill) 60%, transparent);
 }
 
 .calc__history {

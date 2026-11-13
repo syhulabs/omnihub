@@ -30,8 +30,20 @@ export function DisplayTest({ onComplete, onCancel }: TestProps) {
         <p className="hct__hint" style={{ color: textDark ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.75)' }}>
           {isLast ? 'Did all the colors look correct — no dead pixels or odd tints?' : `Checking screen color: ${color.name}`}
         </p>
+        {/* The button sits on the test colour, not on the app theme: its fill follows the text
+            colour chosen for that test colour. With the theme's surface fill, light theme drew
+            white text on a white button. */}
         {!isLast ? (
-          <button type="button" className="hct__btn" style={{ color: textDark ? '#000' : '#fff', borderColor: textDark ? '#000' : '#fff' }} onClick={() => { hapticTap(); setIndex((i) => i + 1); }}>
+          <button
+            type="button"
+            className="hct__btn"
+            style={{
+              color: textDark ? '#000' : '#fff',
+              borderColor: textDark ? '#000' : '#fff',
+              background: textDark ? 'rgba(255, 255, 255, 0.45)' : 'rgba(0, 0, 0, 0.32)',
+            }}
+            onClick={() => { hapticTap(); setIndex((i) => i + 1); }}
+          >
             Next Color
           </button>
         ) : (

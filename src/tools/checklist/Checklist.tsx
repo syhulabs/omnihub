@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { SearchBar } from '../../components/SearchBar';
 import { Icon } from '../../components/Icon';
@@ -73,8 +73,13 @@ export function Checklist() {
 
   const openList = openId ? (draft?.id === openId ? draft : lists.find((l) => l.id === openId)) : null;
 
+  // The list created by the detail screen that is open now: emptied again before closing, it is
+  // discarded instead of left behind as an empty "Untitled" list.
+  const newListIdRef = useRef<string | null>(null);
+
   function createList() {
     const list = newList(category !== 'All' ? category : undefined);
+    newListIdRef.current = list.id;
     setDraft(list);
     setOpenId(list.id);
   }
@@ -111,7 +116,11 @@ export function Checklist() {
         persist([draft, ...lists]);
       }
       setDraft(null);
+    } else if (openId && openId === newListIdRef.current) {
+      const saved = lists.find((l) => l.id === openId);
+      if (saved && !saved.name.trim() && saved.items.length === 0) persist(lists.filter((l) => l.id !== openId));
     }
+    newListIdRef.current = null;
     setOpenId(null);
   }
 

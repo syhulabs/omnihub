@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { fillColor } from '../../theme/fill';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon } from '../../components/Icon';
 import { useRouter } from '../../app/Router';
@@ -254,7 +255,7 @@ export function Budget() {
                 <div className="bg__track">
                   <div
                     className="bg__bar"
-                    style={{ width: `${pct}%`, background: over ? 'var(--red)' : near ? 'var(--orange)' : cat.color }}
+                    style={{ width: `${pct}%`, background: fillColor(over ? 'var(--red)' : near ? 'var(--orange)' : cat.color) }}
                   />
                 </div>
                 <div className="bg__card-bottom">

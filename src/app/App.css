@@ -77,3 +77,16 @@
     transform: translateY(0);
   }
 }
+
+/* The App Lock screen covers the whole window with the app background. Without its own ground it
+   would show whatever is behind it: while a scan is running the app's layers are transparent and
+   the live camera feed is underneath. */
+.applock-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  overflow-y: auto;
+  background: var(--bg);
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+}

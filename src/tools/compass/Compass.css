@@ -210,13 +210,13 @@
 .cp__action--active {
   border-color: color-mix(in srgb, var(--purple) 50%, transparent);
   color: var(--purple);
-  box-shadow: var(--shadow-sm), 0 0 16px -6px color-mix(in srgb, var(--purple) 55%, transparent);
+  box-shadow: var(--shadow-sm), 0 0 16px -6px color-mix(in srgb, var(--purple-fill) 55%, transparent);
 }
 
 .cp__action--flashlight {
   border-color: color-mix(in srgb, var(--orange) 40%, transparent);
   color: var(--orange);
-  background: linear-gradient(160deg, color-mix(in srgb, var(--orange) 10%, var(--bg-elevated)), var(--bg-elevated));
+  background: linear-gradient(160deg, color-mix(in srgb, var(--orange-fill) 10%, var(--bg-elevated)), var(--bg-elevated));
 }
 
 .cp__quote {

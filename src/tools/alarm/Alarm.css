@@ -300,7 +300,7 @@
 }
 
 .alarm__crash-btn--danger {
-  background: var(--red);
+  background: var(--red-fill);
   color: #fff;
 }
 
@@ -348,7 +348,7 @@
 }
 
 .alarm-editor__confirm-delete {
-  background: var(--red) !important;
+  background: var(--red-fill) !important;
   color: #fff !important;
 }
 
@@ -486,7 +486,7 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: var(--red);
+  background: var(--red-fill);
   color: #fff;
   display: flex;
   align-items: center;

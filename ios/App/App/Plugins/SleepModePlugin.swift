@@ -112,7 +112,7 @@ public class SleepModePlugin: CAPPlugin, CAPBridgedPlugin, NotificationHandlerPr
             && (Self.int64(previous["sessionStartMillis"]) ?? 0) > 0
             && Self.isWithinSleepWindow(data, at: now)
         if sessionRunning {
-            for key in ["sessionStartMillis", "nagCount", "lastNagMillis", "mutedUntilMillis", "iosCountedIds"] {
+            for key in ["sessionStartMillis", "nagCount", "lastNagMillis", "mutedUntilMillis", "recentKeysCsv", "iosCountedIds"] {
                 if let value = previous[key] {
                     data[key] = value
                 }
@@ -126,7 +126,11 @@ public class SleepModePlugin: CAPPlugin, CAPBridgedPlugin, NotificationHandlerPr
             if let mutedUntil = Self.date(data["mutedUntilMillis"]), mutedUntil > start {
                 start = mutedUntil
             }
-            armed = rebuildSchedule(&data, from: start, startTier: min(Self.tierCount - 1, Self.int(data["nagCount"]) + 1))
+            // The raised tier only belongs to tonight. Muted until wake ("Stop for tonight"), the
+            // first reminder scheduled is tomorrow's bedtime one, which starts gently again.
+            let tonightWake = Self.sleepWindow(data, containing: now)?.wake ?? now
+            let tier = start >= tonightWake ? 0 : min(Self.tierCount - 1, Self.int(data["nagCount"]) + 1)
+            armed = rebuildSchedule(&data, from: start, startTier: tier)
         } else if Self.bool(data["enabled"], false) {
             armed = rebuildSchedule(&data, from: now.addingTimeInterval(1), startTier: 0)
         } else {

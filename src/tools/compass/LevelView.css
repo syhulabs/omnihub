@@ -79,7 +79,7 @@
 }
 
 .lv__guide--flat .lv__bubble {
-  background: color-mix(in srgb, var(--green) 30%, transparent);
+  background: color-mix(in srgb, var(--green-fill) 30%, transparent);
   border-color: var(--green);
 }
 

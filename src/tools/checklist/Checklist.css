@@ -205,7 +205,7 @@
 }
 
 .cl-detail__confirm-delete {
-  background: var(--red) !important;
+  background: var(--red-fill) !important;
   color: #fff !important;
 }
 
@@ -343,9 +343,9 @@
 }
 
 .cl-detail__checkbox--checked {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--green) 85%, white 10%), var(--green));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--green-fill) 85%, white 10%), var(--green-fill));
   border-color: transparent;
-  box-shadow: 0 0 10px -2px color-mix(in srgb, var(--green) 60%, transparent);
+  box-shadow: 0 0 10px -2px color-mix(in srgb, var(--green-fill) 60%, transparent);
 }
 
 .cl-detail__item-main {
@@ -485,7 +485,7 @@
   margin: 0 20px 8px;
   padding: 8px 12px;
   border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--green) 15%, transparent);
+  background: color-mix(in srgb, var(--green-fill) 15%, transparent);
   color: var(--green);
   font-size: 13px;
   font-weight: 600;

@@ -75,8 +75,8 @@
   align-items: center;
   justify-content: center;
   color: var(--yellow);
-  background: radial-gradient(circle, color-mix(in srgb, var(--yellow) 18%, transparent), transparent 70%);
-  box-shadow: 0 0 32px -6px color-mix(in srgb, var(--yellow) 55%, transparent);
+  background: radial-gradient(circle, color-mix(in srgb, var(--yellow-fill) 18%, transparent), transparent 70%);
+  box-shadow: 0 0 32px -6px color-mix(in srgb, var(--yellow-fill) 55%, transparent);
 }
 
 .notes__hero-title {
@@ -435,12 +435,12 @@
 
 .note-editor__row-icon--category {
   color: var(--orange);
-  background: color-mix(in srgb, var(--orange) 16%, transparent);
+  background: color-mix(in srgb, var(--orange-fill) 16%, transparent);
 }
 
 .note-editor__row-icon--palette {
   color: var(--teal);
-  background: color-mix(in srgb, var(--teal) 16%, transparent);
+  background: color-mix(in srgb, var(--teal-fill) 16%, transparent);
 }
 
 .note-editor__row-text {
@@ -535,6 +535,6 @@
 }
 
 .note-editor__confirm-delete {
-  background: var(--red) !important;
+  background: var(--red-fill) !important;
   color: #fff !important;
 }

@@ -666,9 +666,9 @@
   margin-top: 24px;
   min-height: 52px;
   border-radius: var(--radius-pill);
-  background: linear-gradient(135deg, color-mix(in srgb, var(--green) 85%, white 10%), var(--green));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--green-fill) 85%, white 10%), var(--green-fill));
   color: #fff;
   font-size: 16px;
   font-weight: 700;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--green) 30%, transparent), 0 4px 18px -4px color-mix(in srgb, var(--green) 60%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--green-fill) 30%, transparent), 0 4px 18px -4px color-mix(in srgb, var(--green-fill) 60%, transparent);
 }

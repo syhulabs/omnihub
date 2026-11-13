@@ -25,6 +25,18 @@
   --teal: #14b8a6;
   --pink: #ec4899;
 
+  /* The same accents for solid fills (buttons, rings, bars, dots, glows). They are identical
+     to the tokens above in dark theme; in light theme the tokens above turn into deeper "ink"
+     shades for text and icons, and these keep fills exactly as bright as before. */
+  --green-fill: #22c55e;
+  --yellow-fill: #eab308;
+  --orange-fill: #f97316;
+  --teal-fill: #14b8a6;
+  --red-fill: #ef4444;
+  --blue-fill: #4d7cfe;
+  --purple-fill: #a855f7;
+  --pink-fill: #ec4899;
+
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 22px;
@@ -56,6 +68,19 @@
   --text-primary: #10131a;
   --text-secondary: #4c5568;
   --text-tertiary: #7d879a;
+
+  /* Text and icon shades of the accents. The dark-theme values are tuned for a dark background
+     and fall to 2:1 or less on white (yellow 1.9, green 2.3): pins, stars, category icons, money
+     totals and status pills were close to invisible. These keep the hue at about 4.4:1 or better
+     on white. Fills use the --*-fill tokens and are unchanged. */
+  --green: #138a3c;
+  --yellow: #a96b00;
+  --orange: #c9530a;
+  --teal: #0b8075;
+  --red: #d42a2a;
+  --blue: #2f68ea;
+  --purple: #8b3fdc;
+  --pink: #cf2a78;
 
   --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08), 0 1px 1px rgba(15, 23, 42, 0.05);
   --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.12), 0 1px 3px rgba(15, 23, 42, 0.08);

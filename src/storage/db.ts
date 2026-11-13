@@ -143,16 +143,28 @@ export function exportBackup(): BackupPayload {
   };
 }
 
-/** Synced lists hold `{ id, updatedAt }` items. A restored item gets a fresh updatedAt so it wins
- *  the next cloud merge: otherwise a newer cloud tombstone (the very deletion the user is undoing
- *  by restoring) would remove it again the moment its tool is opened. */
+/** The lists that sync to the cloud (see useCloudSync callers). */
+const SYNCED_KEYS = new Set<string>([
+  StorageKeys.notes,
+  StorageKeys.checklists,
+  StorageKeys.expenses,
+  StorageKeys.budgets,
+  StorageKeys.subscriptions,
+  StorageKeys.debts,
+]);
+
+/** A restored synced item gets a fresh updatedAt so it wins the next cloud merge: otherwise a newer
+ *  cloud tombstone (the very deletion the user is undoing by restoring) would remove it again the
+ *  moment its tool is opened. The new stamps are spaced a millisecond apart in the items' original
+ *  order, so "newest first" sorting still lists them as they were. */
 function restampSyncedItems(value: unknown, now: number): unknown {
   if (!Array.isArray(value)) return value;
-  return value.map((item) =>
-    item && typeof item === 'object' && typeof (item as { id?: unknown }).id === 'string' && typeof (item as { updatedAt?: unknown }).updatedAt === 'number'
-      ? { ...item, updatedAt: now }
-      : item,
-  );
+  type Stamped = { id: string; updatedAt: number };
+  const isStamped = (item: unknown): item is Stamped =>
+    !!item && typeof item === 'object' && typeof (item as Stamped).id === 'string' && typeof (item as Stamped).updatedAt === 'number';
+  const order = value.filter(isStamped).sort((a, b) => b.updatedAt - a.updatedAt);
+  const stamp = new Map(order.map((item, rank) => [item, now - rank]));
+  return value.map((item) => (isStamped(item) ? { ...item, updatedAt: stamp.get(item) ?? now } : item));
 }
 
 export function importBackup(payload: unknown): { imported: number; vaultSkipped: boolean } {
@@ -180,7 +192,7 @@ export function importBackup(payload: unknown): { imported: number; vaultSkipped
       }
       storageSet(key, value);
     } else {
-      storageSet(key, restampSyncedItems(value, now));
+      storageSet(key, SYNCED_KEYS.has(key) ? restampSyncedItems(value, now) : value);
     }
     imported++;
   }

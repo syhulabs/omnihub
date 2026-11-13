@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { fillColor } from '../../theme/fill';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { SearchBar } from '../../components/SearchBar';
 import { Icon } from '../../components/Icon';
@@ -135,7 +136,7 @@ export function Home() {
                     <span
                       className="home__result-icon"
                       style={{
-                        background: `color-mix(in srgb, ${tool.color} 18%, transparent)`,
+                        background: `color-mix(in srgb, ${fillColor(tool.color)} 18%, transparent)`,
                         color: tool.color,
                       }}
                     >

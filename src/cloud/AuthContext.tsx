@@ -11,7 +11,8 @@ interface AuthContextValue {
   deletingAccount: boolean;
   error: string | null;
   signInWithGoogle: () => Promise<void>;
-  signOut: () => Promise<void>;
+  /** Resolves true once signed out; false if it failed (the error is in `error`). */
+  signOut: () => Promise<boolean>;
   /** Permanently deletes the signed-in user's synced data and their account. Throws on failure. */
   deleteAccount: () => Promise<void>;
 }
@@ -68,13 +69,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  async function signOut() {
+  async function signOut(): Promise<boolean> {
     setError(null);
     try {
       await FirebaseAuthentication.signOut();
       setUser(null);
+      return true;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Sign-out failed. Please try again.');
+      return false;
     }
   }
 

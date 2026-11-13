@@ -158,7 +158,7 @@
   width: 28px;
   height: 3px;
   border-radius: 2px;
-  background: linear-gradient(90deg, #4d7cfe, var(--purple));
+  background: linear-gradient(90deg, #4d7cfe, var(--purple-fill));
   margin-bottom: 4px;
 }
 
@@ -170,7 +170,7 @@
 }
 
 .craft__thanks-accent {
-  background: linear-gradient(135deg, #4d7cfe, var(--purple));
+  background: linear-gradient(135deg, #4d7cfe, var(--purple-fill));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -179,4 +179,12 @@
 .craft__thanks p {
   font-size: 12.5px;
   color: rgba(255, 255, 255, 0.65);
+}
+
+/* The daytime artwork behind the hero text is much brighter than the night one, and the soft glow
+   used in dark theme left the white eyebrow and subtitle washed out (about 2.5:1). A tighter,
+   darker halo keeps the same white type readable on the bright scene. */
+:root[data-theme='light'] .craft__hero-eyebrow,
+:root[data-theme='light'] .craft__hero-subtitle {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7), 0 0 10px rgba(0, 0, 0, 0.55);
 }

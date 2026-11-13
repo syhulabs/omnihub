@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { fillColor } from '../../theme/fill';
 import { useBackHandler } from '../../app/useBackHandler';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon } from '../../components/Icon';
@@ -272,7 +273,7 @@ export function ExpenseTracker() {
                       {cat.label}
                     </span>
                     <div className="et__chart-track">
-                      <div className="et__chart-bar" style={{ width: `${(amount / maxCategoryAmount) * 100}%`, background: cat.color }} />
+                      <div className="et__chart-bar" style={{ width: `${(amount / maxCategoryAmount) * 100}%`, background: fillColor(cat.color) }} />
                     </div>
                     <span className="et__chart-amount">{formatMoney(amount, currency)}</span>
                   </div>
@@ -317,7 +318,7 @@ export function ExpenseTracker() {
                       setTab('history');
                     }}
                   >
-                    <span className="et__cat-icon" style={{ background: `color-mix(in srgb, ${cat.color} 18%, transparent)`, color: cat.color }}>
+                    <span className="et__cat-icon" style={{ background: `color-mix(in srgb, ${fillColor(cat.color)} 18%, transparent)`, color: cat.color }}>
                       <Icon name={cat.icon} size={18} />
                     </span>
                     <span className="et__cat-info">
@@ -326,7 +327,7 @@ export function ExpenseTracker() {
                         <strong>{formatMoney(amount, currency)}</strong>
                       </span>
                       <div className="et__chart-track">
-                        <div className="et__chart-bar" style={{ width: `${(amount / maxCategoryAmount) * 100}%`, background: cat.color }} />
+                        <div className="et__chart-bar" style={{ width: `${(amount / maxCategoryAmount) * 100}%`, background: fillColor(cat.color) }} />
                       </div>
                       <span className="et__cat-meta">
                         {((amount / total) * 100).toFixed(0)}% of spending · {count} transaction{count === 1 ? '' : 's'}
@@ -451,7 +452,7 @@ function ExpenseRow({ expense, currency, onDelete }: { expense: Expense; currenc
   const cat = getCategory(expense.categoryId);
   return (
     <li className="et__row">
-      <span className="et__row-icon" style={{ background: `color-mix(in srgb, ${cat.color} 18%, transparent)`, color: cat.color }}>
+      <span className="et__row-icon" style={{ background: `color-mix(in srgb, ${fillColor(cat.color)} 18%, transparent)`, color: cat.color }}>
         <Icon name={cat.icon} size={16} />
       </span>
       <span className="et__row-info">

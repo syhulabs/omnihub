@@ -100,7 +100,7 @@
 }
 
 .sci__key--danger {
-  background: color-mix(in srgb, var(--red) 16%, var(--bg-elevated));
+  background: color-mix(in srgb, var(--red-fill) 16%, var(--bg-elevated));
   border-color: color-mix(in srgb, var(--red) 25%, var(--border));
   color: var(--red);
   font-size: 15px;
@@ -108,11 +108,11 @@
 }
 
 .sci__key--equals {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--green) 85%, white 10%), var(--green));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--green-fill) 85%, white 10%), var(--green-fill));
   border: none;
   color: #fff;
   font-weight: 600;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--green) 30%, transparent), 0 4px 16px -4px color-mix(in srgb, var(--green) 60%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--green-fill) 30%, transparent), 0 4px 16px -4px color-mix(in srgb, var(--green-fill) 60%, transparent);
 }
 
 .sci__key--span4 {

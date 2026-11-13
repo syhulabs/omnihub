@@ -4,10 +4,11 @@ import { useRouter } from '../../app/Router';
 import { evaluateExpression, type AngleMode } from './evaluate';
 import './ScientificCalculator.css';
 
-/** Twelve significant digits: hides binary rounding noise without flattening small results to 0
- *  (rounding to ten decimal places turned 10^-11 into 0 and 10^300 into Infinity). */
+/** Fifteen significant digits, all a double holds exactly: hides binary rounding noise without
+ *  cutting real digits (2^40 = 1099511627776) or flattening small results to 0 (rounding to ten
+ *  decimal places turned 10^-11 into 0). */
 function roundResult(n: number): number {
-  return Number(n.toPrecision(12));
+  return Number(n.toPrecision(15));
 }
 
 /** How a result is written back into the expression: plain digits, with a capital E for the

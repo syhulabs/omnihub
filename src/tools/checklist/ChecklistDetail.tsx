@@ -1,4 +1,4 @@
-import { useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { shareText } from '../../share/saveFile';
 import { formatClockDate } from '../../settings/formats';
 import { ScreenHeader } from '../../components/ScreenHeader';
@@ -60,6 +60,11 @@ export function ChecklistDetail({ list, onChange, onDelete, onClose, onDuplicate
   const dragRef = useRef<DragState | null>(null);
   const listRef = useRef(list);
   listRef.current = list;
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+  // Leaving the screen mid-drag drops the drag: no window listeners outlive it, nothing is saved.
+  const detachDragRef = useRef<(() => void) | null>(null);
+  useEffect(() => () => detachDragRef.current?.(), []);
 
   useBackHandler(() => {
     if (confirmingDelete) setConfirmingDelete(false);
@@ -151,6 +156,7 @@ export function ChecklistDetail({ list, onChange, onDelete, onClose, onDuplicate
   function startDrag(id: string, e: ReactPointerEvent<HTMLButtonElement>) {
     const startIndex = list.items.findIndex((i) => i.id === id);
     if (startIndex < 0 || dragRef.current) return;
+    const pointerId = e.pointerId;
     const rects = list.items.map((i) => itemRefs.current[i.id]?.getBoundingClientRect() ?? null);
     const own = rects[startIndex];
     if (!own) return;
@@ -173,7 +179,7 @@ export function ChecklistDetail({ list, onChange, onDelete, onClose, onDuplicate
 
     const onMove = (ev: PointerEvent) => {
       const current = dragRef.current;
-      if (!current) return;
+      if (!current || ev.pointerId !== pointerId) return; // a second finger doesn't move the row
       const offsetY = ev.clientY - current.startY;
       const draggedMid = current.mids[current.startIndex] + offsetY;
       let targetIndex = 0;
@@ -185,10 +191,15 @@ export function ChecklistDetail({ list, onChange, onDelete, onClose, onDuplicate
       dragRef.current = nextState;
       setDragState(nextState);
     };
-    const onEnd = () => {
+    const detach = () => {
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onEnd);
       window.removeEventListener('pointercancel', onEnd);
+      detachDragRef.current = null;
+    };
+    const onEnd = (ev: PointerEvent) => {
+      if (ev.pointerId !== pointerId) return; // only the dragging finger ends the drag
+      detach();
       const current = dragRef.current;
       dragRef.current = null;
       setDragState(null);
@@ -198,8 +209,11 @@ export function ChecklistDetail({ list, onChange, onDelete, onClose, onDuplicate
       if (from < 0) return;
       const [moved] = items.splice(from, 1);
       items.splice(Math.min(current.targetIndex, items.length), 0, moved);
-      update({ items });
+      // The latest list and change handler, not the ones from when the drag began: a sync that
+      // landed mid-drag must not be overwritten with the older copy.
+      onChangeRef.current({ ...listRef.current, items, updatedAt: Date.now() });
     };
+    detachDragRef.current = detach;
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup', onEnd);
     window.addEventListener('pointercancel', onEnd);

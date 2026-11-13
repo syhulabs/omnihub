@@ -573,18 +573,18 @@
 
 .tz__row-period--sun {
   color: var(--yellow);
-  background: color-mix(in srgb, var(--yellow) 18%, transparent);
+  background: color-mix(in srgb, var(--yellow-fill) 18%, transparent);
 }
 
 .tz__row-period--sunrise,
 .tz__row-period--sunset {
   color: var(--orange);
-  background: color-mix(in srgb, var(--orange) 18%, transparent);
+  background: color-mix(in srgb, var(--orange-fill) 18%, transparent);
 }
 
 .tz__row-period--moon {
   color: var(--blue);
-  background: color-mix(in srgb, var(--blue) 18%, transparent);
+  background: color-mix(in srgb, var(--blue-fill) 18%, transparent);
 }
 
 .tz__row-info {
@@ -609,7 +609,7 @@
   font-size: 9px;
   font-weight: 700;
   color: var(--purple);
-  background: color-mix(in srgb, var(--purple) 16%, transparent);
+  background: color-mix(in srgb, var(--purple-fill) 16%, transparent);
   padding: 2px 7px;
   border-radius: var(--radius-pill);
 }

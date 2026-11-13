@@ -221,15 +221,15 @@
 }
 
 .ns__review-btn--reject {
-  background: color-mix(in srgb, var(--red) 22%, rgba(0, 0, 0, 0.5));
+  background: color-mix(in srgb, var(--red-fill) 22%, rgba(0, 0, 0, 0.5));
   color: var(--red);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--red) 40%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--red-fill) 40%, transparent);
 }
 
 .ns__review-btn--accept {
-  background: color-mix(in srgb, var(--green) 22%, rgba(0, 0, 0, 0.5));
+  background: color-mix(in srgb, var(--green-fill) 22%, rgba(0, 0, 0, 0.5));
   color: var(--green);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--green) 40%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--green-fill) 40%, transparent);
 }
 
 .ns__center {

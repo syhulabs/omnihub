@@ -1,5 +1,5 @@
 .syxdi__title-accent {
-  background: linear-gradient(135deg, #4d7cfe, var(--purple));
+  background: linear-gradient(135deg, #4d7cfe, var(--purple-fill));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -52,7 +52,7 @@
 }
 
 :root[data-theme='light'] .syxdi__headline-title {
-  background-image: linear-gradient(135deg, var(--text-primary), #4d7cfe 55%, var(--purple));
+  background-image: linear-gradient(135deg, var(--text-primary), #4d7cfe 55%, var(--purple-fill));
   filter: none;
 }
 
@@ -106,7 +106,7 @@
   font-weight: 900;
   letter-spacing: -0.01em;
   line-height: 1.2;
-  background: linear-gradient(135deg, #fff, #4d7cfe 55%, var(--purple));
+  background: linear-gradient(135deg, #fff, #4d7cfe 55%, var(--purple-fill));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

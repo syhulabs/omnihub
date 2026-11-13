@@ -33,12 +33,12 @@
 }
 
 .dc__summary-item--green {
-  background: linear-gradient(160deg, color-mix(in srgb, var(--green) 10%, var(--bg-elevated)), var(--bg-elevated));
+  background: linear-gradient(160deg, color-mix(in srgb, var(--green-fill) 10%, var(--bg-elevated)), var(--bg-elevated));
   border: 1px solid color-mix(in srgb, var(--green) 30%, var(--border));
 }
 
 .dc__summary-item--red {
-  background: linear-gradient(160deg, color-mix(in srgb, var(--red) 10%, var(--bg-elevated)), var(--bg-elevated));
+  background: linear-gradient(160deg, color-mix(in srgb, var(--red-fill) 10%, var(--bg-elevated)), var(--bg-elevated));
   border: 1px solid color-mix(in srgb, var(--red) 30%, var(--border));
 }
 
@@ -54,12 +54,12 @@
 
 .dc__summary-icon--green {
   color: var(--green);
-  background: color-mix(in srgb, var(--green) 20%, transparent);
+  background: color-mix(in srgb, var(--green-fill) 20%, transparent);
 }
 
 .dc__summary-icon--red {
   color: var(--red);
-  background: color-mix(in srgb, var(--red) 20%, transparent);
+  background: color-mix(in srgb, var(--red-fill) 20%, transparent);
 }
 
 .dc__summary-item div {
@@ -137,11 +137,11 @@
 }
 
 .dc__balance--positive {
-  background: linear-gradient(120deg, color-mix(in srgb, var(--green) 55%, var(--accent) 20%), var(--accent));
+  background: linear-gradient(120deg, color-mix(in srgb, var(--green-fill) 55%, var(--accent) 20%), var(--accent));
 }
 
 .dc__balance--negative {
-  background: linear-gradient(120deg, color-mix(in srgb, var(--red) 60%, var(--accent) 15%), var(--accent));
+  background: linear-gradient(120deg, color-mix(in srgb, var(--red-fill) 60%, var(--accent) 15%), var(--accent));
 }
 
 .dc__tabs {
@@ -174,10 +174,10 @@
 }
 
 .dc__tab--active-green {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--green) 85%, white 10%), var(--green));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--green-fill) 85%, white 10%), var(--green-fill));
   border-color: transparent;
   color: #fff;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--green) 30%, transparent), 0 3px 14px -4px color-mix(in srgb, var(--green) 60%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--green-fill) 30%, transparent), 0 3px 14px -4px color-mix(in srgb, var(--green-fill) 60%, transparent);
 }
 
 .dc__tab--active-green em {
@@ -185,10 +185,10 @@
 }
 
 .dc__tab--active-red {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--red) 85%, white 10%), var(--red));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--red-fill) 85%, white 10%), var(--red-fill));
   border-color: transparent;
   color: #fff;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--red) 30%, transparent), 0 3px 14px -4px color-mix(in srgb, var(--red) 60%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--red-fill) 30%, transparent), 0 3px 14px -4px color-mix(in srgb, var(--red-fill) 60%, transparent);
 }
 
 .dc__tab--active-red em {
@@ -225,12 +225,12 @@
 
 .dc__add-icon--green {
   color: var(--green);
-  background: color-mix(in srgb, var(--green) 18%, transparent);
+  background: color-mix(in srgb, var(--green-fill) 18%, transparent);
 }
 
 .dc__add-icon--red {
   color: var(--red);
-  background: color-mix(in srgb, var(--red) 18%, transparent);
+  background: color-mix(in srgb, var(--red-fill) 18%, transparent);
 }
 
 .dc__add-head div {
@@ -324,13 +324,13 @@
 }
 
 .dc__add-btn--green {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--green) 85%, white 10%), var(--green));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--green) 30%, transparent), 0 6px 20px -6px color-mix(in srgb, var(--green) 60%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--green-fill) 85%, white 10%), var(--green-fill));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--green-fill) 30%, transparent), 0 6px 20px -6px color-mix(in srgb, var(--green-fill) 60%, transparent);
 }
 
 .dc__add-btn--red {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--red) 85%, white 10%), var(--red));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--red) 30%, transparent), 0 6px 20px -6px color-mix(in srgb, var(--red) 60%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--red-fill) 85%, white 10%), var(--red-fill));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--red-fill) 30%, transparent), 0 6px 20px -6px color-mix(in srgb, var(--red-fill) 60%, transparent);
 }
 
 .dc__empty {
@@ -402,12 +402,12 @@
 }
 
 .dc__row-icon--green {
-  background: color-mix(in srgb, var(--green) 18%, transparent);
+  background: color-mix(in srgb, var(--green-fill) 18%, transparent);
   color: var(--green);
 }
 
 .dc__row-icon--red {
-  background: color-mix(in srgb, var(--red) 18%, transparent);
+  background: color-mix(in srgb, var(--red-fill) 18%, transparent);
   color: var(--red);
 }
 
@@ -444,12 +444,12 @@
 
 .dc__row-pill--green {
   color: var(--green);
-  background: color-mix(in srgb, var(--green) 18%, transparent);
+  background: color-mix(in srgb, var(--green-fill) 18%, transparent);
 }
 
 .dc__row-pill--red {
   color: var(--red);
-  background: color-mix(in srgb, var(--red) 18%, transparent);
+  background: color-mix(in srgb, var(--red-fill) 18%, transparent);
 }
 
 .dc__row-note {
@@ -510,7 +510,7 @@
 
 .dc__due-badge--overdue {
   color: var(--red);
-  background: color-mix(in srgb, var(--red) 18%, transparent);
+  background: color-mix(in srgb, var(--red-fill) 18%, transparent);
 }
 
 .dc__actions {
@@ -663,11 +663,11 @@
 }
 
 .dc__due-dot--green {
-  background: var(--green);
+  background: var(--green-fill);
 }
 
 .dc__due-dot--red {
-  background: var(--red);
+  background: var(--red-fill);
 }
 
 .dc__due-info {

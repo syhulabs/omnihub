@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { App as CapacitorApp } from "@capacitor/app";
 import { PinPad } from "../vault/PinPad";
+import { useBackHandler } from "../app/useBackHandler";
 import { Icon } from "../components/Icon";
 import {
   storageGet,
@@ -54,6 +55,11 @@ export function AppLockGate({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (unlocked) setAppMounted(true);
   }, [unlocked]);
+
+  // While locked, the hardware back button belongs to the lock screen. The app underneath stays
+  // mounted (hidden) after a re-lock, and its own back handlers would otherwise act on it unseen:
+  // discarding a half-typed expense, navigating, or exiting the app.
+  useBackHandler(() => {}, !unlocked);
 
   useEffect(() => {
     const listener = CapacitorApp.addListener(
@@ -161,7 +167,7 @@ export function AppLockGate({ children }: { children: ReactNode }) {
       {/* One stable wrapper, shown or hidden, so locking and unlocking never remounts the app. */}
       {(unlocked || appMounted) && <div style={{ display: unlocked ? 'contents' : 'none' }}>{children}</div>}
       {!unlocked && (
-        <div className="screen">
+        <div className="screen applock-gate">
           <PinPad
             title="Enter PIN"
             subtitle={isLockedOut ? `Too many attempts. Try again in ${formatLockoutRemaining(lockedUntil, now)}` : 'Unlock Omni Hub'}

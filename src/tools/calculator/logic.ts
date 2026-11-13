@@ -22,9 +22,10 @@ export function applyOperator(a: number, b: number, op: Operator): number {
 export function formatResult(value: number): string {
   if (Number.isNaN(value)) return 'Error';
   if (!Number.isFinite(value)) return 'Error';
-  // Twelve significant digits. Rounding to ten decimal places kept binary noise on large sums
-  // (2500000.55 + 1000000.4 showed 3500000.9499999997) and flattened small results to 0.
-  return Number(value.toPrecision(12)).toString();
+  // Fifteen significant digits: as many as a double holds exactly, so 1234567890123 + 0 stays
+  // exact, while the binary noise in the 16th-17th digit (2500000.55 + 1000000.4 showed
+  // 3500000.9499999997) is dropped. Ten decimal places used to flatten small results to 0.
+  return Number(value.toPrecision(15)).toString();
 }
 
 export interface CalculatorHistoryEntry {

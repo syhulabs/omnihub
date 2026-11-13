@@ -115,10 +115,19 @@ export function BarcodeScannerView({ title, formats }: BarcodeScannerViewProps) 
   const statusRef = useRef(status);
   statusRef.current = status;
   useEffect(() => {
+    // Only after a real trip away while the screen said "denied" (to Settings): the permission
+    // dialog itself also pauses and resumes the app, and retrying then would ask a second time
+    // right after the user said no.
+    let deniedWhenLeft = false;
+    const pause = CapacitorApp.addListener('pause', () => {
+      deniedWhenLeft = statusRef.current === 'denied';
+    });
     const listener = CapacitorApp.addListener('resume', () => {
-      if (statusRef.current === 'denied') void startScanning();
+      if (deniedWhenLeft && statusRef.current === 'denied') void startScanning();
+      deniedWhenLeft = false;
     });
     return () => {
+      void pause.then((l) => l.remove());
       void listener.then((l) => l.remove());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

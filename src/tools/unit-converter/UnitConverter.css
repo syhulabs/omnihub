@@ -79,7 +79,7 @@
 }
 
 .uc__label-icon--purple {
-  background: color-mix(in srgb, var(--purple) 22%, transparent);
+  background: color-mix(in srgb, var(--purple-fill) 22%, transparent);
   color: var(--purple);
 }
 

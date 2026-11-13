@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { SearchBar } from '../../components/SearchBar';
 import { Icon } from '../../components/Icon';
@@ -91,15 +91,30 @@ export function Notes() {
 
   const editingNote = editingId ? (draft?.id === editingId ? draft : notes.find((n) => n.id === editingId)) : null;
 
+  // The note created by the editor that is open now. It is stored as soon as it has content, but
+  // until the editor closes it is still "new": emptied again or deleted, it is discarded outright
+  // rather than left behind as an empty note or sent to Trash.
+  const newNoteIdRef = useRef<string | null>(null);
+
   function openNew() {
     const note = newNote();
+    newNoteIdRef.current = note.id;
     setDraft(note);
     setEditingId(note.id);
   }
 
   function openExisting(note: Note) {
+    newNoteIdRef.current = null;
     setDraft(null);
     setEditingId(note.id);
+  }
+
+  function discardNewNote(): boolean {
+    const id = newNoteIdRef.current;
+    newNoteIdRef.current = null;
+    if (!id || id !== editingId || !notes.some((n) => n.id === id)) return false;
+    persist(notes.filter((n) => n.id !== id));
+    return true;
   }
 
   function handleChange(updated: Note) {
@@ -125,16 +140,21 @@ export function Notes() {
         persist([draft, ...notes]);
       }
       setDraft(null);
+    } else {
+      const saved = notes.find((n) => n.id === editingId);
+      if (saved && !saved.title.trim() && !saved.body.trim()) discardNewNote();
     }
+    newNoteIdRef.current = null;
     setEditingId(null);
   }
 
   function deleteEditing() {
     if (draft) {
       setDraft(null);
-    } else if (editingId) {
+    } else if (editingId && !discardNewNote()) {
       trashNote(editingId);
     }
+    newNoteIdRef.current = null;
     setEditingId(null);
   }
 

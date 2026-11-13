@@ -85,7 +85,7 @@
 }
 
 .vch__tabbar-item--active .vch__tabbar-icon-wrap {
-  background: color-mix(in srgb, var(--purple) 16%, transparent);
+  background: color-mix(in srgb, var(--purple-fill) 16%, transparent);
   transform: scale(1.04);
 }
 
@@ -97,7 +97,7 @@
   gap: 8px;
   padding: 12px 14px;
   border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--red) 14%, var(--bg-elevated));
+  background: color-mix(in srgb, var(--red-fill) 14%, var(--bg-elevated));
   border: 1px solid color-mix(in srgb, var(--red) 30%, transparent);
   color: var(--text-primary);
   font-size: 13px;
@@ -128,9 +128,9 @@
   height: 220px;
   background: radial-gradient(
     circle,
-    color-mix(in srgb, var(--purple) 55%, transparent),
-    color-mix(in srgb, var(--pink) 35%, transparent) 45%,
-    color-mix(in srgb, var(--blue) 25%, transparent) 65%,
+    color-mix(in srgb, var(--purple-fill) 55%, transparent),
+    color-mix(in srgb, var(--pink-fill) 35%, transparent) 45%,
+    color-mix(in srgb, var(--blue-fill) 25%, transparent) 65%,
     transparent 78%
   );
   filter: blur(28px);
@@ -205,16 +205,16 @@
 
 .vch__cta--primary {
   background: radial-gradient(circle at 30% -20%, rgba(255, 255, 255, 0.35), transparent 55%),
-    linear-gradient(135deg, color-mix(in srgb, var(--red) 85%, var(--pink) 20%), var(--pink));
+    linear-gradient(135deg, color-mix(in srgb, var(--red-fill) 85%, var(--pink-fill) 20%), var(--pink-fill));
   color: #fff;
-  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.25) inset, 0 8px 22px -8px color-mix(in srgb, var(--red) 60%, transparent);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.25) inset, 0 8px 22px -8px color-mix(in srgb, var(--red-fill) 60%, transparent);
 }
 
 .vch__cta--secondary {
   background: radial-gradient(circle at 30% -20%, rgba(255, 255, 255, 0.35), transparent 55%),
-    linear-gradient(135deg, color-mix(in srgb, var(--blue) 88%, white 6%), var(--blue));
+    linear-gradient(135deg, color-mix(in srgb, var(--blue-fill) 88%, white 6%), var(--blue-fill));
   color: #fff;
-  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.25) inset, 0 8px 22px -8px color-mix(in srgb, var(--blue) 60%, transparent);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.25) inset, 0 8px 22px -8px color-mix(in srgb, var(--blue-fill) 60%, transparent);
 }
 
 .vch__file-input {
@@ -264,7 +264,7 @@
   height: 76px;
   object-fit: contain;
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5))
-    drop-shadow(0 0 16px color-mix(in srgb, var(--tile-color, var(--purple)) 60%, transparent));
+    drop-shadow(0 0 16px color-mix(in srgb, var(--tile-color, var(--purple-fill)) 60%, transparent));
 }
 
 /* Record -------------------------------------------------------------------------------------- */
@@ -277,17 +277,17 @@
   align-items: center;
   justify-content: center;
   background: radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.5), transparent 50%),
-    linear-gradient(135deg, color-mix(in srgb, var(--purple) 88%, white 8%), var(--purple));
+    linear-gradient(135deg, color-mix(in srgb, var(--purple-fill) 88%, white 8%), var(--purple-fill));
   color: #fff;
-  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.3) inset, 0 0 0 1px color-mix(in srgb, var(--purple) 30%, transparent),
-    0 10px 28px -8px color-mix(in srgb, var(--purple) 65%, transparent);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.3) inset, 0 0 0 1px color-mix(in srgb, var(--purple-fill) 30%, transparent),
+    0 10px 28px -8px color-mix(in srgb, var(--purple-fill) 65%, transparent);
 }
 
 .vch__record-btn--active {
   background: radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.5), transparent 50%),
-    linear-gradient(135deg, color-mix(in srgb, var(--red) 88%, white 8%), var(--red));
-  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.3) inset, 0 0 0 1px color-mix(in srgb, var(--red) 30%, transparent),
-    0 10px 28px -8px color-mix(in srgb, var(--red) 65%, transparent);
+    linear-gradient(135deg, color-mix(in srgb, var(--red-fill) 88%, white 8%), var(--red-fill));
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.3) inset, 0 0 0 1px color-mix(in srgb, var(--red-fill) 30%, transparent),
+    0 10px 28px -8px color-mix(in srgb, var(--red-fill) 65%, transparent);
 }
 
 .vch__pulse-wrap {
@@ -322,7 +322,7 @@
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: var(--red);
+  background: var(--red-fill);
   margin-right: 8px;
   vertical-align: middle;
   animation: vch-blink 1s ease-in-out infinite;
@@ -365,7 +365,7 @@
   align-self: center;
   background: radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.45), transparent 55%), var(--accent-gradient);
   color: #fff;
-  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.3) inset, var(--shadow-glow), 0 10px 24px -8px color-mix(in srgb, var(--purple) 60%, transparent);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.3) inset, var(--shadow-glow), 0 10px 24px -8px color-mix(in srgb, var(--purple-fill) 60%, transparent);
 }
 
 .vch__effects {
@@ -405,14 +405,14 @@
 }
 
 .vch__effect--active {
-  background: color-mix(in srgb, var(--effect-color, var(--purple)) 16%, var(--bg-elevated));
+  background: color-mix(in srgb, var(--effect-color, var(--purple-fill)) 16%, var(--bg-elevated));
   border-color: color-mix(in srgb, var(--effect-color, var(--purple)) 45%, transparent);
   color: var(--text-primary);
 }
 
 .vch__effect--active .vch__effect-icon img {
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5))
-    drop-shadow(0 0 18px color-mix(in srgb, var(--effect-color, var(--purple)) 75%, transparent));
+    drop-shadow(0 0 18px color-mix(in srgb, var(--effect-color, var(--purple-fill)) 75%, transparent));
 }
 
 /* Category / preset chips ----------------------------------------------------------------------- */
@@ -497,11 +497,11 @@
   border-radius: 50%;
   overflow: hidden;
   background: radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.4), transparent 46%),
-    linear-gradient(135deg, var(--blue), var(--purple) 55%, var(--pink));
+    linear-gradient(135deg, var(--blue-fill), var(--purple-fill) 55%, var(--pink-fill));
   color: #fff;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15) inset, 0 -8px 18px rgba(255, 255, 255, 0.28) inset,
-    0 8px 18px rgba(0, 0, 0, 0.4) inset, 0 14px 36px -8px color-mix(in srgb, var(--purple) 70%, transparent),
-    0 0 46px -6px color-mix(in srgb, var(--pink) 60%, transparent);
+    0 8px 18px rgba(0, 0, 0, 0.4) inset, 0 14px 36px -8px color-mix(in srgb, var(--purple-fill) 70%, transparent),
+    0 0 46px -6px color-mix(in srgb, var(--pink-fill) 60%, transparent);
   animation: vch-mic-pulse 3.2s ease-in-out infinite;
 }
 
@@ -526,7 +526,7 @@
 }
 
 .vch__preset--active {
-  background: color-mix(in srgb, var(--purple) 16%, var(--bg-elevated));
+  background: color-mix(in srgb, var(--purple-fill) 16%, var(--bg-elevated));
   border-color: var(--purple);
   color: var(--text-primary);
 }
@@ -594,9 +594,9 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.95), var(--purple) 65%);
+  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.95), var(--purple-fill) 65%);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18), 0 2px 6px rgba(0, 0, 0, 0.45),
-    0 0 14px -2px color-mix(in srgb, var(--purple) 75%, transparent);
+    0 0 14px -2px color-mix(in srgb, var(--purple-fill) 75%, transparent);
   cursor: pointer;
 }
 
@@ -605,9 +605,9 @@
   height: 18px;
   border: none;
   border-radius: 50%;
-  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.95), var(--purple) 65%);
+  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.95), var(--purple-fill) 65%);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18), 0 2px 6px rgba(0, 0, 0, 0.45),
-    0 0 14px -2px color-mix(in srgb, var(--purple) 75%, transparent);
+    0 0 14px -2px color-mix(in srgb, var(--purple-fill) 75%, transparent);
   cursor: pointer;
 }
 
@@ -679,7 +679,7 @@
 
 .vch__toggle input:checked + .vch__toggle-track,
 .vch__switch-row input:checked + .vch__toggle-track {
-  background: var(--purple);
+  background: var(--purple-fill);
   border-color: var(--purple);
 }
 
@@ -752,7 +752,7 @@
   align-items: center;
   justify-content: center;
   background: radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.45), transparent 55%), var(--accent-gradient);
-  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.28) inset, 0 4px 10px -4px color-mix(in srgb, var(--purple) 60%, transparent);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.28) inset, 0 4px 10px -4px color-mix(in srgb, var(--purple-fill) 60%, transparent);
   color: #fff;
 }
 
@@ -787,7 +787,7 @@
   height: var(--h);
   min-height: 3px;
   border-radius: 2px;
-  background: color-mix(in srgb, var(--purple) 55%, var(--bg-elevated-2));
+  background: color-mix(in srgb, var(--purple-fill) 55%, var(--bg-elevated-2));
 }
 
 /* .vch__body--center centers its children on the cross axis, which shrink-wraps a flex item with
@@ -801,7 +801,7 @@
 }
 
 .vch__waveform--live span {
-  background: linear-gradient(180deg, var(--red), color-mix(in srgb, var(--pink) 60%, var(--red)));
+  background: linear-gradient(180deg, var(--red-fill), color-mix(in srgb, var(--pink-fill) 60%, var(--red-fill)));
   transition: height 0.09s ease-out;
 }
 
@@ -847,11 +847,11 @@
 .vch__action--primary {
   background: radial-gradient(circle at 30% -30%, rgba(255, 255, 255, 0.45), transparent 55%), var(--accent-gradient);
   color: #fff;
-  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.3) inset, var(--shadow-glow), 0 10px 24px -10px color-mix(in srgb, var(--purple) 65%, transparent);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.3) inset, var(--shadow-glow), 0 10px 24px -10px color-mix(in srgb, var(--purple-fill) 65%, transparent);
 }
 
 .vch__action--danger {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--red) 88%, white 8%), var(--red));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--red-fill) 88%, white 8%), var(--red-fill));
   color: #fff;
 }
 
@@ -867,7 +867,7 @@
   gap: 12px;
   padding: 14px;
   border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--green) 14%, var(--bg-elevated));
+  background: color-mix(in srgb, var(--green-fill) 14%, var(--bg-elevated));
   border: 1px solid color-mix(in srgb, var(--green) 30%, transparent);
 }
 
@@ -879,7 +879,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--green);
+  background: var(--green-fill);
   color: #fff;
 }
 
@@ -1010,7 +1010,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: color-mix(in srgb, var(--purple) 20%, var(--bg-elevated-2));
+  background: color-mix(in srgb, var(--purple-fill) 20%, var(--bg-elevated-2));
   color: var(--purple);
 }
 

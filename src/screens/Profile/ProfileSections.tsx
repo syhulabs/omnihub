@@ -504,7 +504,12 @@ export function ProfileDataSync() {
     hapticWarning();
     // Staying signed in would undo the wipe: the next tool opened would pull every synced item
     // straight back from the account.
-    if (user) await signOut();
+    if (user && !(await signOut())) {
+      // Wiping while still signed in would be undone by the next sync, so stop here.
+      setConfirmingClear(false);
+      setImportStatus({ type: 'error', message: "Couldn't sign you out, so nothing was deleted. Check your connection and try again." });
+      return;
+    }
     clearAllData();
     await clearAllFiles();
     await clearNativeState();

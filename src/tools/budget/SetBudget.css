@@ -323,15 +323,15 @@
 }
 
 .sb__preview-bar--ok {
-  background: var(--green);
+  background: var(--green-fill);
 }
 
 .sb__preview-bar--near {
-  background: var(--yellow);
+  background: var(--yellow-fill);
 }
 
 .sb__preview-bar--over {
-  background: var(--red);
+  background: var(--red-fill);
 }
 
 .sb__preview-scale {

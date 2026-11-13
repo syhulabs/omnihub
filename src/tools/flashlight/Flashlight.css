@@ -53,7 +53,7 @@
   width: 180px;
   height: 220px;
   transform: translateX(-50%);
-  background: radial-gradient(ellipse 60% 100% at 50% 100%, color-mix(in srgb, var(--blue) 22%, transparent), transparent 70%);
+  background: radial-gradient(ellipse 60% 100% at 50% 100%, color-mix(in srgb, var(--blue-fill) 22%, transparent), transparent 70%);
   opacity: 0.5;
   transition: opacity 0.2s ease;
   pointer-events: none;
@@ -61,7 +61,7 @@
 
 .fl__beam--on {
   opacity: 1;
-  background: radial-gradient(ellipse 60% 100% at 50% 100%, color-mix(in srgb, #fff 55%, var(--blue) 20%), transparent 72%);
+  background: radial-gradient(ellipse 60% 100% at 50% 100%, color-mix(in srgb, #fff 55%, var(--blue-fill) 20%), transparent 72%);
 }
 
 .fl__toggle {
@@ -77,14 +77,14 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  box-shadow: var(--shadow-sm), 0 0 24px -6px color-mix(in srgb, var(--blue) 50%, transparent);
+  box-shadow: var(--shadow-sm), 0 0 24px -6px color-mix(in srgb, var(--blue-fill) 50%, transparent);
 }
 
 .fl__toggle--on {
-  background: var(--yellow);
+  background: var(--yellow-fill);
   border-color: var(--yellow);
   color: #1a1a0a;
-  box-shadow: 0 0 60px 10px color-mix(in srgb, var(--yellow) 55%, transparent);
+  box-shadow: 0 0 60px 10px color-mix(in srgb, var(--yellow-fill) 55%, transparent);
 }
 
 .fl__status {
@@ -128,7 +128,7 @@
 .fl__mode-chip--active {
   border-color: color-mix(in srgb, var(--blue) 55%, transparent);
   color: var(--blue);
-  box-shadow: var(--shadow-sm), 0 0 16px -6px color-mix(in srgb, var(--blue) 55%, transparent);
+  box-shadow: var(--shadow-sm), 0 0 16px -6px color-mix(in srgb, var(--blue-fill) 55%, transparent);
 }
 
 .fl__alerts {
@@ -158,7 +158,7 @@
   align-items: center;
   justify-content: center;
   color: var(--blue);
-  background: color-mix(in srgb, var(--blue) 18%, transparent);
+  background: color-mix(in srgb, var(--blue-fill) 18%, transparent);
 }
 
 .fl__alerts-title {
@@ -201,22 +201,22 @@
 
 .fl__alert-icon--blue {
   color: var(--blue);
-  background: color-mix(in srgb, var(--blue) 18%, transparent);
+  background: color-mix(in srgb, var(--blue-fill) 18%, transparent);
 }
 
 .fl__alert-icon--purple {
   color: var(--purple);
-  background: color-mix(in srgb, var(--purple) 18%, transparent);
+  background: color-mix(in srgb, var(--purple-fill) 18%, transparent);
 }
 
 .fl__alert-icon--orange {
   color: var(--orange);
-  background: color-mix(in srgb, var(--orange) 18%, transparent);
+  background: color-mix(in srgb, var(--orange-fill) 18%, transparent);
 }
 
 .fl__alert-icon--green {
   color: var(--green);
-  background: color-mix(in srgb, var(--green) 18%, transparent);
+  background: color-mix(in srgb, var(--green-fill) 18%, transparent);
 }
 
 .fl__alert-info {
@@ -300,6 +300,6 @@
   font-weight: 700;
 }
 
-.fl__badge--green { background: color-mix(in srgb, var(--green) 12%, transparent); border: 1px solid color-mix(in srgb, var(--green) 28%, transparent); color: var(--green); }
-.fl__badge--purple { background: color-mix(in srgb, var(--purple) 12%, transparent); border: 1px solid color-mix(in srgb, var(--purple) 28%, transparent); color: var(--purple); }
-.fl__badge--blue { background: color-mix(in srgb, var(--blue) 12%, transparent); border: 1px solid color-mix(in srgb, var(--blue) 28%, transparent); color: var(--blue); }
+.fl__badge--green { background: color-mix(in srgb, var(--green-fill) 12%, transparent); border: 1px solid color-mix(in srgb, var(--green) 28%, transparent); color: var(--green); }
+.fl__badge--purple { background: color-mix(in srgb, var(--purple-fill) 12%, transparent); border: 1px solid color-mix(in srgb, var(--purple) 28%, transparent); color: var(--purple); }
+.fl__badge--blue { background: color-mix(in srgb, var(--blue-fill) 12%, transparent); border: 1px solid color-mix(in srgb, var(--blue) 28%, transparent); color: var(--blue); }

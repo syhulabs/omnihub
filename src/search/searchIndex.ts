@@ -80,12 +80,13 @@ export function searchTools(query: string, limit = 8): SearchResult[] {
 
   const results = TOOLS.map((tool) => ({
     tool,
-    score: scoreTool(tool, normalized, tokens),
+    // Locked "coming soon" tools count for half, so a tool that opens wins a close call (with
+    // eight slots, "c" used to fill up with locked tools and miss Calculator), while a search
+    // that names a locked tool, like "qr generator", still finds it first.
+    score: scoreTool(tool, normalized, tokens) * (isLocked(tool) ? 0.5 : 1),
   }))
     .filter((result) => result.score > 0)
-    // Tools that can be opened come before locked "coming soon" ones, whatever the score: with
-    // eight slots, "c" used to list Voice Changer and no Calculator.
-    .sort((a, b) => Number(isLocked(a.tool)) - Number(isLocked(b.tool)) || b.score - a.score);
+    .sort((a, b) => b.score - a.score);
 
   return results.slice(0, limit);
 }

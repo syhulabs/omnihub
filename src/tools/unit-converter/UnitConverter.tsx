@@ -26,9 +26,10 @@ function defaultUnits(categoryId: string): [string, string] {
 
 function formatNumber(value: number): string {
   if (Number.isNaN(value) || !Number.isFinite(value)) return '—';
-  // Seven significant digits rather than six decimal places: 1 byte in GB or 1 mg in tons used to
-  // round to a flat 0, while the factors' own rounding showed up as 10.000008.
-  return Number(value.toPrecision(7)).toString();
+  // Significant digits rather than decimal places, so 1 byte in GB or 1 mg in tons doesn't round to
+  // a flat 0. Twelve keeps large values whole (123456789 mm is 123456.789 m) and still hides the
+  // last-digit noise of the conversion arithmetic.
+  return Number(value.toPrecision(12)).toString();
 }
 
 export function UnitConverter() {

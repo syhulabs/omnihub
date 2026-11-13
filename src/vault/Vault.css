@@ -66,7 +66,7 @@
 }
 
 .vault-pin__dots--error .vault-pin__dot--filled {
-  background: var(--red);
+  background: var(--red-fill);
   border-color: var(--red);
 }
 
@@ -374,7 +374,7 @@
 }
 
 .vault-editor__confirm-delete {
-  background: var(--red) !important;
+  background: var(--red-fill) !important;
   color: #fff !important;
 }
 
@@ -519,7 +519,7 @@
 }
 
 .vault-files__confirm-delete {
-  background: var(--red) !important;
+  background: var(--red-fill) !important;
   border-color: var(--red) !important;
   color: #fff !important;
 }

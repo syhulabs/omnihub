@@ -48,7 +48,7 @@
 }
 
 .sm__tabbar-item--active .sm__tabbar-icon-wrap {
-  background: color-mix(in srgb, var(--purple) 16%, transparent);
+  background: color-mix(in srgb, var(--purple-fill) 16%, transparent);
   transform: scale(1.04);
 }
 
@@ -94,9 +94,9 @@
 }
 
 .sm__hero--active {
-  background: linear-gradient(160deg, color-mix(in srgb, var(--purple) 16%, var(--bg-elevated)), var(--bg-elevated) 70%);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--purple-fill) 16%, var(--bg-elevated)), var(--bg-elevated) 70%);
   border-color: color-mix(in srgb, var(--purple) 40%, var(--border));
-  box-shadow: 0 0 28px -8px color-mix(in srgb, var(--purple) 60%, transparent);
+  box-shadow: 0 0 28px -8px color-mix(in srgb, var(--purple-fill) 60%, transparent);
 }
 
 .sm__hero-icon {
@@ -108,9 +108,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--purple) 85%, white 10%), var(--purple));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--purple-fill) 85%, white 10%), var(--purple-fill));
   color: #fff;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--purple) 30%, transparent), 0 4px 20px -4px color-mix(in srgb, var(--purple) 75%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--purple-fill) 30%, transparent), 0 4px 20px -4px color-mix(in srgb, var(--purple-fill) 75%, transparent);
 }
 
 .sm__hero-zzz {
@@ -121,7 +121,7 @@
   font-weight: 800;
   font-style: italic;
   color: #fff;
-  background: color-mix(in srgb, var(--purple) 85%, black 10%);
+  background: color-mix(in srgb, var(--purple-fill) 85%, black 10%);
   padding: 1px 4px;
   border-radius: 6px;
   box-shadow: 0 0 0 2px var(--bg-elevated);
@@ -178,7 +178,7 @@
   align-items: flex-start;
   gap: 8px;
   padding: 12px 14px;
-  background: color-mix(in srgb, var(--yellow) 12%, var(--bg-elevated));
+  background: color-mix(in srgb, var(--yellow-fill) 12%, var(--bg-elevated));
   border: 1px solid color-mix(in srgb, var(--yellow) 35%, var(--border));
   border-radius: var(--radius-md);
   color: var(--text-secondary);
@@ -194,7 +194,7 @@
 
 .sm__warning--muted {
   align-items: center;
-  background: color-mix(in srgb, var(--purple) 12%, var(--bg-elevated));
+  background: color-mix(in srgb, var(--purple-fill) 12%, var(--bg-elevated));
   border-color: color-mix(in srgb, var(--purple) 35%, var(--border));
 }
 
@@ -211,7 +211,7 @@
   flex-shrink: 0;
   padding: 6px 12px;
   border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--purple) 22%, transparent);
+  background: color-mix(in srgb, var(--purple-fill) 22%, transparent);
   color: var(--purple);
   font-size: 12px;
   font-weight: 700;
@@ -231,7 +231,7 @@
 }
 
 .sm__switch--on {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--purple) 85%, white 10%), var(--purple));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--purple-fill) 85%, white 10%), var(--purple-fill));
   border-color: transparent;
   justify-content: flex-end;
 }
@@ -316,14 +316,14 @@
 
 .sm__time-icon--night {
   color: #fff;
-  background: radial-gradient(120% 140% at 30% 22%, color-mix(in srgb, var(--purple) 55%, white 35%) 0%, var(--purple) 55%, color-mix(in srgb, var(--purple) 75%, black 25%) 100%);
-  box-shadow: 0 3px 10px -4px color-mix(in srgb, var(--purple) 75%, transparent);
+  background: radial-gradient(120% 140% at 30% 22%, color-mix(in srgb, var(--purple-fill) 55%, white 35%) 0%, var(--purple-fill) 55%, color-mix(in srgb, var(--purple-fill) 75%, black 25%) 100%);
+  box-shadow: 0 3px 10px -4px color-mix(in srgb, var(--purple-fill) 75%, transparent);
 }
 
 .sm__time-icon--day {
   color: #fff;
-  background: radial-gradient(120% 140% at 30% 22%, color-mix(in srgb, var(--yellow) 55%, white 35%) 0%, var(--yellow) 55%, color-mix(in srgb, var(--yellow) 75%, black 25%) 100%);
-  box-shadow: 0 3px 10px -4px color-mix(in srgb, var(--yellow) 75%, transparent);
+  background: radial-gradient(120% 140% at 30% 22%, color-mix(in srgb, var(--yellow-fill) 55%, white 35%) 0%, var(--yellow-fill) 55%, color-mix(in srgb, var(--yellow-fill) 75%, black 25%) 100%);
+  box-shadow: 0 3px 10px -4px color-mix(in srgb, var(--yellow-fill) 75%, transparent);
 }
 
 .sm__time-text {
@@ -397,10 +397,10 @@
 }
 
 .sm__chip--active {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--purple) 85%, white 10%), var(--purple));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--purple-fill) 85%, white 10%), var(--purple-fill));
   border-color: transparent;
   color: #fff;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--purple) 30%, transparent), 0 3px 14px -4px color-mix(in srgb, var(--purple) 60%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--purple-fill) 30%, transparent), 0 3px 14px -4px color-mix(in srgb, var(--purple-fill) 60%, transparent);
 }
 
 .sm__volume-row {
@@ -425,8 +425,8 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: var(--purple);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--purple) 30%, transparent), 0 2px 8px -2px color-mix(in srgb, var(--purple) 70%, transparent);
+  background: var(--purple-fill);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--purple-fill) 30%, transparent), 0 2px 8px -2px color-mix(in srgb, var(--purple-fill) 70%, transparent);
   cursor: pointer;
 }
 
@@ -435,7 +435,7 @@
   height: 18px;
   border: none;
   border-radius: 50%;
-  background: var(--purple);
+  background: var(--purple-fill);
   cursor: pointer;
 }
 
@@ -474,9 +474,9 @@
 }
 
 .sm__personality--active {
-  background: linear-gradient(160deg, color-mix(in srgb, var(--purple) 14%, var(--bg-elevated)), var(--bg-elevated));
+  background: linear-gradient(160deg, color-mix(in srgb, var(--purple-fill) 14%, var(--bg-elevated)), var(--bg-elevated));
   border-color: color-mix(in srgb, var(--purple) 45%, var(--border));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--purple) 25%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--purple-fill) 25%, transparent);
 }
 
 .sm__personality--locked {
@@ -499,12 +499,12 @@
   font-size: 19px;
   background: radial-gradient(
     120% 140% at 30% 22%,
-    color-mix(in srgb, var(--emoji-color, var(--purple)) 55%, white 35%) 0%,
-    var(--emoji-color, var(--purple)) 55%,
-    color-mix(in srgb, var(--emoji-color, var(--purple)) 75%, black 25%) 100%
+    color-mix(in srgb, var(--emoji-color, var(--purple-fill)) 55%, white 35%) 0%,
+    var(--emoji-color, var(--purple-fill)) 55%,
+    color-mix(in srgb, var(--emoji-color, var(--purple-fill)) 75%, black 25%) 100%
   );
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--emoji-color, var(--purple)) 35%, transparent),
-    0 3px 12px -4px color-mix(in srgb, var(--emoji-color, var(--purple)) 80%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--emoji-color, var(--purple-fill)) 35%, transparent),
+    0 3px 12px -4px color-mix(in srgb, var(--emoji-color, var(--purple-fill)) 80%, transparent);
 }
 
 .sm__personality-emoji img {
@@ -560,7 +560,7 @@
   min-height: 44px;
   border-radius: var(--radius-pill);
   border: 1px dashed color-mix(in srgb, var(--purple) 45%, var(--border));
-  background: color-mix(in srgb, var(--purple) 8%, transparent);
+  background: color-mix(in srgb, var(--purple-fill) 8%, transparent);
   color: var(--purple);
   font-size: 13px;
   font-weight: 600;
@@ -588,8 +588,8 @@
   align-items: center;
   justify-content: center;
   font-size: 16px;
-  background: color-mix(in srgb, var(--purple) 22%, var(--bg-elevated));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--purple) 30%, transparent);
+  background: color-mix(in srgb, var(--purple-fill) 22%, var(--bg-elevated));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--purple-fill) 30%, transparent);
 }
 
 .sm__sample-avatar img {
@@ -656,7 +656,7 @@
   width: 2px;
   height: 10px;
   border-radius: 1px;
-  background: var(--purple);
+  background: var(--purple-fill);
   opacity: 0.7;
 }
 
@@ -712,9 +712,9 @@
 }
 
 .sm__mode-card--active {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--purple) 85%, white 10%), var(--purple));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--purple-fill) 85%, white 10%), var(--purple-fill));
   border-color: transparent;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--purple) 30%, transparent), 0 4px 16px -4px color-mix(in srgb, var(--purple) 60%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--purple-fill) 30%, transparent), 0 4px 16px -4px color-mix(in srgb, var(--purple-fill) 60%, transparent);
 }
 
 .sm__mode-card--active strong,
@@ -761,7 +761,7 @@
 .sm__field input:focus {
   outline: none;
   border-color: color-mix(in srgb, var(--purple) 45%, var(--border-strong));
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--purple) 16%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--purple-fill) 16%, transparent);
 }
 
 .sm__field-row {
@@ -823,13 +823,13 @@
 .sm__sheet-input:focus {
   outline: none;
   border-color: color-mix(in srgb, var(--purple) 45%, var(--border-strong));
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--purple) 16%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--purple-fill) 16%, transparent);
 }
 
 .sm__sheet-close {
   min-height: 48px;
   border-radius: var(--radius-pill);
-  background: linear-gradient(135deg, color-mix(in srgb, var(--purple) 85%, white 10%), var(--purple));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--purple-fill) 85%, white 10%), var(--purple-fill));
   color: #fff;
   font-size: 15px;
   font-weight: 700;
@@ -848,12 +848,12 @@
 }
 
 .sm__badge--free {
-  background: color-mix(in srgb, var(--green) 22%, transparent);
+  background: color-mix(in srgb, var(--green-fill) 22%, transparent);
   color: var(--green);
 }
 
 .sm__badge--ai {
-  background: color-mix(in srgb, var(--purple) 24%, transparent);
+  background: color-mix(in srgb, var(--purple-fill) 24%, transparent);
   color: var(--purple);
 }
 
@@ -914,11 +914,11 @@
   color: #fff;
   background: radial-gradient(
     120% 140% at 30% 22%,
-    color-mix(in srgb, var(--menu-color, var(--purple)) 55%, white 35%) 0%,
-    var(--menu-color, var(--purple)) 55%,
-    color-mix(in srgb, var(--menu-color, var(--purple)) 75%, black 25%) 100%
+    color-mix(in srgb, var(--menu-color, var(--purple-fill)) 55%, white 35%) 0%,
+    var(--menu-color, var(--purple-fill)) 55%,
+    color-mix(in srgb, var(--menu-color, var(--purple-fill)) 75%, black 25%) 100%
   );
-  box-shadow: 0 3px 12px -4px color-mix(in srgb, var(--menu-color, var(--purple)) 80%, transparent);
+  box-shadow: 0 3px 12px -4px color-mix(in srgb, var(--menu-color, var(--purple-fill)) 80%, transparent);
 }
 
 .sm__menu-text {
@@ -966,11 +966,11 @@
   padding: 14px;
   min-height: 48px;
   border-radius: var(--radius-pill);
-  background: linear-gradient(135deg, var(--purple), #a76bff);
+  background: linear-gradient(135deg, var(--purple-fill), #a76bff);
   color: #fff;
   font-size: 14px;
   font-weight: 700;
-  box-shadow: 0 6px 20px -8px color-mix(in srgb, var(--purple) 70%, transparent);
+  box-shadow: 0 6px 20px -8px color-mix(in srgb, var(--purple-fill) 70%, transparent);
 }
 
 .sm__quick-grid {
@@ -1032,11 +1032,11 @@
   color: #fff;
   background: radial-gradient(
     120% 140% at 30% 22%,
-    color-mix(in srgb, var(--field-color, var(--purple)) 55%, white 35%) 0%,
-    var(--field-color, var(--purple)) 55%,
-    color-mix(in srgb, var(--field-color, var(--purple)) 75%, black 25%) 100%
+    color-mix(in srgb, var(--field-color, var(--purple-fill)) 55%, white 35%) 0%,
+    var(--field-color, var(--purple-fill)) 55%,
+    color-mix(in srgb, var(--field-color, var(--purple-fill)) 75%, black 25%) 100%
   );
-  box-shadow: 0 3px 10px -4px color-mix(in srgb, var(--field-color, var(--purple)) 75%, transparent);
+  box-shadow: 0 3px 10px -4px color-mix(in srgb, var(--field-color, var(--purple-fill)) 75%, transparent);
 }
 
 .sm__field-row2-text {
@@ -1170,11 +1170,11 @@
 
 .wd__ring-progress {
   fill: none;
-  stroke: var(--green);
+  stroke: var(--green-fill);
   stroke-width: 6;
   stroke-linecap: round;
   transition: stroke-dashoffset 0.25s linear;
-  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--green) 60%, transparent));
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--green-fill) 60%, transparent));
 }
 
 .wd__ring-center {
@@ -1238,7 +1238,7 @@
 }
 
 .wd__action--active {
-  background: color-mix(in srgb, var(--green) 16%, var(--bg-elevated));
+  background: color-mix(in srgb, var(--green-fill) 16%, var(--bg-elevated));
   border-color: color-mix(in srgb, var(--green) 45%, var(--border));
   color: var(--green);
 }
@@ -1251,11 +1251,11 @@
   width: 100%;
   min-height: 52px;
   border-radius: var(--radius-pill);
-  background: linear-gradient(135deg, color-mix(in srgb, var(--green) 85%, white 10%), var(--green));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--green-fill) 85%, white 10%), var(--green-fill));
   color: #06210f;
   font-size: 15px;
   font-weight: 800;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--green) 30%, transparent), 0 6px 20px -6px color-mix(in srgb, var(--green) 60%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--green-fill) 30%, transparent), 0 6px 20px -6px color-mix(in srgb, var(--green-fill) 60%, transparent);
 }
 
 .wd__breathe-overlay {
@@ -1274,7 +1274,7 @@
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: radial-gradient(circle, color-mix(in srgb, var(--green) 55%, transparent), transparent 70%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--green-fill) 55%, transparent), transparent 70%);
   border: 2px solid color-mix(in srgb, var(--green) 60%, transparent);
   animation: wd-breathe 8s ease-in-out infinite;
 }
@@ -1342,7 +1342,7 @@
 
 .ss__card--playing {
   border-color: color-mix(in srgb, var(--purple) 50%, var(--border));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--purple) 30%, transparent), 0 0 20px -8px color-mix(in srgb, var(--purple) 60%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--purple-fill) 30%, transparent), 0 0 20px -8px color-mix(in srgb, var(--purple-fill) 60%, transparent);
 }
 
 .ss__card-image {
@@ -1364,7 +1364,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: color-mix(in srgb, var(--purple) 30%, rgba(10, 8, 20, 0.6));
+  background: color-mix(in srgb, var(--purple-fill) 30%, rgba(10, 8, 20, 0.6));
   color: #fff;
 }
 
@@ -1414,9 +1414,9 @@
 }
 
 .si__range-tab--active {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--purple) 85%, white 10%), var(--purple));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--purple-fill) 85%, white 10%), var(--purple-fill));
   color: #fff;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--purple) 30%, transparent), 0 3px 14px -4px color-mix(in srgb, var(--purple) 60%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--purple-fill) 30%, transparent), 0 3px 14px -4px color-mix(in srgb, var(--purple-fill) 60%, transparent);
 }
 
 .si__stat-grid {
@@ -1491,7 +1491,7 @@
   width: 100%;
   max-width: 22px;
   border-radius: 4px 4px 0 0;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--purple) 90%, white 10%), var(--purple));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--purple-fill) 90%, white 10%), var(--purple-fill));
 }
 
 .si__bar-col span {
@@ -1509,11 +1509,11 @@
   padding: 14px;
   min-height: 48px;
   border-radius: var(--radius-pill);
-  background: linear-gradient(135deg, var(--purple), #a76bff);
+  background: linear-gradient(135deg, var(--purple-fill), #a76bff);
   color: #fff;
   font-size: 14px;
   font-weight: 700;
-  box-shadow: 0 6px 20px -8px color-mix(in srgb, var(--purple) 70%, transparent);
+  box-shadow: 0 6px 20px -8px color-mix(in srgb, var(--purple-fill) 70%, transparent);
 }
 
 .smp__perks {
@@ -1595,7 +1595,7 @@
 /* AI tab redesign (Pro-companion style) */
 
 .sm__ai2-title-accent {
-  background: linear-gradient(135deg, var(--purple), #a76bff);
+  background: linear-gradient(135deg, var(--purple-fill), #a76bff);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -1607,7 +1607,7 @@
   gap: 4px;
   padding: 5px 11px;
   border-radius: var(--radius-pill);
-  background: linear-gradient(135deg, var(--yellow), var(--orange));
+  background: linear-gradient(135deg, var(--yellow-fill), var(--orange-fill));
   color: #2a1400;
   font-size: 11px;
   font-weight: 800;
@@ -1615,7 +1615,7 @@
 }
 
 .sm__ai2-status-badge--active {
-  background: linear-gradient(135deg, var(--green), color-mix(in srgb, var(--green) 70%, black));
+  background: linear-gradient(135deg, var(--green-fill), color-mix(in srgb, var(--green-fill) 70%, black));
   color: #fff;
 }
 
@@ -1674,7 +1674,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(160deg, color-mix(in srgb, var(--purple) 30%, var(--bg-elevated-2)), var(--bg-elevated-2));
+  background: linear-gradient(160deg, color-mix(in srgb, var(--purple-fill) 30%, var(--bg-elevated-2)), var(--bg-elevated-2));
   color: var(--purple);
 }
 
@@ -1704,7 +1704,7 @@
   gap: 3px;
   padding: 2px 7px;
   border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--yellow) 20%, var(--bg-elevated-2));
+  background: color-mix(in srgb, var(--yellow-fill) 20%, var(--bg-elevated-2));
   color: var(--yellow);
   font-size: 9px;
   font-weight: 800;
@@ -1730,7 +1730,7 @@
 }
 
 .sm__ai2-toggle-switch--active {
-  background: var(--green);
+  background: var(--green-fill);
   border-color: transparent;
   color: #fff;
 }
@@ -1781,15 +1781,15 @@
   font-size: 18px;
   background: radial-gradient(
     120% 140% at 30% 22%,
-    color-mix(in srgb, var(--emoji-color, var(--purple)) 55%, white 35%) 0%,
-    var(--emoji-color, var(--purple)) 55%,
-    color-mix(in srgb, var(--emoji-color, var(--purple)) 75%, black 25%) 100%
+    color-mix(in srgb, var(--emoji-color, var(--purple-fill)) 55%, white 35%) 0%,
+    var(--emoji-color, var(--purple-fill)) 55%,
+    color-mix(in srgb, var(--emoji-color, var(--purple-fill)) 75%, black 25%) 100%
   );
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--emoji-color, var(--purple)) 35%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--emoji-color, var(--purple-fill)) 35%, transparent);
 }
 
 .sm__ai2-avatar--active .sm__ai2-avatar-img {
-  box-shadow: 0 0 0 2px var(--bg-app), 0 0 0 4px var(--emoji-color, var(--purple));
+  box-shadow: 0 0 0 2px var(--bg-app), 0 0 0 4px var(--emoji-color, var(--purple-fill));
 }
 
 .sm__ai2-avatar-img img {
@@ -1855,9 +1855,9 @@
   overflow: hidden;
   background: radial-gradient(
     120% 140% at 30% 22%,
-    color-mix(in srgb, var(--emoji-color, var(--purple)) 55%, white 35%) 0%,
-    var(--emoji-color, var(--purple)) 55%,
-    color-mix(in srgb, var(--emoji-color, var(--purple)) 75%, black 25%) 100%
+    color-mix(in srgb, var(--emoji-color, var(--purple-fill)) 55%, white 35%) 0%,
+    var(--emoji-color, var(--purple-fill)) 55%,
+    color-mix(in srgb, var(--emoji-color, var(--purple-fill)) 75%, black 25%) 100%
   );
 }
 
@@ -1872,7 +1872,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--purple), #a76bff);
+  background: linear-gradient(135deg, var(--purple-fill), #a76bff);
   color: #fff;
   display: flex;
   align-items: center;
@@ -1893,11 +1893,11 @@
   min-width: 2px;
   height: calc(20% + (var(--i, 0) * 7 % 11) * 6%);
   border-radius: 2px;
-  background: color-mix(in srgb, var(--purple) 55%, var(--border-strong));
+  background: color-mix(in srgb, var(--purple-fill) 55%, var(--border-strong));
 }
 
 .sm__ai2-preview-wave--active span {
-  background: var(--purple);
+  background: var(--purple-fill);
   animation: sm-ai2-wave 0.9s ease-in-out infinite;
   animation-delay: calc(var(--i, 0) * 0.05s);
 }
@@ -1956,7 +1956,7 @@
 }
 
 .sm__ai2-preview-dot--active {
-  background: linear-gradient(135deg, var(--purple), #a76bff);
+  background: linear-gradient(135deg, var(--purple-fill), #a76bff);
   color: #fff;
 }
 
@@ -1994,6 +1994,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: color-mix(in srgb, var(--purple) 16%, var(--bg-elevated-2));
+  background: color-mix(in srgb, var(--purple-fill) 16%, var(--bg-elevated-2));
   color: var(--purple);
 }

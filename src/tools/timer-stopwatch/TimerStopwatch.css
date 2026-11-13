@@ -44,16 +44,16 @@
 
 .tm2__ring-progress {
   fill: none;
-  stroke: var(--green);
+  stroke: var(--green-fill);
   stroke-width: 6;
   stroke-linecap: round;
-  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--green) 65%, transparent));
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--green-fill) 65%, transparent));
   transition: stroke-dashoffset 0.2s linear, stroke 0.3s ease;
 }
 
 .tm2__ring-progress--finished {
-  stroke: var(--red);
-  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--red) 65%, transparent));
+  stroke: var(--red-fill);
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--red-fill) 65%, transparent));
 }
 
 .tm2__ring-handle {
@@ -62,14 +62,14 @@
   height: 16px;
   margin: -8px 0 0 -8px;
   border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--green) 25%, transparent), 0 0 14px color-mix(in srgb, var(--green) 70%, transparent);
+  background: var(--green-fill);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--green-fill) 25%, transparent), 0 0 14px color-mix(in srgb, var(--green-fill) 70%, transparent);
   transition: left 0.2s linear, top 0.2s linear, background 0.3s ease;
 }
 
 .tm2__ring-handle--finished {
-  background: var(--red);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--red) 25%, transparent), 0 0 14px color-mix(in srgb, var(--red) 70%, transparent);
+  background: var(--red-fill);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--red-fill) 25%, transparent), 0 0 14px color-mix(in srgb, var(--red-fill) 70%, transparent);
 }
 
 .tm2__ring-center {
@@ -288,7 +288,7 @@
   align-items: center;
   justify-content: center;
   color: var(--green);
-  background: color-mix(in srgb, var(--green) 16%, transparent);
+  background: color-mix(in srgb, var(--green-fill) 16%, transparent);
   flex-shrink: 0;
 }
 
@@ -324,7 +324,7 @@
   min-height: 44px;
   border-radius: var(--radius-pill);
   color: var(--red);
-  background: color-mix(in srgb, var(--red) 12%, transparent);
+  background: color-mix(in srgb, var(--red-fill) 12%, transparent);
   font-weight: 600;
   font-size: 14px;
 }
@@ -352,13 +352,13 @@
 }
 
 .tm__btn--start {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--green) 85%, white 10%), var(--green));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--green) 30%, transparent), 0 4px 18px -4px color-mix(in srgb, var(--green) 55%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--green-fill) 85%, white 10%), var(--green-fill));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--green-fill) 30%, transparent), 0 4px 18px -4px color-mix(in srgb, var(--green-fill) 55%, transparent);
 }
 
 .tm__btn--stop {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--red) 85%, white 10%), var(--red));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--red) 30%, transparent), 0 4px 18px -4px color-mix(in srgb, var(--red) 55%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--red-fill) 85%, white 10%), var(--red-fill));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--red-fill) 30%, transparent), 0 4px 18px -4px color-mix(in srgb, var(--red-fill) 55%, transparent);
 }
 
 .tm__btn--secondary {
@@ -407,10 +407,10 @@
 
 .sw2__ring-progress {
   fill: none;
-  stroke: var(--green);
+  stroke: var(--green-fill);
   stroke-width: 6;
   stroke-linecap: round;
-  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--green) 65%, transparent));
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--green-fill) 65%, transparent));
   transition: stroke-dashoffset 0.2s linear;
 }
 
@@ -420,8 +420,8 @@
   height: 16px;
   margin: -8px 0 0 -8px;
   border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--green) 25%, transparent), 0 0 14px color-mix(in srgb, var(--green) 70%, transparent);
+  background: var(--green-fill);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--green-fill) 25%, transparent), 0 0 14px color-mix(in srgb, var(--green-fill) 70%, transparent);
   transition: left 0.2s linear, top 0.2s linear;
 }
 
@@ -508,13 +508,13 @@
   width: 76px;
   height: 76px;
   color: #fff;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--green) 85%, white 10%), var(--green));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--green) 30%, transparent), 0 4px 22px -4px color-mix(in srgb, var(--green) 60%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--green-fill) 85%, white 10%), var(--green-fill));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--green-fill) 30%, transparent), 0 4px 22px -4px color-mix(in srgb, var(--green-fill) 60%, transparent);
 }
 
 .sw2__circle-btn--main.sw2__circle-btn--stop {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--red) 85%, white 10%), var(--red));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--red) 30%, transparent), 0 4px 22px -4px color-mix(in srgb, var(--red) 60%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--red-fill) 85%, white 10%), var(--red-fill));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--red-fill) 30%, transparent), 0 4px 22px -4px color-mix(in srgb, var(--red-fill) 60%, transparent);
 }
 
 .sw2__laps-card {

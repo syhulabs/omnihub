@@ -345,37 +345,37 @@
 }
 
 .pf__row-icon--blue {
-  background: color-mix(in srgb, var(--blue) 20%, transparent);
+  background: color-mix(in srgb, var(--blue-fill) 20%, transparent);
   color: var(--blue);
 }
 
 .pf__row-icon--purple {
-  background: color-mix(in srgb, var(--purple) 20%, transparent);
+  background: color-mix(in srgb, var(--purple-fill) 20%, transparent);
   color: var(--purple);
 }
 
 .pf__row-icon--green {
-  background: color-mix(in srgb, var(--green) 20%, transparent);
+  background: color-mix(in srgb, var(--green-fill) 20%, transparent);
   color: var(--green);
 }
 
 .pf__row-icon--danger {
-  background: color-mix(in srgb, var(--red) 20%, transparent);
+  background: color-mix(in srgb, var(--red-fill) 20%, transparent);
   color: var(--red);
 }
 
 .pf__row-icon--orange {
-  background: color-mix(in srgb, var(--orange) 20%, transparent);
+  background: color-mix(in srgb, var(--orange-fill) 20%, transparent);
   color: var(--orange);
 }
 
 .pf__row-icon--pink {
-  background: color-mix(in srgb, var(--pink) 20%, transparent);
+  background: color-mix(in srgb, var(--pink-fill) 20%, transparent);
   color: var(--pink);
 }
 
 .pf__row-icon--teal {
-  background: color-mix(in srgb, var(--teal) 20%, transparent);
+  background: color-mix(in srgb, var(--teal-fill) 20%, transparent);
   color: var(--teal);
 }
 
@@ -487,12 +487,12 @@
 }
 
 .pf__status--success {
-  background: color-mix(in srgb, var(--green) 15%, transparent);
+  background: color-mix(in srgb, var(--green-fill) 15%, transparent);
   color: var(--green);
 }
 
 .pf__status--error {
-  background: color-mix(in srgb, var(--red) 15%, transparent);
+  background: color-mix(in srgb, var(--red-fill) 15%, transparent);
   color: var(--red);
 }
 
@@ -523,7 +523,7 @@
 }
 
 .pf__confirm-delete {
-  background: var(--red) !important;
+  background: var(--red-fill) !important;
   color: #fff !important;
 }
 
@@ -614,6 +614,12 @@
 
 .pf__body--settings .pf__group-label svg {
   color: var(--label-icon, var(--accent));
+}
+
+/* Light theme: the section icon colours come from the dark mockup (the green globe was 1.6:1 on
+   the light page). Deepened in light theme only, keeping each hue. */
+:root[data-theme='light'] .pf__body--settings .pf__group-label svg {
+  filter: brightness(0.68) saturate(1.25);
 }
 
 .pf__body--settings .pf__card {

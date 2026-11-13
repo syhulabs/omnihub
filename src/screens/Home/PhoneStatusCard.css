@@ -41,7 +41,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: color-mix(in srgb, var(--blue) 20%, transparent);
+  background: color-mix(in srgb, var(--blue-fill) 20%, transparent);
   color: var(--blue);
 }
 
@@ -86,14 +86,14 @@
   color: var(--green);
 }
 .phc__status--good .phc__status-dot {
-  background: var(--green);
+  background: var(--green-fill);
 }
 
 .phc__status--warn {
   color: var(--orange);
 }
 .phc__status--warn .phc__status-dot {
-  background: var(--orange);
+  background: var(--orange-fill);
 }
 
 .phc__menu-wrap {
@@ -202,4 +202,22 @@
 
 :root:not([data-theme='light']) .phc__stat span {
   color: #9aa3b5;
+}
+
+/* Light theme: the stat icon colours above are sampled from the dark mockup and fade out on the
+   white tiles (the battery green was 1.5:1). Same hues, deep enough to read on white. */
+:root[data-theme='light'] .phc__stat--battery svg {
+  color: #0b9a5e;
+}
+
+:root[data-theme='light'] .phc__stat--storage svg {
+  color: #0b7fc4;
+}
+
+:root[data-theme='light'] .phc__stat--ram svg {
+  color: #7a35e0;
+}
+
+:root[data-theme='light'] .phc__stat--wifi svg {
+  color: #2f6fe8;
 }
