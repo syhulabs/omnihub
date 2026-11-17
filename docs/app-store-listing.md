@@ -130,10 +130,13 @@ Alarms and Sleep Mode use local notifications (time-sensitive). Sleep Mode sends
 
 The AI and Craft tabs are "coming soon" information pages with no controls.
 
-Permissions, each asked only when its feature is opened: Camera for the QR, barcode and number scanners and the Health Check camera test; Microphone for the Health Check audio test; Location (while in use) for coordinates and altitude in the Compass; Motion for the Compass and Level; Face ID to unlock App Lock and the Vault.
+Permissions, each asked only when its feature is opened: Camera for the QR, barcode and number scanners and the Health Check camera test; Location (while in use) for coordinates and altitude in the Compass; Motion for the Compass and Level; Face ID to unlock App Lock and the Vault.
 ```
 
 No demo account is needed, because nothing requires signing in.
+
+`Info.plist` also carries a microphone purpose string for the Voice Changer. That tool is locked in this
+version, so the microphone is never requested; the string is harmless and can stay.
 
 ## Screenshots
 
