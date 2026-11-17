@@ -75,6 +75,8 @@ Release notes (under 500 characters):
    iPhone simulator cannot run the app on an Apple-silicon Mac: Google ML Kit (the scanners) ships no
    simulator build for Apple silicon, so the app builds for Intel simulators only and iOS 27 simulators
    refuse it (found 17 Nov). App Store Connect wants 6.9-inch (1320 x 2868) or 6.5-inch screenshots.
+   The owner's iPhone 16 Pro Max takes them at exactly 1320 x 2868 (6.9-inch), so its screenshots fit as is.
+   The owner has a paid Apple Developer team (17 Nov), so Sign in with Apple and TestFlight can work.
 6. **Owner**: archive and upload to TestFlight (`docs/ios-build.md`, section 7), then fill in App Store
    Connect (section 8): listing text, App Privacy labels, age rating, review notes, privacy policy URL.
 7. **Owner**: submit for review.
