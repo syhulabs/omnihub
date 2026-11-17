@@ -68,7 +68,9 @@ Release notes (under 500 characters):
    duplicate `open url` handler in `AppDelegate.swift`.
 2. Done (17 Nov): the Firebase iOS app exists; `GoogleService-Info.plist` is in `ios/App/App/` and its
    reversed client ID is in `Info.plist`.
-3. **Owner**: switch on Sign in with Apple in two places, then test it on an iPhone:
+3. Done (17 Nov): Apple is enabled in Firebase and Sign in with Apple works on the owner's iPhone 17.
+   Still open: the *OAuth code flow* key fields below, so Delete My Account also revokes the Apple token.
+   The original steps, for reference:
    - Firebase console, *Authentication*, *Sign-in method*: enable **Apple**. To let Delete My Account revoke
      the Apple token (Apple requires it), fill in the provider's *OAuth code flow* fields: the Apple Team ID,
      and a key made in the Apple Developer account under *Certificates, Identifiers & Profiles → Keys* with
