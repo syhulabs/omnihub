@@ -58,6 +58,26 @@ in Xcode. After editing the Android `MessageBank.java`, regenerate the Swift cop
 `python3 scripts/gen-sleep-message-bank.py`. The app icon and launch screen images come from `design/app-icon-dark.webp`; after changing it, rerun
 `python3 scripts/gen-app-icons.py`.
 
+### Testing without a paid Apple Developer membership (free Personal Team)
+
+Used on 17 Nov 2026, when Omni Hub first ran on the owner's iPhone. Nothing here is committed: every
+change is a command-line override or a file outside the repository.
+
+- A free team cannot use Sign in with Apple. Build with `CODE_SIGN_ENTITLEMENTS=/tmp/omnihub-test.entitlements`
+  (an empty plist dict) instead of removing the capability from the project.
+- `com.syhuinc.omnihub` is registered to another Apple team, so the free team uses
+  `com.syhuinc.omnihub.test`. Passed as `PRODUCT_BUNDLE_IDENTIFIER=` on the command line, that ID also lands on
+  every pod framework, and the install fails with "Found bundle at …RecaptchaInterop.framework with the same
+  identifier". The workaround was to fix the frameworks' identifiers inside the built app in `/tmp`.
+  With the real bundle ID and a paid team none of this is needed: build without any override.
+- In such a build Google sign-in fails (the Firebase iOS app is registered for `com.syhuinc.omnihub`) and
+  Apple sign-in is off. Everything else can be tested. The app stops opening after 7 days.
+- Command: `xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Debug -destination 'id=<iPhone>'
+  -derivedDataPath /tmp/oh-device -allowProvisioningUpdates DEVELOPMENT_TEAM=<personal team id> CODE_SIGN_ENTITLEMENTS=...`,
+  then `xcrun devicectl device install app` and `xcrun devicectl device process launch`.
+- An iPhone build needs about 15 GB free on the Mac. The simulator runtimes (about 18 GB each) were deleted
+  to make room; the simulator cannot run the app anyway (section 3).
+
 ## 4. What to test on the phone
 
 Everything in both themes, as usual, plus the iOS-specific paths:
