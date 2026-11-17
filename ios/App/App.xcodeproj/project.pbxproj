@@ -7,43 +7,32 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B904F0E59506936EC64EB241 /* OmniBridgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B94756871EA82F40EE5731AA /* OmniBridgeViewController.swift */; };
-		19B6DC00E4749784E0E84B7F /* LocalNotificationHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12FBDA72911CA7A35C2EA7B /* LocalNotificationHub.swift */; };
-		A21F03974DF5B6B02CFFFFAB /* KeepAwakePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1563765923814499FC625DC3 /* KeepAwakePlugin.swift */; };
-		C3B1C2EC09F39D4B8F80312E /* FlashAlertPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58F813F2514CE27884DAF45 /* FlashAlertPlugin.swift */; };
-		EF2EE55528F89ACF3161EC2B /* RingtonePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648FF0674457CECEC1A52A21 /* RingtonePlugin.swift */; };
-		45E88752EEDD05F42CAAC7B5 /* BiometricPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951ED47A10AB98377C81DF64 /* BiometricPlugin.swift */; };
-		41A65015488B40A481268EAB /* DeviceStatsPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA9BF5D603074D6E0C09F05 /* DeviceStatsPlugin.swift */; };
-		949323B11E77F1EE5F215102 /* AlarmPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B37EB0693E9ED3177A2F44 /* AlarmPlugin.swift */; };
-		9544F1CE68E9E18C8B3540AA /* SleepModePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E06EA9DC78BFA9CF42C033E /* SleepModePlugin.swift */; };
-		80DE9CAEE908EDD03B31CB4B /* SleepMessageBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0855F68E3A40EDD1BECB09EF /* SleepMessageBank.swift */; };
 		175853BC8A6E4FC6CB11DC8B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = AA31C39CFA0653F100A2B380 /* PrivacyInfo.xcprivacy */; };
-		52FF00345137AE1875C987C1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E38F4ED2B903491A5C949BB8 /* GoogleService-Info.plist */; };
+		19B6DC00E4749784E0E84B7F /* LocalNotificationHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12FBDA72911CA7A35C2EA7B /* LocalNotificationHub.swift */; };
 		2FAD9763203C412B000D30F8 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD9762203C412B000D30F8 /* config.xml */; };
+		41A65015488B40A481268EAB /* DeviceStatsPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA9BF5D603074D6E0C09F05 /* DeviceStatsPlugin.swift */; };
+		45E88752EEDD05F42CAAC7B5 /* BiometricPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951ED47A10AB98377C81DF64 /* BiometricPlugin.swift */; };
 		50379B232058CBB4000EE86E /* capacitor.config.json in Resources */ = {isa = PBXBuildFile; fileRef = 50379B222058CBB4000EE86E /* capacitor.config.json */; };
 		504EC3081FED79650016851F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504EC3071FED79650016851F /* AppDelegate.swift */; };
 		504EC30D1FED79650016851F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30B1FED79650016851F /* Main.storyboard */; };
 		504EC30F1FED79650016851F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30E1FED79650016851F /* Assets.xcassets */; };
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
+		52FF00345137AE1875C987C1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E38F4ED2B903491A5C949BB8 /* GoogleService-Info.plist */; };
+		80DE9CAEE908EDD03B31CB4B /* SleepMessageBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0855F68E3A40EDD1BECB09EF /* SleepMessageBank.swift */; };
+		949323B11E77F1EE5F215102 /* AlarmPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B37EB0693E9ED3177A2F44 /* AlarmPlugin.swift */; };
+		9544F1CE68E9E18C8B3540AA /* SleepModePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E06EA9DC78BFA9CF42C033E /* SleepModePlugin.swift */; };
 		9582B6852FE996820072D4E8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582B6842FE996800072D4E8 /* SceneDelegate.swift */; };
 		A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */; };
+		A21F03974DF5B6B02CFFFFAB /* KeepAwakePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1563765923814499FC625DC3 /* KeepAwakePlugin.swift */; };
+		B904F0E59506936EC64EB241 /* OmniBridgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B94756871EA82F40EE5731AA /* OmniBridgeViewController.swift */; };
+		C3B1C2EC09F39D4B8F80312E /* FlashAlertPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58F813F2514CE27884DAF45 /* FlashAlertPlugin.swift */; };
+		EF2EE55528F89ACF3161EC2B /* RingtonePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648FF0674457CECEC1A52A21 /* RingtonePlugin.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B94756871EA82F40EE5731AA /* OmniBridgeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OmniBridgeViewController.swift; sourceTree = "<group>"; };
-		D12FBDA72911CA7A35C2EA7B /* LocalNotificationHub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationHub.swift; sourceTree = "<group>"; };
-		1563765923814499FC625DC3 /* KeepAwakePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeepAwakePlugin.swift; sourceTree = "<group>"; };
-		A58F813F2514CE27884DAF45 /* FlashAlertPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashAlertPlugin.swift; sourceTree = "<group>"; };
-		648FF0674457CECEC1A52A21 /* RingtonePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingtonePlugin.swift; sourceTree = "<group>"; };
-		951ED47A10AB98377C81DF64 /* BiometricPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricPlugin.swift; sourceTree = "<group>"; };
-		5FA9BF5D603074D6E0C09F05 /* DeviceStatsPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceStatsPlugin.swift; sourceTree = "<group>"; };
-		B4B37EB0693E9ED3177A2F44 /* AlarmPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmPlugin.swift; sourceTree = "<group>"; };
-		8E06EA9DC78BFA9CF42C033E /* SleepModePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepModePlugin.swift; sourceTree = "<group>"; };
 		0855F68E3A40EDD1BECB09EF /* SleepMessageBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepMessageBank.swift; sourceTree = "<group>"; };
-		AA31C39CFA0653F100A2B380 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "PrivacyInfo.xcprivacy"; sourceTree = "<group>"; };
-		E38F4ED2B903491A5C949BB8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		C875377F20115F3EFF8BD516 /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
+		1563765923814499FC625DC3 /* KeepAwakePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeepAwakePlugin.swift; sourceTree = "<group>"; };
 		2FAD9762203C412B000D30F8 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = config.xml; sourceTree = "<group>"; };
 		50379B222058CBB4000EE86E /* capacitor.config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = capacitor.config.json; sourceTree = "<group>"; };
 		504EC3041FED79650016851F /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -53,9 +42,20 @@
 		504EC3111FED79650016851F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		504EC3131FED79650016851F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		50B271D01FEDC1A000F3C39B /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
+		5FA9BF5D603074D6E0C09F05 /* DeviceStatsPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceStatsPlugin.swift; sourceTree = "<group>"; };
+		648FF0674457CECEC1A52A21 /* RingtonePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingtonePlugin.swift; sourceTree = "<group>"; };
+		8E06EA9DC78BFA9CF42C033E /* SleepModePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepModePlugin.swift; sourceTree = "<group>"; };
+		951ED47A10AB98377C81DF64 /* BiometricPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricPlugin.swift; sourceTree = "<group>"; };
 		9582B6842FE996800072D4E8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		A58F813F2514CE27884DAF45 /* FlashAlertPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashAlertPlugin.swift; sourceTree = "<group>"; };
+		AA31C39CFA0653F100A2B380 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
+		B4B37EB0693E9ED3177A2F44 /* AlarmPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmPlugin.swift; sourceTree = "<group>"; };
+		B94756871EA82F40EE5731AA /* OmniBridgeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OmniBridgeViewController.swift; sourceTree = "<group>"; };
+		C875377F20115F3EFF8BD516 /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
+		D12FBDA72911CA7A35C2EA7B /* LocalNotificationHub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationHub.swift; sourceTree = "<group>"; };
+		E38F4ED2B903491A5C949BB8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -155,6 +155,7 @@
 				504EC3011FED79650016851F /* Frameworks */,
 				504EC3021FED79650016851F /* Resources */,
 				9592DBEFFC6D2A0C8D5DEB22 /* [CP] Embed Pods Frameworks */,
+				217FBBB05B9A3DC52BE0CC7D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -190,8 +191,6 @@
 				Base,
 			);
 			mainGroup = 504EC2FB1FED79650016851F;
-			packageReferences = (
-			);
 			productRefGroup = 504EC3051FED79650016851F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -220,6 +219,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		217FBBB05B9A3DC52BE0CC7D /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-App/Pods-App-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		6634F4EFEBD30273BCE97C65 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

@@ -76,7 +76,7 @@
 			<string>com.syhuinc.omnihub.google-signin</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.REPLACE-WITH-REVERSED-CLIENT-ID</string>
+				<string>com.googleusercontent.apps.354903225183-2h4bm5ksjq4j5k5ulbgvjrp5m5ilg7dl</string>
 			</array>
 		</dict>
 	</array>
