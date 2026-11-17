@@ -1,0 +1,65 @@
+.soon-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  background: linear-gradient(160deg, #1b1240 0%, #2c1c5c 45%, #191033 100%);
+  box-shadow: 0 14px 30px -12px rgba(44, 28, 92, 0.6);
+}
+
+.soon-hero__glow {
+  position: absolute;
+  top: -40%;
+  right: -20%;
+  width: 70%;
+  height: 140%;
+  background: radial-gradient(closest-side, rgba(150, 120, 255, 0.34), rgba(150, 120, 255, 0) 70%);
+  pointer-events: none;
+}
+
+.soon-hero__art {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 38%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.soon-hero__badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+
+.soon-hero__title {
+  position: relative;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  max-width: 62%;
+}
+
+.soon-hero__text {
+  position: relative;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+  line-height: 1.4;
+  margin-top: 8px;
+  max-width: 62%;
+}

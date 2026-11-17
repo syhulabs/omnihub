@@ -1,13 +1,13 @@
-/* Geometry is from design/bottom-nav-reference-v2.png (1220 wide at the phone's width), compressed
-   vertically to 272 units (see BottomNav.tsx): the bar keeps that aspect ratio, the SVG frame fills
-   it, and every tab is placed by percentage, so at 436 CSS px wide each element lands where the
-   drawing has it. Vertical percentages are of the bar's height (272); horizontal of its width. */
+/* Geometry is from design/bottom-nav-reference-v2.png (1220 wide at the phone's width), redrawn
+   200 units tall (see BottomNav.tsx): the bar keeps that aspect ratio, the SVG frame fills it, and
+   every tab is placed by percentage. Vertical percentages are of the bar's height (200);
+   horizontal of its width. */
 
 .bottom-nav {
   position: relative;
   flex-shrink: 0;
   width: 100%;
-  aspect-ratio: 1220 / 272;
+  aspect-ratio: 1220 / 200;
   margin-bottom: var(--safe-bottom);
   /* Cancels the Text Size page zoom: the bar is drawn to the mockup's geometry, so its icons and
      labels must not grow inside the fixed frame. */
@@ -76,11 +76,11 @@
   transition: none;
 }
 
-/* icon centre at y = 139/272 (27 units below the accent line, as in the mockup); label centre 205/272 */
+/* icon centre at y = 101/200; label centre 153/200 */
 .bottom-nav__icon {
   position: absolute;
   left: 50%;
-  top: 51.1%;
+  top: 50.5%;
   transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
@@ -90,10 +90,10 @@
 .bottom-nav__label {
   position: absolute;
   left: 50%;
-  top: 75.4%;
+  top: 76.5%;
   transform: translate(-50%, -50%);
   white-space: nowrap;
-  font-size: 12.1px;
+  font-size: 11px;
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0.01em;
@@ -103,13 +103,13 @@
   color: #79acff;
 }
 
-/* The AI tile is drawn in the SVG (y 36-176); the mark is centred in it at the mockup's width */
+/* The AI tile is drawn in the SVG (y 22-126); the mark is centred in it */
 .bottom-nav__item--brand {
   width: 13.7%;
 }
 
 .bottom-nav__item--brand .bottom-nav__label {
-  top: 75.4%;
+  top: 76.5%;
   color: #bca6ff;
 }
 
@@ -121,8 +121,8 @@
 .bottom-nav__mark {
   position: absolute;
   left: 50%;
-  top: 39%; /* tile interior centre: (42 + 170) / 2 = 106 of 272 */
-  width: 81.5%;
+  top: 37%; /* tile centre: (22 + 126) / 2 = 74 of 200 */
+  width: 65.8%;
   transform: translate(-50%, -50%);
   user-select: none;
 }

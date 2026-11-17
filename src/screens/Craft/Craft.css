@@ -1,190 +1,76 @@
-.craft__title-accent {
-  background: linear-gradient(90deg, #00cfff 0%, #0f8cff 35%, #3d6bff 55%, #c146f9 80%, #ec5fff 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.craft__body {
+/* Three of the Hub's tool icons, fanned like the chips on the Hub's featured card. */
+.craft__hero-icons {
   position: relative;
-  z-index: 1;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 0 16px 24px;
+  width: 96px;
+  height: 92px;
 }
 
-.craft__hero {
-  position: relative;
-  padding-top: calc(26px + var(--safe-top));
-  padding-bottom: 28px;
-  padding-inline: 26px;
-  aspect-ratio: 841 / 1870;
-  margin-bottom: -146.9%;
-  display: flex;
-  align-items: flex-start;
-  background-size: cover;
-  background-position: center top;
-  background-color: #191033;
-}
-
-.craft__hero-scrim {
+.craft__hero-chip {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(5, 8, 16, 0.6) 0%, rgba(5, 8, 16, 0.1) 15%, rgba(5, 8, 16, 0) 40%);
-}
-
-.craft__hero-text {
-  position: relative;
-  z-index: 1;
-}
-
-.craft__hero-eyebrow {
-  display: block;
-  font-size: 8px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: 0.69em;
-  color: #fff;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
-  margin-bottom: 2px;
-}
-
-.craft__hero-title {
-  font-family: var(--font-display);
-  font-size: 42px;
-  font-weight: 800;
-  color: #fff;
-  line-height: 0.73;
-  padding-top: 7px;
-  margin-bottom: -3px;
-  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.6);
-}
-
-.craft__hero-subtitle {
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 12.5px;
-  color: #fff;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
-}
-
-.craft__features {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.craft__feature {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: contain;
-  display: block;
-}
-
-.craft__banner {
-  width: 100%;
-  height: auto;
-  display: block;
-  margin: 0 auto;
-  border-radius: var(--radius-lg);
-}
-
-.craft__section-head {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.craft__section-head h2 {
-  font-family: var(--font-display);
-  font-size: 16px;
-  font-weight: 800;
-  line-height: 1.1;
-  color: var(--text-primary);
-}
-
-.craft__section-head p {
-  font-size: 10.5px;
-  color: var(--text-secondary);
+  width: 46px;
+  height: 46px;
+  object-fit: cover;
+  border-radius: 13px;
+  box-shadow: 0 8px 14px -5px rgba(0, 0, 0, 0.55);
+  top: calc(var(--i) * 20px);
+  right: calc(var(--i) * 22px);
+  transform: rotate(calc(8deg - var(--i) * 8deg));
 }
 
 .craft__recipes {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+  gap: 10px;
 }
 
-.craft__recipe-card {
+.craft__recipe {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 6px;
+  align-items: flex-start;
+  padding: 12px 11px;
 }
 
-.craft__recipe-img {
+/* The recipe's tools, side by side. */
+.craft__recipe-icons {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
   width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: contain;
-  display: block;
+}
+
+.craft__recipe-icons img {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 24%;
+  object-fit: cover;
+}
+
+.craft__recipe strong {
+  margin-top: 11px;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+.craft__recipe-parts {
+  margin-top: 4px;
+  margin-bottom: 10px;
+  font-size: 11.5px;
+  line-height: 1.35;
+  color: var(--text-secondary);
+  text-wrap: balance;
 }
 
 .craft__recipe-soon {
-  display: flex;
+  margin-top: auto;
+  display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 8px;
+  padding: 4px 9px;
   border-radius: var(--radius-pill);
   background: var(--bg-elevated-2);
-  border: 1px solid var(--border-strong);
   color: var(--text-secondary);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
-}
-
-.craft__thanks {
-  margin-top: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 22px 18px;
-  border-radius: var(--radius-lg);
-  background: linear-gradient(160deg, #1b1240 0%, #2c1c5c 45%, #191033 100%);
-  border: 1px solid color-mix(in srgb, var(--purple) 30%, transparent);
-}
-
-.craft__thanks-bar {
-  width: 28px;
-  height: 3px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, #4d7cfe, var(--purple-fill));
-  margin-bottom: 4px;
-}
-
-.craft__thanks h2 {
-  font-size: 19px;
-  font-weight: 800;
-  line-height: 1.25;
-  color: #fff;
-}
-
-.craft__thanks-accent {
-  background: linear-gradient(135deg, #4d7cfe, var(--purple-fill));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.craft__thanks p {
-  font-size: 12.5px;
-  color: rgba(255, 255, 255, 0.65);
-}
-
-/* The daytime artwork behind the hero text is much brighter than the night one, and the soft glow
-   used in dark theme left the white eyebrow and subtitle washed out (about 2.5:1). A tighter,
-   darker halo keeps the same white type readable on the bright scene. */
-:root[data-theme='light'] .craft__hero-eyebrow,
-:root[data-theme='light'] .craft__hero-subtitle {
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7), 0 0 10px rgba(0, 0, 0, 0.55);
 }

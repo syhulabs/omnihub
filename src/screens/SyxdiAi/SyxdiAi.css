@@ -1,124 +1,8 @@
-.syxdi__title-accent {
-  background: linear-gradient(135deg, #4d7cfe, var(--purple-fill));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Negative z-index would paint this behind .app-shell's own opaque background (it has no
-   stacking context of its own), so instead this sits at z-index 0 and .syxdi__screen is
-   explicitly raised above it. */
-.syxdi__bg {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  max-width: 560px;
-  margin: 0 auto;
-  background-size: cover;
-  background-position: center top;
-  background-color: #0b0a1a;
-}
-
-/* Dims the scene so the content reads first, getting darker toward the cards like the mockup. */
-.syxdi__bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(6, 5, 22, 0.2) 0%,
-    rgba(6, 5, 22, 0.3) 30%,
-    rgba(6, 5, 22, 0.58) 42%,
-    rgba(6, 5, 22, 0.68) 52%,
-    rgba(6, 5, 22, 0.84) 60%,
-    rgba(6, 5, 22, 0.88) 100%
-  );
-}
-
-:root[data-theme='light'] .syxdi__bg::after {
-  background: linear-gradient(
-    180deg,
-    rgba(243, 244, 248, 0.55) 0%,
-    rgba(243, 244, 248, 0.35) 30%,
-    rgba(243, 244, 248, 0.62) 42%,
-    rgba(243, 244, 248, 0.72) 100%
-  );
-}
-
-:root[data-theme='light'] .syxdi__headline-eyebrow,
-:root[data-theme='light'] .syxdi__headline-text {
-  color: var(--text-secondary);
-  text-shadow: none;
-}
-
-:root[data-theme='light'] .syxdi__headline-title {
-  background-image: linear-gradient(135deg, var(--text-primary), #4d7cfe 55%, var(--purple-fill));
-  filter: none;
-}
-
-.syxdi__screen {
-  position: relative;
-  z-index: 1;
-}
-
-.syxdi__hero-card {
-  position: relative;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  border: 1px solid rgba(120, 110, 230, 0.55);
-  box-shadow:
-    0 0 18px -4px rgba(120, 100, 255, 0.55),
-    0 14px 28px -14px rgba(0, 0, 0, 0.7);
-  aspect-ratio: 864 / 600;
-  background-size: cover;
-  background-position: center;
-  background-color: #191033;
-}
-
-.syxdi__body {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 0 16px 24px;
-}
-
-.syxdi__headline {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 12px 4px;
-  text-align: center;
-}
-
-.syxdi__headline-eyebrow {
-  font-size: 11px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.75);
-  text-transform: uppercase;
-  letter-spacing: 0.3em;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
-}
-
-.syxdi__headline-title {
-  font-size: 30px;
-  font-weight: 900;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
-  background: linear-gradient(135deg, #fff, #4d7cfe 55%, var(--purple-fill));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  filter: drop-shadow(0 1px 10px rgba(0, 0, 0, 0.45));
-}
-
-.syxdi__headline-text {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.8);
-  line-height: 1.5;
-  max-width: 300px;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+.syxdi__mark {
+  width: 86%;
+  max-width: 132px;
+  filter: drop-shadow(0 6px 18px rgba(120, 100, 255, 0.55));
+  user-select: none;
 }
 
 .syxdi__features {
@@ -130,49 +14,21 @@
 .syxdi__feature {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 18px 10px;
-  text-align: center;
-  /* Dark navy glass inside, blue-to-purple-to-pink glowing edge (padding-box / border-box trick). */
-  background:
-    linear-gradient(160deg, rgba(16, 18, 52, 0.84), rgba(7, 11, 32, 0.9)) padding-box,
-    linear-gradient(100deg, rgba(150, 70, 210, 0.85) 0%, rgba(60, 95, 200, 0.6) 45%, rgba(200, 110, 190, 0.85) 100%) border-box;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1.5px solid transparent;
-  border-radius: var(--radius-lg);
-  box-shadow:
-    0 0 16px -6px rgba(150, 90, 255, 0.6),
-    0 14px 28px -14px rgba(0, 0, 0, 0.7);
+  align-items: flex-start;
+  padding: 14px;
 }
 
 .syxdi__feature strong {
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+
+.syxdi__feature > span:last-child {
+  margin-top: 3px;
   font-size: 12px;
-  color: #fff;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
-}
-
-.syxdi__feature span:last-child {
-  font-size: 10.5px;
-  color: rgba(255, 255, 255, 0.78);
   line-height: 1.35;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
-}
-
-.syxdi__feature-icon {
-  width: 52px;
-  height: 52px;
-  object-fit: contain;
-}
-
-.syxdi__thanks {
-  margin-top: auto;
-  position: relative;
-  aspect-ratio: 810 / 265;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background-size: cover;
-  background-position: center;
-  border: 1px solid color-mix(in srgb, var(--purple) 30%, transparent);
+  color: var(--text-secondary);
 }

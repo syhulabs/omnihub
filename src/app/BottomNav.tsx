@@ -6,9 +6,10 @@ import './BottomNav.css';
 /* The bar is drawn to design/bottom-nav-reference-v2.png, a 1220-wide mockup at the phone's exact
    width: the frame, accent lines and AI tile are one SVG in that coordinate space, and the tabs
    are placed at the mockup's measured centres as percentages, so the whole bar scales with the
-   screen width and lands pixel-for-pixel at 436 CSS px. Vertically it is compressed from the
-   mockup's 350 units to 272 (the owner found the full height too tall): every stroke, angle, icon
-   and label keeps its size, only the empty space between them shrinks. */
+   screen width. The owner found the mockup's bar too tall twice: it was first compressed from 350
+   units to 272, then (Nov 17) redrawn at 200 units, about 72 CSS px on the phone instead of 97.
+   The shapes are the mockup's (chamfered frame, raised notch, AI tile, accent lines, pink bars);
+   the notch, tile, icons and labels are scaled down to fit the lower frame. */
 
 interface Tab {
   path: string;
@@ -23,11 +24,11 @@ interface Tab {
 }
 
 const TABS: Tab[] = [
-  { path: '/', label: 'Home', icon: 'home', iconSize: 35, x: 14.84 },
-  { path: '/tools', label: 'Hub', icon: 'grid', iconSize: 33, x: 33.0 },
+  { path: '/', label: 'Home', icon: 'home', iconSize: 26, x: 14.84 },
+  { path: '/tools', label: 'Hub', icon: 'grid', iconSize: 24.5, x: 33.0 },
   { path: '/ai', label: 'AI', brand: true, x: 50 },
-  { path: '/craft', label: 'Craft', icon: 'flask', iconSize: 30, x: 67.38 },
-  { path: '/profile', label: 'Desk', icon: 'archive', iconSize: 32, x: 85.57 },
+  { path: '/craft', label: 'Craft', icon: 'flask', iconSize: 22.5, x: 67.38 },
+  { path: '/profile', label: 'Desk', icon: 'archive', iconSize: 24, x: 85.57 },
 ];
 
 export function BottomNav() {
@@ -35,7 +36,7 @@ export function BottomNav() {
 
   return (
     <nav className="bottom-nav">
-      <svg className="bottom-nav__frame" viewBox="0 0 1220 272" aria-hidden="true" focusable="false">
+      <svg className="bottom-nav__frame" viewBox="0 0 1220 200" aria-hidden="true" focusable="false">
         <defs>
           {/* sampled along the mockup's tile border: cyan at top-left, blue, violet, magenta at bottom-right */}
           <linearGradient id="bn-tile" x1="0" y1="0" x2="1" y2="1">
@@ -48,20 +49,20 @@ export function BottomNav() {
         </defs>
         {/* outer frame: chamfered corners, raised notch for the AI tile */}
         <path
-          d="M117 58 H498 L537 14 H685 L724 58 H1102 L1164 120 V196 L1102 258 H117 L55 196 V120 Z"
+          d="M101 40 H518 L548 6 H671 L701 40 H1118 L1164 86 V146 L1118 192 H101 L55 146 V86 Z"
           fill="none"
           stroke="#649bff"
           strokeWidth="5"
           strokeLinejoin="miter"
         />
         {/* purple accent lines following the top chamfers */}
-        <path d="M458 88 H120 L86 133" fill="none" stroke="#7a62ff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M761 88 H1099 L1133 133" fill="none" stroke="#7a62ff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M482 60 H107 L80 92" fill="none" stroke="#7a62ff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M737 60 H1112 L1139 92" fill="none" stroke="#7a62ff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
         {/* pink bars under the outer tabs */}
-        <path d="M153 238 H318" stroke="#ed5ac5" strokeWidth="5" strokeLinecap="round" />
-        <path d="M901 238 H1066" stroke="#ed5ac5" strokeWidth="5" strokeLinecap="round" />
+        <path d="M153 178 H318" stroke="#ed5ac5" strokeWidth="5" strokeLinecap="round" />
+        <path d="M901 178 H1066" stroke="#ed5ac5" strokeWidth="5" strokeLinecap="round" />
         {/* AI tile */}
-        <rect x="529" y="39" width="161" height="134" rx="35" fill="none" stroke="url(#bn-tile)" strokeWidth="6" />
+        <rect x="541.5" y="22" width="136" height="104" rx="29" fill="none" stroke="url(#bn-tile)" strokeWidth="6" />
       </svg>
 
       {TABS.map((tab) => {

@@ -2,7 +2,7 @@
 
 Offline all-in-one utility app for Android (shipping) and iOS (project ready, not yet built on a Mac).
 Vite + React + TypeScript, wrapped with Capacitor.
-Package `com.syhuinc.omnihub`, versionName 1.0, last shipped versionCode 168. Work directly on `main`.
+Package `com.syhuinc.omnihub`, versionName 1.0, last shipped versionCode 168 (test builds go up to 173). Work directly on `main`.
 The owner tests on a Motorola Edge 60 Fusion and reviews every change visually, in dark and light theme.
 
 ## How the owner works (standing instructions)
@@ -22,6 +22,8 @@ The owner tests on a Motorola Edge 60 Fusion and reviews every change visually, 
 - The owner dislikes big gaps and "flashy for the sake of it"; prefers polished, glossy, punchy, but app-like.
 - **No buttons that do nothing.** Coming-soon screens (SYXDI AI, Crafting Station) have no clickable controls.
 - The bottom nav is shared by every tab. Don't restyle it per tab.
+- Every tab uses the same plain style as Home and Hub (header, app background, cards). The owner rejected
+  full-screen illustrated tabs (the old AI, Craft and Desk) on Nov 17: nothing should "stand out".
 - Keep unfinished work out of commits that ship. Commit only the files for the change at hand.
 - Language setting: English only for now; the Language row stays static.
 

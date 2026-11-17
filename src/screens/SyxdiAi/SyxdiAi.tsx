@@ -1,68 +1,61 @@
+import type { CSSProperties } from 'react';
 import { ScreenHeader } from '../../components/ScreenHeader';
-import heroScene from '../../assets/syxdi-ai/hero.webp';
-import bgSceneDark from '../../assets/syxdi-ai/hero-dark.webp';
-import bgSceneLight from '../../assets/syxdi-ai/hero-light.webp';
-import closingScene from '../../assets/syxdi-ai/closing-scene.webp';
-import iconChat from '../../assets/syxdi-ai/icon-chat.webp';
-import iconUser from '../../assets/syxdi-ai/icon-user.webp';
-import iconFeed from '../../assets/syxdi-ai/icon-feed.webp';
-import iconBulb from '../../assets/syxdi-ai/icon-bulb.webp';
-import { useIsLightTheme } from '../../theme/useTheme';
+import { SoonHero } from '../../components/SoonHero';
+import { Icon, type IconName } from '../../components/Icon';
+import brandMark from '../../assets/syxdi-ai/nav-icon-static.webp';
+import '../../components/InfoList.css';
 import './SyxdiAi.css';
 
-const FEATURES: { icon: string; title: string; desc: string }[] = [
-  { icon: iconChat, title: 'Natural Conversations', desc: 'Talk naturally, anytime.' },
-  { icon: iconUser, title: 'Understands You', desc: 'Learns your preferences.' },
-  { icon: iconFeed, title: 'Personal News Feed', desc: 'Updates that matter to you.' },
-  { icon: iconBulb, title: 'Smart Insights', desc: 'Helpful suggestions for a better day.' },
+const FEATURES: { icon: IconName; tile: string; title: string; desc: string }[] = [
+  { icon: 'chat', tile: '#3f7cf6', title: 'Natural Conversations', desc: 'Talk naturally, anytime.' },
+  { icon: 'user', tile: '#7c5cf5', title: 'Understands You', desc: 'Learns your preferences.' },
+  { icon: 'bookmark', tile: '#0f9f8f', title: 'Personal News Feed', desc: 'Updates that matter to you.' },
+  { icon: 'lightbulb', tile: '#ee8a1d', title: 'Smart Insights', desc: 'Helpful suggestions for a better day.' },
 ];
 
+/** Coming-soon page: information only, no clickable controls. Laid out like Home and Hub (plain
+    header, the app's own background, cards), not as a full-screen illustration. */
 export function SyxdiAi() {
-  const isLight = useIsLightTheme();
-  const bgScene = isLight ? bgSceneLight : bgSceneDark;
-
   return (
-    <>
-      {/* Fixed full-viewport layer, kept as a sibling of .screen (not a descendant) so the
-          screen's entrance animation never gives it a transformed containing block. */}
-      <div className="syxdi__bg" style={{ backgroundImage: `url(${bgScene})` }} />
+    <div className="screen">
+      <ScreenHeader title="SYXDI AI" subtitle="Your AI companion for Omni Hub." />
 
-      <div className="screen syxdi__screen">
-        <ScreenHeader
+      <div className="tab-body">
+        <SoonHero
           title={
             <>
-              SYXDI <span className="syxdi__title-accent">AI</span>
+              A smarter,
+              <br />
+              more personal AI.
             </>
           }
-          subtitle="Your AI companion for Omni Hub."
+          text="On its way to Omni Hub."
+          art={<img className="syxdi__mark" src={brandMark} alt="" draggable={false} />}
         />
 
-        <div className="syxdi__body">
-          <div className="syxdi__hero-card" style={{ backgroundImage: `url(${heroScene})` }} />
-
-          <div className="syxdi__headline">
-            <span className="syxdi__headline-eyebrow">SYXDI AI</span>
-            <h2 className="syxdi__headline-title">COMING SOON</h2>
-            <p className="syxdi__headline-text">
-              A smarter, more personal AI experience is on the way.
-            </p>
+        <section className="tab-section">
+          <div className="tab-section__head">
+            <h2>What to expect</h2>
           </div>
-
           <div className="syxdi__features">
             {FEATURES.map((f) => (
-              <div key={f.title} className="syxdi__feature">
-                <img className="syxdi__feature-icon" src={f.icon} alt="" />
+              <div key={f.title} className="info-card syxdi__feature">
+                <span className="info-row__icon" style={{ '--tile': f.tile } as CSSProperties}>
+                  <Icon name={f.icon} size={21} strokeWidth={2} />
+                </span>
                 <strong>{f.title}</strong>
                 <span>{f.desc}</span>
               </div>
             ))}
           </div>
+        </section>
 
-          {/* The art itself already has "Better days are coming / Thank you for your
-              support" baked in, so this is just the image -- no HTML text on top. */}
-          <div className="syxdi__thanks" style={{ backgroundImage: `url(${closingScene})` }} />
-        </div>
+        <p className="tab-note">
+          Better days are coming.
+          <br />
+          Thank you for your support.
+        </p>
       </div>
-    </>
+    </div>
   );
 }

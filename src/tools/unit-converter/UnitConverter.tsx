@@ -32,6 +32,15 @@ function formatNumber(value: number): string {
   return Number(value.toPrecision(12)).toString();
 }
 
+/** The result sits beside the unit picker in about 240px. Long results (0.393700787402) used to
+    run under the picker and look cut off, so the type steps down with the length instead. */
+function resultFontSize(text: string): number {
+  if (text.length <= 11) return 28;
+  if (text.length <= 14) return 22;
+  if (text.length <= 18) return 17;
+  return 14;
+}
+
 export function UnitConverter() {
   const { back } = useRouter();
   const [categoryId, setCategoryId] = useState(UNIT_CATEGORIES[0].id);
@@ -119,7 +128,9 @@ export function UnitConverter() {
             To
           </label>
           <div className="uc__row">
-            <div className="uc__result">{result || '—'}</div>
+            <div className="uc__result" style={{ fontSize: resultFontSize(result || '—') }}>
+              {result || '—'}
+            </div>
             <select
               className="uc__select"
               value={toUnitId}

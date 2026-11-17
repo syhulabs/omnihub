@@ -4,18 +4,25 @@ The owner's approved designs. Match these exactly (see CLAUDE.md). Newest refere
 
 | File | Screen | Status |
 |---|---|---|
-| `desk-reference.png` | Desk tab (`/profile`) | Built and matched (Oct 8) |
-| `syxdi-ai-reference-dark.jpg` | SYXDI AI tab, dark | Built and matched (Oct 8) |
-| `syxdi-ai-background-dark.jpg` / `-light.jpg` | SYXDI AI full-screen background art | In use |
-| `craft-reference.jpg` | Crafting Station tab | Built and matched (Oct 8). The background art in the app is the owner's own asset, not the mockup's |
-| `craft-reference-font-position-notes.jpg` | Owner's red-circled notes: "I want exact font n exact position" | Applied |
+| `desk-reference.png` | Desk tab (`/profile`) | **Retired (Nov 17)**: the owner disliked the photo header. Desk is now a plain grouped menu in the Settings style |
+| `syxdi-ai-reference-dark.jpg` | SYXDI AI tab, dark | **Retired (Nov 17)**: the owner disliked the full-screen scene. The tab is now a plain header, a coming-soon card with the brand mark, and four feature cards |
+| `syxdi-ai-background-dark.jpg` / `-light.jpg` | SYXDI AI full-screen background art | **Retired (Nov 17)**, no longer in the app |
+| `craft-reference.jpg` | Crafting Station tab | **Retired (Nov 17)**: the owner said it stood out a lot. The tab is now a plain header, a coming-soon card, three "how it will work" rows and three recipe cards built from the Hub's tool icons |
+| `craft-reference-font-position-notes.jpg` | Owner's red-circled notes on the old Crafting Station | **Retired (Nov 17)** with that design |
 | `home-reference.jpg` | Home tab + My Phone card menu (two states) | Built and matched (Oct 8). The phone photo can't be reproduced; the app shows an icon |
 | `hub-reference-OLD-sep22.jpg` | Old "Tools" screen | **Outdated**: predates the Hub rename and the glossy 3D icon set. Ask the owner for a current Hub reference before changing Hub |
 | `settings-reference.jpg` | Settings screen (Desk → Settings) | Built and matched (Oct 10); awaiting the owner's on-device review |
-| `bottom-nav-reference-v2.png` | Bottom nav bar (angular frame, raised AI tile; 1220x350 at the phone's width) | Built (Nov 6) at the mockup's width; compressed vertically from 350 to 272 units at the owner's request (the full height felt too tall), keeping every stroke, angle, icon and label at the mockup's size. Replaces `bottom-nav-reference.jpg`. The 3D model icon and its Settings toggle are gone by the owner's request, so the Settings GENERAL card has two rows, not the mockup's three |
+| `bottom-nav-reference-v2.png` | Bottom nav bar (angular frame, raised AI tile; 1220x350 at the phone's width) | Built (Nov 6) at the mockup's width. The owner found it too tall twice: compressed from 350 to 272 units, then (Nov 17) redrawn at 200 units (about 72 px on the phone, was 97) with the notch, AI tile, icons and labels scaled down to fit; the shapes and colours are the mockup's. Replaces `bottom-nav-reference.jpg`. The 3D model icon and its Settings toggle are gone by the owner's request, so the Settings GENERAL card has two rows, not the mockup's three |
 | `bottom-nav-reference.jpg` | Old bottom nav bar | **Outdated** (Nov 6) |
 | `sleep-mode-ai-tab-reference-dark.jpg` / `-light.jpg` | Sleep Mode → AI personality tab with previews | See plans |
 | `app-icon-reference.jpg` | App icon direction the owner picked | In use |
+
+## The three redesigned tabs (Nov 17)
+AI, Craft and Desk use the same language as Home and Hub: `ScreenHeader`, the app background, cards
+from `src/components/InfoList.css`, and the shared coming-soon card `src/components/SoonHero.tsx` (the
+same deep purple as the Hub's "More Tools On The Way"). No full-screen art, no display font. The old
+artwork was removed from `src/assets` (it is in git history before Nov 17). There is no mockup for
+these three; if the owner sends one, it becomes the spec.
 
 # Planned features and open work
 
