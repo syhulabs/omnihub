@@ -65,7 +65,11 @@ Release notes (under 500 characters):
 2. Done (17 Nov): the Firebase iOS app exists; `GoogleService-Info.plist` is in `ios/App/App/` and its
    reversed client ID is in `Info.plist`.
 3. **Owner**: switch on Sign in with Apple in two places, then test it on an iPhone:
-   - Firebase console, *Authentication*, *Sign-in method*: enable **Apple**.
+   - Firebase console, *Authentication*, *Sign-in method*: enable **Apple**. To let Delete My Account revoke
+     the Apple token (Apple requires it), fill in the provider's *OAuth code flow* fields: the Apple Team ID,
+     and a key made in the Apple Developer account under *Certificates, Identifiers & Profiles → Keys* with
+     *Sign in with Apple* ticked (its Key ID and the downloaded .p8 private key). Without these, sign-in still
+     works but the token is not revoked when an account is deleted.
    - Xcode, *App* target, *Signing & Capabilities*: the *Sign in with Apple* capability should already be
      listed (it is in `App.entitlements`); with automatic signing Xcode registers it on the App ID.
    - On the phone: Desk, Profile: "Sign in with Apple" is the first row. Sign in, check that a note syncs,
