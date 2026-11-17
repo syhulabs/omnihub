@@ -76,7 +76,14 @@ Release notes (under 500 characters):
    simulator build for Apple silicon, so the app builds for Intel simulators only and iOS 27 simulators
    refuse it (found 17 Nov). App Store Connect wants 6.9-inch (1320 x 2868) or 6.5-inch screenshots.
    The owner's iPhone 16 Pro Max takes them at exactly 1320 x 2868 (6.9-inch), so its screenshots fit as is.
-   The owner has a paid Apple Developer team (17 Nov), so Sign in with Apple and TestFlight can work.
+   The owner does not have a paid Apple Developer membership yet (17 Nov). Until they join:
+   - The App Store, TestFlight and Sign in with Apple cannot work. Joining is the owner's step:
+     developer.apple.com/programs/enroll (yearly fee; approval can take a day or more).
+   - The app can still run on the owner's iPhone with Xcode's free "Personal Team", which does not allow
+     the Sign in with Apple capability. For that test only, the owner removes it in Xcode (Signing &
+     Capabilities, the x next to it) and must not commit the change; afterwards
+     `git restore ios/App/App/App.entitlements ios/App/App.xcodeproj/project.pbxproj` puts it back.
+     A Personal Team build stops opening after 7 days; run it from Xcode again.
 6. **Owner**: archive and upload to TestFlight (`docs/ios-build.md`, section 7), then fill in App Store
    Connect (section 8): listing text, App Privacy labels, age rating, review notes, privacy policy URL.
 7. **Owner**: submit for review.
