@@ -11,6 +11,8 @@ interface AuthContextValue {
   deletingAccount: boolean;
   error: string | null;
   signInWithGoogle: () => Promise<void>;
+  /** iPhone only: the App Store requires Sign in with Apple next to any third-party sign-in. */
+  signInWithApple: () => Promise<void>;
   /** Resolves true once signed out; false if it failed (the error is in `error`). */
   signOut: () => Promise<boolean>;
   /** Permanently deletes the signed-in user's synced data and their account. Throws on failure. */
@@ -50,11 +52,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  async function signInWithGoogle() {
+  async function signIn(provider: 'google' | 'apple') {
     setError(null);
     setSigningIn(true);
     try {
-      const result = await FirebaseAuthentication.signInWithGoogle();
+      const result =
+        provider === 'apple'
+          ? await FirebaseAuthentication.signInWithApple()
+          : await FirebaseAuthentication.signInWithGoogle();
       setUser(result.user);
     } catch (err) {
       const message = err instanceof Error ? err.message : '';
@@ -68,6 +73,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSigningIn(false);
     }
   }
+
+  const signInWithGoogle = () => signIn('google');
+  const signInWithApple = () => signIn('apple');
 
   async function signOut(): Promise<boolean> {
     setError(null);
@@ -86,9 +94,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setError(null);
     setDeletingAccount(true);
     try {
+      // Confirm with the provider the account was created with.
+      const usesApple = user.providerData?.some((p) => p.providerId === 'apple.com') ?? false;
       await deleteAccountAndData(user.uid, async () => {
-        const result = await FirebaseAuthentication.signInWithGoogle();
-        return result.user?.uid ?? null;
+        const result = usesApple
+          ? await FirebaseAuthentication.signInWithApple()
+          : await FirebaseAuthentication.signInWithGoogle();
+        return {
+          uid: result.user?.uid ?? null,
+          appleAuthorizationCode: usesApple ? result.credential?.authorizationCode : undefined,
+        };
       });
       setUser(null);
     } finally {
@@ -98,7 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, signingIn, deletingAccount, error, signInWithGoogle, signOut, deleteAccount }}
+      value={{ user, loading, signingIn, deletingAccount, error, signInWithGoogle, signInWithApple, signOut, deleteAccount }}
     >
       {children}
     </AuthContext.Provider>

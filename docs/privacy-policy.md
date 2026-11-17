@@ -2,15 +2,16 @@
 
 **Last updated:** October 2026
 
-Omni Hub doesn't require an account. Signing in with Google is entirely optional and only unlocks syncing some of your data across your own devices — nothing else changes, and nothing is shared, sold, or used for ads or analytics either way.
+Omni Hub doesn't require an account. Signing in with Google (or with Apple on iPhone) is entirely optional and only unlocks syncing some of your data across your own devices — nothing else changes, and nothing is shared, sold, or used for ads or analytics either way.
 
 ## What we collect
 
 **If you never sign in:** nothing. Every tool's data (notes, alarms, Vault, and everything else) stays on your device and is never sent anywhere. Omni Hub itself uses no analytics, tracking, or advertising SDKs. The Google libraries we use for optional sign-in are built into the app and may make minimal automatic device-identification calls in the background on their own, as any app using Google's Firebase does — we turn their automatic data collection off by default (see [Third-party services](#third-party-services) below), but that's Google's library behavior, not something Omni Hub reads, controls, or can fully guarantee.
 
-**If you choose to sign in with Google** (Desk ▸ Profile), to sync your data across your own devices:
+**If you choose to sign in with Google, or with Apple on iPhone** (Desk ▸ Profile), to sync your data across your own devices:
 
 - Firebase Authentication (a Google service) receives your Google account's basic profile — name, email address, and profile photo — to identify you as the signed-in user. Omni Hub doesn't see or store your Google password.
+- If you sign in with Apple instead, Firebase Authentication receives the name and email address Apple shares with the app (Apple lets you hide your real email address). Omni Hub doesn't see or store your Apple ID password.
 - These tools' content syncs to Cloud Firestore (also a Google service), scoped to your account, so it can reach your other signed-in devices: **Notes** (titles and text), **Checklist** (list names and items), **Expense Tracker** (amounts, categories, notes, dates), **Budget** (per-category limits), **Subscription Calculator**, **Debt Tracker** (amounts and names/notes you enter), and **Alarms** (time, label, repeat, sound choice, and backup settings — see [Alarm](#alarm) below).
 - Your **Vault** notes sync too, but only as the same PIN-encrypted ciphertext already stored on your device — see [Vault](#vault) below for exactly what that means.
 
@@ -68,7 +69,7 @@ Signing in and syncing uses Google's Firebase platform (Firebase Authentication 
 
 ## Children's privacy
 
-Omni Hub does not knowingly collect data from children. Cloud sync requires deliberately signing in with a Google account, which is not directed at or targeted toward children.
+Omni Hub does not knowingly collect data from children. Cloud sync requires deliberately signing in with a Google or Apple account, which is not directed at or targeted toward children.
 
 ## Changes to this policy
 

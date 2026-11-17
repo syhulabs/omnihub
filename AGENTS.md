@@ -9,11 +9,11 @@ Omni Hub is an offline all-in-one utility app by SYHU Labs: about 26 working too
 checklist, alarm, Sleep Mode, Vault, scanners, compass, expense and budget tools and more) behind five tabs:
 Home, Hub, SYXDI AI, Craft, Desk. Vite + React 19 + TypeScript, wrapped with Capacitor 8.5.2.
 
-- Android: shipping. Package `com.syhuinc.omnihub`, in Google Play internal testing, versionCode 169.
+- Android: shipping. Package `com.syhuinc.omnihub`, in Google Play internal testing; test builds are at versionCode 174.
 - iOS: project in `ios/` (CocoaPods, iPhone only), written without Xcode and never built on a Mac yet.
 - Website: `docs/` is served by GitHub Pages at https://omnihub.syhu.net (landing page, privacy policy,
   delete-account page).
-- Cloud: Firebase Auth (Google), Firestore sync, one Cloud Function in `functions/` for Sleep Mode AI.
+- Cloud: Firebase Auth (Google; Apple on iPhone), Firestore sync, one Cloud Function in `functions/` for Sleep Mode AI.
 
 ## Who else works here
 
@@ -25,6 +25,28 @@ theme. Claude also works on this repository, from a cloud session, and pushes to
 - If a file you want to change was changed on `main` since you read it, re-read it first. Do not revert work
   you did not write; ask the owner.
 - Do not redo finished work. `git log` and the lists below say what is done.
+
+## Publishing stays with the owner
+
+You prepare; the owner publishes. Do not:
+
+- create, open, copy or ask for the release keystore (`android/keystore.properties`,
+  `android/app/release-keystore.jks`) or its passwords;
+- build a signed release AAB or APK (debug APKs for testing are fine);
+- upload anything to Google Play Console, App Store Connect or TestFlight;
+- archive or distribute from Xcode, or change signing teams, certificates or provisioning profiles;
+- run `firebase deploy` or change anything in the Firebase console;
+- edit store listings, pricing or account settings anywhere.
+
+If a task needs one of these, stop and tell the owner exactly what to do. The steps are in
+`docs/release-checklist.md`.
+
+## State on 17 November 2026
+
+Since 11 November: the AI, Craft and Desk tabs were rebuilt in the plain Home and Hub style (the owner
+rejected the full-screen illustrated versions; see `design/README.md`), the bottom nav was lowered to about
+72 px, and Sign in with Apple was added for iPhone (`src/cloud/AuthContext.tsx`, hidden on Android with
+`isIOS`; never run on a device yet).
 
 ## State on 11 November 2026
 
@@ -43,8 +65,8 @@ Waiting on the owner (do not do these yourself unless asked):
 
 - `firebase deploy --only functions` and Firestore rules.
 - A signed release build (the keystore is not in the repo, on purpose).
-- The first iOS build in Xcode, the Firebase iOS config file, and Sign in with Apple (required before App Store
-  review because the app offers Google Sign-In).
+- The first iOS build in Xcode, the Firebase iOS config file, and switching on Sign in with Apple in Firebase
+  and the Apple Developer account (the code is in; see `docs/release-checklist.md`).
 - The product decisions listed in `design/README.md` under "Second whole-app review (Nov 11)".
 
 ## Rules that are easy to break
@@ -58,6 +80,9 @@ These are in `CLAUDE.md` in full. The ones that have caused rework:
 - No buttons that do nothing. Coming-soon screens have no clickable controls. A feature that cannot work on a
   platform is hidden there with `isIOS` from `src/platform.ts`, not left as a dead control.
 - The bottom nav is shared by every tab. Do not restyle it per tab.
+- All tabs use the same plain style as Home and Hub. No full-screen illustrated backgrounds, nothing that
+  stands out.
+- English only.
 - Text Size is a page `zoom` on `<html>`: size full-height layout in `%`, never `vh`.
 - Keep `@capacitor/core`, `android`, `ios` and `cli` on the same version.
 - Never commit `android/keystore.properties`, `android/app/release-keystore.jks`, or the temporary

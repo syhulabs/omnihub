@@ -10,7 +10,8 @@ const config: CapacitorConfig = {
   plugins: {
     FirebaseAuthentication: {
       skipNativeAuth: false,
-      providers: ['google.com'],
+      // apple.com: Sign in with Apple, offered on iPhone only (App Store guideline 4.8).
+      providers: ['google.com', 'apple.com'],
     },
   },
 };

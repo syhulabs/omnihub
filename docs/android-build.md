@@ -74,11 +74,14 @@ Create an app in [Google Play Console](https://play.google.com/console), then un
 
 # Google Play Store checklist
 
+The current, ordered steps for a release are in `docs/release-checklist.md`. The list below is the
+one-time store setup.
+
 ## App identity
 
 - [x] Package name: `com.syhuinc.omnihub`
 - [x] App name: **Omni Hub**
-- [x] Version: `1.0.0` (versionCode `1`)
+- [x] Version: `1.0` (versionCode: see `android/app/build.gradle`; it must go up with every upload)
 - [x] Signed release AAB (see above) — keep the keystore safe for future updates
 
 ## Icons & graphics (generated already, in `android/app/src/main/res/`)
@@ -107,7 +110,7 @@ Launcher icons (all densities + adaptive icon layers) and splash screens are alr
 ## App content questionnaires (Play Console → App content)
 
 - [ ] **Privacy Policy**: provide the hosted URL
-- [ ] **Data safety form**: answer "No data collected" for every category — Omni Hub makes no network requests, has no accounts, and only stores data locally with `localStorage`
+- [ ] **Data safety form**: data is collected only if the user signs in (optional): name, email address, user ID and the content of the synced tools, for app functionality and account management; encrypted in transit; not shared; deletion available. Details in `docs/release-checklist.md` and the privacy policy
 - [ ] **Ads**: declare "No ads"
 - [ ] **Target audience & content rating**: fill out the content rating questionnaire (Omni Hub is a general-purpose utility app, no mature content)
 - [ ] **Government apps / Financial features**: not applicable

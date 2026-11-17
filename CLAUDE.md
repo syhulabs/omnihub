@@ -2,7 +2,7 @@
 
 Offline all-in-one utility app for Android (shipping) and iOS (project ready, not yet built on a Mac).
 Vite + React + TypeScript, wrapped with Capacitor.
-Package `com.syhuinc.omnihub`, versionName 1.0, last shipped versionCode 168 (test builds go up to 173). Work directly on `main`.
+Package `com.syhuinc.omnihub`, versionName 1.0, last shipped versionCode 168 (test builds go up to 174). Work directly on `main`.
 The owner tests on a Motorola Edge 60 Fusion and reviews every change visually, in dark and light theme.
 
 ## How the owner works (standing instructions)
@@ -26,6 +26,9 @@ The owner tests on a Motorola Edge 60 Fusion and reviews every change visually, 
   full-screen illustrated tabs (the old AI, Craft and Desk) on Nov 17: nothing should "stand out".
 - Keep unfinished work out of commits that ship. Commit only the files for the change at hand.
 - Language setting: English only for now; the Language row stays static.
+- **Publishing stays with the owner.** Never touch the release keystore, build a signed release, upload to
+  Play Console, App Store Connect or TestFlight, archive from Xcode, change signing, run `firebase deploy`,
+  or edit store listings. Prepare, then tell the owner exactly what to do (`docs/release-checklist.md`).
 
 ## Art department (GPT via Codex CLI)
 

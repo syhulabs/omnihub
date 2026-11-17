@@ -78,6 +78,17 @@
   color: var(--blue);
 }
 
+/* Sign in with Apple: Apple's black-and-white mark (white tile in dark theme, black in light). */
+.pf__row-icon--apple {
+  background: #fff;
+  color: #000;
+}
+
+:root[data-theme='light'] .pf__row-icon--apple {
+  background: #000;
+  color: #fff;
+}
+
 .pf__row-icon--purple {
   background: color-mix(in srgb, var(--purple-fill) 20%, transparent);
   color: var(--purple);

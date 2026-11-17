@@ -42,21 +42,26 @@ async function deleteCollection(uid: string, collection: string): Promise<void> 
  * the client out of its own cleanup.
  *
  * Firebase refuses to delete an account on a stale session (`auth/requires-recent-login`),
- * so the user confirms with Google first, before anything is wiped: a cancelled or wrong
+ * so the user confirms with Google or Apple first, before anything is wiped: a cancelled or wrong
  * account there must leave both the data and the account untouched. `reauthenticate`
  * resolves the uid that is signed in afterwards, which has to be the same account.
+ *
+ * For an account made with Sign in with Apple, that confirmation also returns an authorization
+ * code. Apple requires the app to revoke its token when the account is deleted (App Store
+ * guideline 5.1.1(v)), so it is revoked just before the account goes.
  */
 export async function deleteAccountAndData(
   uid: string,
-  reauthenticate: () => Promise<string | null>,
+  reauthenticate: () => Promise<{ uid: string | null; appleAuthorizationCode?: string }>,
 ): Promise<void> {
   let confirmedUid: string | null;
+  let appleAuthorizationCode: string | undefined;
   try {
-    confirmedUid = await reauthenticate();
+    ({ uid: confirmedUid, appleAuthorizationCode } = await reauthenticate());
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     if (/cancel/i.test(message)) throw new Error('Sign-in was cancelled. Nothing was deleted.');
-    throw new Error("Couldn't confirm your Google account. Nothing was deleted.");
+    throw new Error("Couldn't confirm your account. Nothing was deleted.");
   }
   if (confirmedUid !== uid) {
     // The chooser has just signed this phone in as that other account. Staying signed in would
@@ -66,11 +71,18 @@ export async function deleteAccountAndData(
     } catch {
       // best-effort
     }
-    throw new Error('That is a different Google account, so nothing was deleted and you have been signed out. Sign in with the account you want to delete.');
+    throw new Error('That is a different account, so nothing was deleted and you have been signed out. Sign in with the account you want to delete.');
   }
 
   for (const collection of SYNCED_COLLECTIONS) {
     await deleteCollection(uid, collection);
+  }
+  if (appleAuthorizationCode) {
+    try {
+      await FirebaseAuthentication.revokeAccessToken({ token: appleAuthorizationCode });
+    } catch {
+      // The data is already gone; a failed revoke must not leave the account half-deleted.
+    }
   }
   await FirebaseAuthentication.deleteUser();
 }

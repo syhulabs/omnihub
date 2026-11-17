@@ -12,8 +12,8 @@ export function PrivacyPolicy() {
 
       <div className="pp__body">
         <p className="pp__lede">
-          Omni Hub doesn't require an account. Signing in with Google is entirely optional and
-          only unlocks syncing some of your data across your own devices — nothing else changes,
+          Omni Hub doesn't require an account. Signing in with Google (or with Apple on iPhone) is
+          entirely optional and only unlocks syncing some of your data across your own devices — nothing else changes,
           and nothing is shared, sold, or used for ads or analytics either way.
         </p>
 
@@ -30,14 +30,19 @@ export function PrivacyPolicy() {
             controls, or can fully guarantee.
           </p>
           <p>
-            <strong>If you choose to sign in with Google</strong> (Desk ▸ Profile), to sync
-            your data across your own devices:
+            <strong>If you choose to sign in with Google, or with Apple on iPhone</strong> (Desk ▸
+            Profile), to sync your data across your own devices:
           </p>
           <ul>
             <li>
               Firebase Authentication (a Google service) receives your Google account's basic
               profile — name, email address, and profile photo — to identify you as the
               signed-in user. Omni Hub doesn't see or store your Google password.
+            </li>
+            <li>
+              If you sign in with Apple instead, Firebase Authentication receives the name and
+              email address Apple shares with the app (Apple lets you hide your real email
+              address). Omni Hub doesn't see or store your Apple ID password.
             </li>
             <li>
               These tools' content syncs to Cloud Firestore (also a Google service), scoped to
@@ -326,7 +331,7 @@ export function PrivacyPolicy() {
           <h2>Children's privacy</h2>
           <p>
             Omni Hub does not knowingly collect data from children. Cloud sync requires
-            deliberately signing in with a Google account, which is not directed at or targeted
+            deliberately signing in with a Google or Apple account, which is not directed at or targeted
             toward children.
           </p>
         </section>

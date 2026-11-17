@@ -115,15 +115,15 @@ is separate.
 
 Blocking before submission:
 
-- **Sign in with Apple is required.** App Store Review Guideline 4.8: an app offering a third-party
-  login (Google) must also offer Sign in with Apple. Omni Hub only has Google today, so the review
-  will reject it until Apple sign-in is added (Firebase supports the `apple.com` provider and
-  `@capacitor-firebase/authentication` implements it natively on iOS; the Firebase project needs the
-  Apple provider enabled and the app the *Sign in with Apple* capability). TestFlight does not check this.
+- **Sign in with Apple** (App Store Review Guideline 4.8, required because the app offers Google
+  Sign-In) is in the code since Nov 17: an Apple row above Google in Desk → Profile on iPhone, the
+  `apple.com` provider in `capacitor.config.ts`, and the capability in `App.entitlements`. It has never
+  run on a device. The owner still has to enable the Apple provider in Firebase and test it; the steps
+  are in `docs/release-checklist.md`.
 - Account deletion is available in the app (Desk → Delete My Account). Keep it; Apple requires it.
 - Privacy policy URL: `https://omnihub.syhu.net/privacy-policy.html`. Support URL: the website.
-- The in-app privacy policy page (`src/screens/PrivacyPolicy`) still describes Android permissions
-  (notification access, "Display over other apps"). Reword it per platform, or point it at the website.
+- The in-app privacy policy page (`src/screens/PrivacyPolicy`) has its own iPhone permissions section and
+  mentions Apple sign-in; re-read it on the phone before submitting.
 
 Listing (reuse `docs/play-store-listing.md` for the copy):
 

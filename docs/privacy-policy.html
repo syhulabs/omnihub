@@ -284,7 +284,7 @@
     Last updated November 2026
   </span>
 
-  <p class="lede">Omni Hub doesn't require an account. Signing in with Google is entirely optional and only unlocks syncing some of your data across your own devices — nothing else changes, and nothing is shared, sold, or used for ads or analytics either way.</p>
+  <p class="lede">Omni Hub doesn't require an account. Signing in with Google (or with Apple on iPhone) is entirely optional and only unlocks syncing some of your data across your own devices — nothing else changes, and nothing is shared, sold, or used for ads or analytics either way.</p>
 
   <nav class="toc" aria-label="Table of contents">
     <p>On this page</p>
@@ -305,9 +305,10 @@
   <section id="collect">
     <h2>What we collect</h2>
     <p><strong>If you never sign in:</strong> nothing. Every tool's data (notes, alarms, Vault, and everything else) stays on your device and is never sent anywhere. Omni Hub itself uses no analytics, tracking, or advertising SDKs. The Google libraries we use for optional sign-in are built into the app and may make minimal automatic device-identification calls in the background on their own, as any app using Google's Firebase does — we turn their automatic data collection off by default (see <a href="#third-party">Third-party services</a> below), but that's Google's library behavior, not something Omni Hub reads, controls, or can fully guarantee.</p>
-    <p><strong>If you choose to sign in with Google</strong> (Desk ▸ Profile), to sync your data across your own devices:</p>
+    <p><strong>If you choose to sign in with Google, or with Apple on iPhone</strong> (Desk ▸ Profile), to sync your data across your own devices:</p>
     <ul>
       <li>Firebase Authentication (a Google service) receives your Google account's basic profile — name, email address, and profile photo — to identify you as the signed-in user. Omni Hub doesn't see or store your Google password.</li>
+      <li>If you sign in with Apple instead, Firebase Authentication receives the name and email address Apple shares with the app (Apple lets you hide your real email address). Omni Hub doesn't see or store your Apple ID password.</li>
       <li>These tools' content syncs to Cloud Firestore (also a Google service), scoped to your account, so it can reach your other signed-in devices: <strong>Notes</strong> (titles and text), <strong>Checklist</strong> (list names and items), <strong>Expense Tracker</strong> (amounts, categories, notes, dates), <strong>Budget</strong> (per-category limits), <strong>Subscription Calculator</strong>, <strong>Debt Tracker</strong> (amounts and names/notes you enter), and <strong>Alarms</strong> (time, label, repeat, sound choice, and backup settings — see <a href="#alarm">Alarm</a> below).</li>
       <li>Your <strong>Vault</strong> notes sync too, but only as the same PIN-encrypted ciphertext already stored on your device — see <a href="#vault">Vault</a> below for exactly what that means.</li>
     </ul>
@@ -371,7 +372,7 @@
 
   <section id="children">
     <h2>Children's privacy</h2>
-    <p>Omni Hub does not knowingly collect data from children. Cloud sync requires deliberately signing in with a Google account, which is not directed at or targeted toward children.</p>
+    <p>Omni Hub does not knowingly collect data from children. Cloud sync requires deliberately signing in with a Google or Apple account, which is not directed at or targeted toward children.</p>
   </section>
 
   <section id="changes">
