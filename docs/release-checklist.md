@@ -59,11 +59,10 @@ Release notes (under 500 characters):
 
 ## App Store (iPhone)
 
-1. On the Mac: `git pull origin main`, `npm install`, `npm run ios:sync`, then build for a generic iOS device
-   with `CODE_SIGNING_ALLOWED=NO` and fix any Swift compile errors (`docs/ios-build.md`, sections 1 to 3).
-   The Swift has only been type-checked on Linux so far.
-2. **Owner**: Firebase console: add the iOS app (`com.syhuinc.omnihub`), download `GoogleService-Info.plist`
-   into `ios/App/App/` (`docs/ios-build.md`, section 2).
+1. Done (17 Nov): the unsigned build for a generic iOS device succeeds on the Mac. One fix was needed, a
+   duplicate `open url` handler in `AppDelegate.swift`.
+2. Done (17 Nov): the Firebase iOS app exists; `GoogleService-Info.plist` is in `ios/App/App/` and its
+   reversed client ID is in `Info.plist`.
 3. **Owner**: switch on Sign in with Apple in two places, then test it on an iPhone:
    - Firebase console, *Authentication*, *Sign-in method*: enable **Apple**.
    - Xcode, *App* target, *Signing & Capabilities*: the *Sign in with Apple* capability should already be

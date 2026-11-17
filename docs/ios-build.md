@@ -1,10 +1,10 @@
 # Building Omni Hub for iOS
 
-The iOS project lives in `ios/` (Capacitor, CocoaPods). It was written in the cloud, where there is no
-Xcode, so **the first build on the Mac is the first real compile of the Swift code** in
-`ios/App/App/Plugins/`. That code has been type-checked with the Swift compiler on Linux against
-stand-ins for the Apple and Capacitor APIs (zero errors), which catches mistakes in the plugins' own
-logic but not a wrong assumption about an Apple API. Expect at most a few compiler complaints.
+The iOS project lives in `ios/` (Capacitor, CocoaPods). The Swift code in `ios/App/App/Plugins/` was written
+in the cloud, where there is no Xcode. The first build on the Mac (17 Nov 2026, generic iOS device,
+`CODE_SIGNING_ALLOWED=NO`) succeeded after one fix: `AppDelegate.swift` declared the `open url` handler
+twice. `GoogleService-Info.plist` and the reversed client ID in `Info.plist` are in place. The app has
+not run on an iPhone yet, so the plugins' behaviour on a device is still untested.
 
 Bundle ID `com.syhuinc.omnihub`, iPhone only, portrait only, iOS 15.5 or newer (the ML Kit scanners require 15.5).
 
