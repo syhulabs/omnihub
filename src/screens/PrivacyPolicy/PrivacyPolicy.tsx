@@ -14,14 +14,15 @@ export function PrivacyPolicy() {
         <p className="pp__lede">
           Omni Hub doesn't require an account. Signing in with Google (or with Apple on iPhone) is
           entirely optional and only unlocks syncing some of your data across your own devices — nothing else changes,
-          and nothing is shared, sold, or used for ads or analytics either way.
+          and nothing is sold, shared for advertising, or used for ads either way.
         </p>
 
         <section className="pp__section">
           <h2>What we collect</h2>
           <p>
             <strong>If you never sign in:</strong> nothing. Every tool's data (notes, alarms,
-            Vault, and everything else) stays on your device and is never sent anywhere. Omni Hub
+            Vault, and everything else) stays on your device and is never sent anywhere.
+            One exception: the QR Scanner, Barcode Scanner and the Calculator's number scanner use Google's ML Kit, which reads codes and digits entirely on your device but sends Google anonymous diagnostic information when you use them: your device's model and OS version, the app's name and version, a per-installation ID that isn't meant to identify you or your phone, and how the scanner performed (such as how long a scan took and any error codes). No images, codes or text you scan are sent. Omni Hub
             itself uses no analytics, tracking, or advertising SDKs. The Google libraries we use
             for optional sign-in are built into the app and may make minimal automatic
             device-identification calls in the background on their own, as any app using Google's
@@ -94,6 +95,12 @@ export function PrivacyPolicy() {
               Uninstalling the app deletes local data along with it; it does not delete anything
               already synced to your account — sign in again after reinstalling to get it back.
             </li>
+            <li>
+              Your phone's own backup can include some of this data, the same as for any app. On Android, Google's backup includes only your alarms and Sleep Mode settings (including the name and routine you enter in Sleep Mode's Personal mode); the Vault and every other tool's data are excluded. On iPhone, an iCloud or computer backup includes the app's data, with Vault content still encrypted inside it.
+            </li>
+            <li>
+              Deleting your account (Desk ▸ Profile ▸ Delete My Account) permanently deletes your account and everything synced to it. If you can't use the app, see omnihub.syhu.net/delete-account.html.
+            </li>
           </ul>
         </section>
 
@@ -116,7 +123,7 @@ export function PrivacyPolicy() {
           <p>
             Your PIN is never stored anywhere, on-device or in the cloud — only used to derive
             that key each time you unlock — so if you forget it, Vault content cannot be recovered
-            and the Vault must be reset. Opening or saving a Vault photo/file decrypts a temporary
+            and the Vault must be reset. If you turn on Biometric Unlock for the Vault, that derived key is kept on your device in the phone's secure, hardware-protected storage (Android Keystore, or the Keychain on iPhone) and is only released after your fingerprint or face is confirmed; it still never leaves the device. App Lock's PIN is stored only as a salted hash, on your device. Opening or saving a Vault photo/file decrypts a temporary
             copy for that action (e.g. to view an image, or to hand it to another app through your phone's share sheet); that copy is no longer encrypted once it leaves the Vault, and Omni Hub deletes its own cached copy the next time the app starts. Vault photos and files are not
             included in the main <strong>Desk ▸ Data & Sync ▸ Export Backup</strong> file; use{' '}
             <strong>Vault ▸ Photos &amp; Files ▸ Export</strong> instead, which decrypts them into a
@@ -197,8 +204,7 @@ export function PrivacyPolicy() {
                   <strong>Alarms, notifications, and background wake permissions</strong> (schedule
                   alarms, post notifications, run in the foreground briefly while an alarm rings, keep
                   the device awake for that, show the ringing screen over the lock screen, and restart
-                  alarms after the device reboots) — all used solely by the <strong>Alarm</strong>{' '}
-                  feature, so an alarm you set still rings even if Omni Hub is closed. None of this
+                  alarms after the device reboots) — used by <strong>Alarm</strong> and <strong>Sleep Mode</strong>, so an alarm you set still rings and Sleep Mode reminders still arrive even if Omni Hub is closed. None of this
                   involves any network access.
                 </li>
                 <li>
@@ -314,7 +320,7 @@ export function PrivacyPolicy() {
             >
               policies.google.com/privacy
             </a>
-            .
+            . The scanners use Google's ML Kit (see What we collect), described in Google's ML Kit data disclosure: developers.google.com/ml-kit/android-data-disclosure.
           </p>
         </section>
 
@@ -335,7 +341,7 @@ export function PrivacyPolicy() {
         <section className="pp__section pp__section--last">
           <h2>Contact</h2>
           <p>
-            Questions about this policy can be sent to the developer contact on Omni Hub's store listing (Google Play or the App Store).
+            Questions about this policy can be sent to syhu.inc@gmail.com.
           </p>
         </section>
       </div>

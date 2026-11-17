@@ -40,7 +40,7 @@ calculator,converter,notes,checklist,alarm,timer,budget,expense,vault,scanner,co
 Omni Hub is an all-in-one toolbox for everyday tasks: a private PIN-locked Vault, Subscription Calculator, Sleep Mode, Debt Tracker, calculator, notes and more, all in one clean, fast app. No clutter, no account required.
 
 NO ACCOUNT NEEDED
-Sign-up is never required to use Omni Hub. Everything you create is stored on your iPhone, and you are always in control: back up your data to a file whenever you like, or clear it all with one tap. No tracking, no analytics, no ads.
+Sign-up is never required to use Omni Hub. Everything you create is stored on your iPhone, and you are always in control: back up your data to a file whenever you like, or clear it all with one tap. No ads, no tracking.
 
 OPTIONAL: SYNC ACROSS YOUR DEVICES
 Want your data on more than one device? Sign in with Apple or Google, entirely optional, to sync Notes, Checklist, Expense Tracker, Budget, Subscription Calculator, Debt Tracker, Alarms and your private Vault. Your Vault stays protected: only your already PIN-encrypted data leaves your device, and your PIN never does. Nothing is shared or sold. You can delete your account and its synced data from inside the app at any time.
@@ -107,8 +107,9 @@ Fast and simple, with a dark and a light theme. Every permission Omni Hub asks f
 
 ## App Privacy answers
 
-Data is collected only if the user signs in. It is linked to the user and **not** used for tracking.
-All of it is for **App Functionality**:
+Two sources of data. Neither is used for tracking.
+
+**1. Only if the user signs in** (Apple or Google). Linked to the user, purpose **App Functionality**:
 
 - Contact Info → Email Address
 - Contact Info → Name
@@ -116,8 +117,17 @@ All of it is for **App Functionality**:
 - User Content → Other User Content (the content of the synced tools: notes, checklists, expenses, budgets,
   subscriptions, debts, alarms, and the encrypted Vault)
 
-Nothing else is collected. No advertising, no analytics, no third-party tracking.
-`ios/App/App/PrivacyInfo.xcprivacy` declares the same.
+**2. Google ML Kit, whenever a scanner is used** (QR, barcode, the Calculator's number scanner), signed in or
+not. Google's ML Kit library sends Google anonymous diagnostics: device model and OS, app name and version, a
+per-installation ID, performance and error codes. No images or scanned content. **Not linked** to the user,
+purpose **Analytics**:
+
+- Diagnostics → Performance Data
+- Diagnostics → Other Diagnostic Data
+- Identifiers → Device ID
+
+No advertising and no third-party tracking. `ios/App/App/PrivacyInfo.xcprivacy` declares the sign-in data;
+ML Kit's diagnostics belong to Google's library. Source: developers.google.com/ml-kit/ios-data-disclosure.
 
 ## Review notes (App Review Information → Notes)
 

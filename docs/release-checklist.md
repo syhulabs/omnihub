@@ -42,11 +42,15 @@ The owner chose to publish the iPhone version first.
 6. **Owner**: Play Console, *Store listing*: replace the app icon and the phone screenshots with the new ones.
 7. **Owner**: Play Console, *App content*, check these still match the app:
    - Privacy policy: `https://omnihub.syhu.net/privacy-policy.html`
-   - Data safety: data **is** collected, only if the user signs in, and only for app functionality and
-     account management: name, email address, user ID, and the content of the synced tools (notes,
-     checklists, expenses, budgets, subscriptions, debts, alarms, the encrypted Vault). Encrypted in
-     transit, not shared, deletion can be requested. Delete-account URL:
-     `https://omnihub.syhu.net/delete-account.html`. The privacy policy is the source of truth.
+   - Data safety: data **is** collected, from two sources. Encrypted in transit, not shared, not sold.
+     - Only if the user signs in, for app functionality and account management: name, email address, user
+       ID, and the content of the synced tools (notes, checklists, expenses, budgets, subscriptions, debts,
+       alarms, the encrypted Vault). Optional; deletion can be requested. Delete-account URL:
+       `https://omnihub.syhu.net/delete-account.html`.
+     - Google ML Kit, whenever a scanner is used, signed in or not: *App info and performance → Diagnostics*
+       and *Device or other IDs* (a per-installation ID), for analytics. Required (cannot be turned off).
+       Source: developers.google.com/ml-kit/android-data-disclosure.
+     The privacy policy is the source of truth.
    - Ads: none. Category: Tools.
 
 Release notes (under 500 characters):
@@ -81,15 +85,9 @@ Release notes (under 500 characters):
    refuse it (found 17 Nov). App Store Connect wants 6.9-inch (1320 x 2868) or 6.5-inch screenshots.
    The owner's test phone is an iPhone 17 (6.3-inch, screenshots 1206 x 2622). That size is not one the App
    Store requires, so its screenshots are scaled to 1320 x 2868 (the shapes are almost identical: 2.174 vs 2.173).
-   The owner does not have a paid Apple Developer membership yet (17 Nov) and chose to enroll as an
-   **Individual**, so the App Store shows their personal name as the seller. Until the enrollment is approved:
-   - The App Store, TestFlight and Sign in with Apple cannot work. Joining is the owner's step:
-     developer.apple.com/programs/enroll (yearly fee; approval can take a day or more).
-   - The app can still run on the owner's iPhone with Xcode's free "Personal Team", which does not allow
-     the Sign in with Apple capability. For that test only, the owner removes it in Xcode (Signing &
-     Capabilities, the x next to it) and must not commit the change; afterwards
-     `git restore ios/App/App/App.entitlements ios/App/App.xcodeproj/project.pbxproj` puts it back.
-     A Personal Team build stops opening after 7 days; run it from Xcode again.
+   The owner has a paid Apple Developer account (individual, seller name "Syhu Sulthan muhyideen"), confirmed
+   in App Store Connect on 17 Nov. An earlier note here said otherwise; that was a misunderstanding. The
+   Personal Team test build in `docs/ios-build.md` was only needed before that was clear.
 6. **Owner**: archive and upload to TestFlight (`docs/ios-build.md`, section 7), then fill in App Store
    Connect (section 8): listing text, App Privacy labels, age rating, review notes, privacy policy URL.
 7. **Owner**: submit for review.

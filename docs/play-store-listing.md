@@ -14,7 +14,7 @@
 Omni Hub is an all-in-one toolbox for everyday tasks — a private PIN-locked Vault, Subscription Calculator, Sleep Mode, Debt Tracker, calculator, notes, and more — all in one clean, fast app. No clutter, no account required.
 
 NO ACCOUNT NEEDED
-Sign-up is never required to use Omni Hub. Everything you create is stored on your device, and you're always in control: back up your data to a file whenever you like, or clear it all with one tap. No tracking, no analytics — ever.
+Sign-up is never required to use Omni Hub. Everything you create is stored on your device, and you're always in control: back up your data to a file whenever you like, or clear it all with one tap. No ads, no tracking.
 
 OPTIONAL: SYNC ACROSS YOUR DEVICES
 Want your data available on more than one device? Sign in with Google, entirely optional, to sync Notes, Checklist, Expense Tracker, Budget, Subscription Calculator, Debt Tracker, Alarms, and your private Vault automatically. Your Vault stays end-to-end protected — only your already PIN-encrypted data ever leaves your device, and your PIN itself never does. Nothing is shared or sold, ever.

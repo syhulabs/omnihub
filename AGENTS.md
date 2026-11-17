@@ -48,7 +48,7 @@ If a task needs one of these, stop and tell the owner exactly what to do. The st
 Since 11 November: the AI, Craft and Desk tabs were rebuilt in the plain Home and Hub style (the owner
 rejected the full-screen illustrated versions; see `design/README.md`), the bottom nav was lowered to about
 72 px, and Sign in with Apple was added for iPhone (`src/cloud/AuthContext.tsx`, hidden on Android with
-`isIOS`; never run on a device yet).
+`isIOS`; never run on a device yet), and Sleep Mode AI became "coming soon" for everyone.
 
 ## State on 11 November 2026
 

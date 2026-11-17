@@ -2,11 +2,11 @@
 
 **Last updated:** October 2026
 
-Omni Hub doesn't require an account. Signing in with Google (or with Apple on iPhone) is entirely optional and only unlocks syncing some of your data across your own devices — nothing else changes, and nothing is shared, sold, or used for ads or analytics either way.
+Omni Hub doesn't require an account. Signing in with Google (or with Apple on iPhone) is entirely optional and only unlocks syncing some of your data across your own devices — nothing else changes, and nothing is sold, shared for advertising, or used for ads either way.
 
 ## What we collect
 
-**If you never sign in:** nothing. Every tool's data (notes, alarms, Vault, and everything else) stays on your device and is never sent anywhere. Omni Hub itself uses no analytics, tracking, or advertising SDKs. The Google libraries we use for optional sign-in are built into the app and may make minimal automatic device-identification calls in the background on their own, as any app using Google's Firebase does — we turn their automatic data collection off by default (see [Third-party services](#third-party-services) below), but that's Google's library behavior, not something Omni Hub reads, controls, or can fully guarantee.
+**If you never sign in:** nothing. Every tool's data (notes, alarms, Vault, and everything else) stays on your device and is never sent anywhere. One exception: the QR Scanner, Barcode Scanner and the Calculator's number scanner use Google's ML Kit, which reads codes and digits entirely on your device but sends Google anonymous diagnostic information when you use them: your device's model and OS version, the app's name and version, a per-installation ID that isn't meant to identify you or your phone, and how the scanner performed (such as how long a scan took and any error codes). No images, codes or text you scan are sent. Omni Hub itself uses no analytics, tracking, or advertising SDKs. The Google libraries we use for optional sign-in are built into the app and may make minimal automatic device-identification calls in the background on their own, as any app using Google's Firebase does — we turn their automatic data collection off by default (see [Third-party services](#third-party-services) below), but that's Google's library behavior, not something Omni Hub reads, controls, or can fully guarantee.
 
 **If you choose to sign in with Google, or with Apple on iPhone** (Desk ▸ Profile), to sync your data across your own devices:
 
@@ -25,6 +25,8 @@ Everything you enter into Omni Hub — notes, checklists, expenses, budgets, cal
 - You can delete all local data at any time from **Desk ▸ Data & Sync ▸ Clear All Data**.
 - Signing out (Desk ▸ Profile ▸ Sign Out) stops syncing but does not delete what's already on your device or already synced to your account.
 - Uninstalling the app deletes local data along with it; it does not delete anything already synced to your account — sign in again after reinstalling to get it back.
+- Your phone's own backup can include some of this data, the same as for any app. On Android, Google's backup includes only your alarms and Sleep Mode settings (including the name and routine you enter in Sleep Mode's Personal mode); the Vault and every other tool's data are excluded. On iPhone, an iCloud or computer backup includes the app's data, with Vault content still encrypted inside it.
+- Deleting your account (Desk ▸ Profile ▸ Delete My Account) permanently deletes your account and everything synced to it. If you can't use the app, see omnihub.syhu.net/delete-account.html.
 
 ## Vault
 
@@ -32,7 +34,7 @@ Notes, photos, and files you save in the **Vault** are additionally encrypted on
 
 **Your PIN, and any key derived from it, never leaves your device — not even if you sign in and sync.** If you sign in, only the already-encrypted ciphertext of your Vault notes is copied to Firebase, in a form Omni Hub itself cannot read without your PIN; a second device only regains access to it by unlocking with the same PIN. Vault photos and files don't sync at all yet and stay device-only regardless of sign-in status.
 
-Your PIN is never stored anywhere, on-device or in the cloud — only used to derive that key each time you unlock — so if you forget it, Vault content cannot be recovered and the Vault must be reset. Opening or saving a Vault photo/file decrypts a temporary copy for that action (e.g. to view an image or save it to your Downloads folder); that copy is no longer encrypted once it leaves the Vault. Vault photos and files are not included in the main **Desk ▸ Data & Sync ▸ Export Backup** file; use **Vault ▸ Photos & Files ▸ Export** instead, which decrypts them into a plain `.zip` file on your device — that zip is unencrypted, since it needs to be readable outside the app, so store or share it with the same care you'd give the original photos/files. Use **Vault ▸ Photos & Files ▸ Import** to bring that zip back in (e.g. after reinstalling), which re-encrypts everything as it's added.
+Your PIN is never stored anywhere, on-device or in the cloud — only used to derive that key each time you unlock — so if you forget it, Vault content cannot be recovered and the Vault must be reset. If you turn on Biometric Unlock for the Vault, that derived key is kept on your device in the phone's secure, hardware-protected storage (Android Keystore, or the Keychain on iPhone) and is only released after your fingerprint or face is confirmed; it still never leaves the device. App Lock's PIN is stored only as a salted hash, on your device. Opening or saving a Vault photo/file decrypts a temporary copy for that action (e.g. to view an image or save it to your Downloads folder); that copy is no longer encrypted once it leaves the Vault. Vault photos and files are not included in the main **Desk ▸ Data & Sync ▸ Export Backup** file; use **Vault ▸ Photos & Files ▸ Export** instead, which decrypts them into a plain `.zip` file on your device — that zip is unencrypted, since it needs to be readable outside the app, so store or share it with the same care you'd give the original photos/files. Use **Vault ▸ Photos & Files ▸ Import** to bring that zip back in (e.g. after reinstalling), which re-encrypts everything as it's added.
 
 After 5 wrong PIN attempts, Vault locks itself out with an escalating delay (30s, then 1m, 2m, 5m, 10m, and 30m for every attempt after that) before you can try again — this never clears or wipes any Vault data, it only slows down guessing.
 
@@ -42,7 +44,7 @@ Omni Hub does not access your contacts. It requests these permissions, all used 
 
 - **Internet / network access** — required only for the optional Google Sign-In and cloud sync described above. Unused unless you sign in. Omni Hub separately checks (but does not use to connect anywhere) whether you currently have a Wi-Fi or mobile connection, to show connection status on the "My Phone" card and Phone Health Check.
 - **Vibrate** — haptic feedback (tap and completion vibrations).
-- **Alarms, notifications, and background wake permissions** (schedule alarms, post notifications, run in the foreground briefly while an alarm rings, keep the device awake for that, show the ringing screen over the lock screen, and restart alarms after the device reboots) — all used solely by the **Alarm** feature, so an alarm you set still rings even if Omni Hub is closed. None of this involves any network access.
+- **Alarms, notifications, and background wake permissions** (schedule alarms, post notifications, run in the foreground briefly while an alarm rings, keep the device awake for that, show the ringing screen over the lock screen, and restart alarms after the device reboots) — used by **Alarm** and **Sleep Mode**, so an alarm you set still rings and Sleep Mode reminders still arrive even if Omni Hub is closed. None of this involves any network access.
 - **Biometrics** (optional, off by default) — used only by the **App Lock** and **Vault** "Biometric Unlock" settings, so you can unlock with your fingerprint or face instead of typing your PIN. Android's own system prompt does the matching; Omni Hub only learns whether it succeeded and never sees, stores, or transmits your fingerprint or face data.
 - **Display over other apps** — used only by **Sleep Mode**'s on-screen reminder card, so it can appear on top of whatever you're doing when a reminder fires, but only while your phone is unlocked and in active use. Without this permission granted, the same reminder still shows as a normal notification.
 - **Camera / flashlight** — used by the **QR Scanner**, **Barcode Scanner**, and **Flashlight** tools, and by the **Phone Health Check**'s Front Camera and Rear Camera tests (Phone Center) to show you a live preview so you can confirm your cameras work. In every case the preview is shown to you only, entirely on your device — no photo, video, or scanned image is ever saved or transmitted; a scanned code's decoded text stays on-device too.
@@ -65,7 +67,7 @@ Sleep Mode AI is coming soon and is not available in this version. Nothing about
 
 ## Third-party services
 
-Signing in and syncing uses Google's Firebase platform (Firebase Authentication and Cloud Firestore). We set Firebase's own flag to disable its automatic background data collection by default, so these libraries only act when a feature here actually calls them (signing in or syncing) — never automatically. Google's own privacy policy governs how Google handles data on their servers: <https://policies.google.com/privacy>.
+Signing in and syncing uses Google's Firebase platform (Firebase Authentication and Cloud Firestore). We set Firebase's own flag to disable its automatic background data collection by default, so these libraries only act when a feature here actually calls them (signing in or syncing) — never automatically. Google's own privacy policy governs how Google handles data on their servers: <https://policies.google.com/privacy>. The scanners use Google's ML Kit (see What we collect), described in Google's ML Kit data disclosure: developers.google.com/ml-kit/android-data-disclosure.
 
 ## Children's privacy
 
@@ -77,4 +79,4 @@ If this policy ever changes, the "Last updated" date above will change too.
 
 ## Contact
 
-Questions about this policy can be sent to the developer contact listed on the Omni Hub Google Play Store listing.
+Questions about this policy can be sent to syhu.inc@gmail.com.
