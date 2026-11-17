@@ -25,7 +25,8 @@ The owner chose to publish the iPhone version first.
 - The app icon is the owner's dark glass icon everywhere (Android, iPhone, splash screens, website). The
   Play listing icon to upload is `docs/store-assets/hi-res-icon-512-2026-11.png`; the older
   `hi-res-icon-512.png` is a different, outdated logo.
-- Listing text: `docs/play-store-listing.md`. Feature graphic: `docs/store-assets/feature-graphic.png`.
+- Listing text: `docs/play-store-listing.md` (Play) and `docs/app-store-listing.md` (App Store: name, subtitle,
+  keywords, description, App Privacy answers, review notes). Feature graphic: `docs/store-assets/feature-graphic.png`.
 
 ## Google Play
 
