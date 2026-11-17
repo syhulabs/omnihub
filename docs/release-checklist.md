@@ -22,7 +22,10 @@ The owner chose to publish the iPhone version first.
   dark and two light). The older set in `phone-screenshots/` shows a bottom bar the app no longer has.
   `01-home` and `07-home-light` were taken in a browser, so the phone card says "Web Preview": retake those two
   on the phone before uploading.
-- Listing text: `docs/play-store-listing.md`. Feature graphic and 512 px icon: `docs/store-assets/`.
+- The app icon is the owner's dark glass icon everywhere (Android, iPhone, splash screens, website). The
+  Play listing icon to upload is `docs/store-assets/hi-res-icon-512-2026-11.png`; the older
+  `hi-res-icon-512.png` is a different, outdated logo.
+- Listing text: `docs/play-store-listing.md`. Feature graphic: `docs/store-assets/feature-graphic.png`.
 
 ## Google Play
 
@@ -35,7 +38,7 @@ The owner chose to publish the iPhone version first.
    `android/app/build/outputs/bundle/release/app-release.aab`.
 5. **Owner**: Play Console, *Test and release*: create a release on the testing track first, upload the AAB,
    paste the release notes below, roll out. Promote to production after the testers confirm.
-6. **Owner**: Play Console, *Store listing*: replace the phone screenshots with the new set.
+6. **Owner**: Play Console, *Store listing*: replace the app icon and the phone screenshots with the new ones.
 7. **Owner**: Play Console, *App content*, check these still match the app:
    - Privacy policy: `https://omnihub.syhu.net/privacy-policy.html`
    - Data safety: data **is** collected, only if the user signs in, and only for app functionality and

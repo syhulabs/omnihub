@@ -67,6 +67,8 @@ git-ignored on purpose and are **not in the repo**; the owner keeps them private
   `MainActivity.java` before `super.onCreate()`. The cloud session has no Android SDK, so native Java
   can't be compiled there: keep it small and conservative, and say so when it ships untested.
 - Reference mockups: `design/` (see `design/README.md`).
+- App icon: `design/app-icon-dark.webp` (the owner's). Every icon and splash file is generated from it by
+  `python3 scripts/gen-app-icons.py`; never edit those files by hand or with `capacitor-assets`.
 - iOS: `ios/` (Capacitor + CocoaPods, iPhone only). The seven plugins have Swift counterparts in
   `ios/App/App/Plugins/`, registered in `OmniBridgeViewController.capacitorDidLoad()`. The message bank
   is generated from the Java one (`scripts/gen-sleep-message-bank.py`). Android-only features are hidden

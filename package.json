@@ -13,7 +13,7 @@
     "android:open": "npx cap open android",
     "ios:sync": "npm run build && npx cap sync ios",
     "ios:open": "npx cap open ios",
-    "ios:assets": "npx capacitor-assets generate --ios --iconBackgroundColor '#080b12' --iconBackgroundColorDark '#080b12' --splashBackgroundColor '#080b12' --splashBackgroundColorDark '#080b12'"
+    "icons": "python3 scripts/gen-app-icons.py"
   },
   "dependencies": {
     "@capacitor-firebase/app": "^8.5.2",

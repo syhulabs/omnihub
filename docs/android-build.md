@@ -90,14 +90,15 @@ Google Play itself needs a few extra graphics uploaded separately in Play Consol
 
 | Asset | Size | Notes |
 |---|---|---|
-| App icon (hi-res) | 512×512 px, 32-bit PNG (with alpha) | Store listing icon — export `omni-hub/assets/icon.png` at 512×512, or re-crop from the 1024×1024 source |
+| App icon (hi-res) | 512×512 px PNG | Store listing icon: `docs/store-assets/hi-res-icon-512-2026-11.png` |
 | Feature graphic | 1024×500 px, PNG/JPEG, no alpha | Shown at the top of the store listing |
 | Phone screenshots | min 2, up to 8 — 16:9 or 9:16, each side 320–3840 px (JPEG/24-bit PNG, no alpha) | Take these from a real device or emulator running the app (Home, Tools, a couple of tools in use, Profile) |
 | (Optional) Tablet/other screenshots | same rules | Skip for a phone-only v1 |
 
-Launcher icons (all densities + adaptive icon layers) and splash screens are already generated for you under `android/app/src/main/res/mipmap-*` and `drawable*`, produced from `omni-hub/assets/icon*.png` and `omni-hub/assets/splash.png` via `npx capacitor-assets generate --android --iconBackgroundColor '#0a0e16' --iconBackgroundColorDark '#0a0e16'`. Re-run that command any time you change the source images in `omni-hub/assets/`.
-
-`assets/icon-foreground.png` and `assets/icon-background.png` are the dedicated adaptive-icon layers (full-bleed logo art + solid brand-color backdrop). capacitor-assets always regenerates `mipmap-anydpi-v26/ic_launcher.xml` and `ic_launcher_round.xml` with a 16.7% `<inset>` on both layers, which shrinks and dims the icon since our art is already full-bleed — after regenerating, re-edit those two XML files to drop the `<inset>` wrapper (`<background android:drawable="@mipmap/ic_launcher_background" />` / `<foreground android:drawable="@mipmap/ic_launcher_foreground" />` with no inset) so the icon fills the tile edge-to-edge again.
+Launcher icons (all densities, adaptive layers at full resolution) and splash screens are generated from the
+owner's icon, `design/app-icon-dark.webp`, by `python3 scripts/gen-app-icons.py` (needs Pillow). Run it again if
+the icon ever changes. Do not use `npx capacitor-assets generate` for this any more: it made the adaptive layers
+at a third of the resolution Android asks for and put a 16.7% inset back into `mipmap-anydpi-v26/ic_launcher.xml`.
 
 ## Store listing text
 

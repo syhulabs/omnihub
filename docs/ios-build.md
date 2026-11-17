@@ -53,8 +53,8 @@ In Xcode:
 
 After every web change: `npm run ios:sync` (or `npx cap copy ios` for web-only changes), then Run again
 in Xcode. After editing the Android `MessageBank.java`, regenerate the Swift copy with
-`python3 scripts/gen-sleep-message-bank.py`. After changing `assets/icon.png` or `assets/splash.png`,
-rerun `npx capacitor-assets generate --ios --iconBackgroundColor '#080b12' --iconBackgroundColorDark '#080b12' --splashBackgroundColor '#080b12' --splashBackgroundColorDark '#080b12'`.
+`python3 scripts/gen-sleep-message-bank.py`. The app icon and launch screen images come from `design/app-icon-dark.webp`; after changing it, rerun
+`python3 scripts/gen-app-icons.py`.
 
 ## 4. What to test on the phone
 
