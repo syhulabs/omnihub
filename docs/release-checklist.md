@@ -4,7 +4,9 @@ Publishing is done by the owner only. Assistants prepare the code, the documents
 the lines marked **Owner**. Nothing here needs the release keystore, a store console or the Firebase console
 from an assistant.
 
-State on 17 November 2026: test build versionCode 174 (debug-signed). The last build uploaded to Play is 168.
+State on 17 November 2026: the owner tested build 174 on the phone in dark and light and approved it.
+`versionCode` is now 175, the number for the next Play upload. The last build uploaded to Play is 168.
+The owner chose to publish the iPhone version first.
 
 ## Already prepared
 
@@ -24,10 +26,8 @@ State on 17 November 2026: test build versionCode 174 (debug-signed). The last b
 
 ## Google Play
 
-1. **Owner**: test build 174 on the phone in dark and light: the five tabs, the lower bottom bar, an alarm
-   ringing, Sleep Mode, App Lock, Vault.
-2. Assistant, when the owner says go: set `versionCode` to 175 or higher in `android/app/build.gradle` (it
-   must be higher than 168), `npm run build`, `npx cap sync android`, commit and push.
+1. Done: the owner tested build 174 and approved it.
+2. Done: `versionCode` is 175 on `main`.
 3. **Owner**: `firebase deploy --only functions` (refunds failed AI generations, and removes a deleted
    user's cloud data).
 4. **Owner**: build the signed bundle on the Mac, with `android/keystore.properties` and
