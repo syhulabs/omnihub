@@ -1,4 +1,4 @@
-# Omni Hub: briefing for ChatGPT / Codex
+# Omni Hub: briefing for assistants (ChatGPT / Codex, Grok, and any other)
 
 You are joining a project that is already far along. Read this file, then `CLAUDE.md` (the owner's standing
 rules, they apply to you exactly as written), then `design/README.md` (mockups and open work).
@@ -19,7 +19,8 @@ Home, Hub, SYXDI AI, Craft, Desk. Vite + React 19 + TypeScript, wrapped with Cap
 ## Who else works here
 
 The owner (SYHU) decides everything and reviews every change on a Motorola Edge 60 Fusion, in dark and light
-theme. Claude also works on this repository, from a cloud session, and pushes to `main`. So:
+theme. Several assistants work on this repository and all push to `main`: Claude from a cloud session,
+and ChatGPT and Grok in the owner's folder on the Mac. So:
 
 - Run `git pull origin main` before you start and again before you push. Never force-push, never rewrite history.
 - Keep commits small and complete: one change, only its files, a message that says what and why.
