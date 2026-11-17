@@ -7,16 +7,19 @@ or alarm-sound picker, alarms and Sleep Mode arrive as notifications, and sign-i
 ## Name (max 30 characters)
 
 ```
-Omni Hub
+Omni Hub: Everyday Tools
 ```
+
+"Omni Hub" alone was already taken on the App Store (17 Nov 2026), so the app record was created with this
+name (Apple ID 6835903024). The name under the icon on the phone stays "Omni Hub".
 
 ## Subtitle (max 30 characters)
 
 ```
-26+ everyday tools in one app
+Notes, alarms, budgets & more
 ```
 
-(29 characters)
+(29 characters; the name already says "Everyday Tools", so the subtitle names what's inside)
 
 ## Promotional text (max 170 characters, can be changed without a new build)
 
@@ -93,6 +96,18 @@ A CLEAN, FOCUSED APP
 Fast and simple, with a dark and a light theme. Every permission Omni Hub asks for is used only for the feature that needs it; the privacy policy says exactly what each one does.
 ```
 
+## Copyright
+
+```
+2026 Syhu Sulthan Muhyideen
+```
+
+## What's New (version 1.0)
+
+```
+First release of Omni Hub for iPhone.
+```
+
 ## URLs
 
 - Privacy Policy URL: `https://omnihub.syhu.net/privacy-policy.html`
@@ -136,7 +151,7 @@ Omni Hub works fully offline and needs no account. Every tool can be used withou
 
 Sign in with Apple and Google Sign-In (Desk tab → Profile) are optional and only sync the user's own data between their devices. The account and its synced data can be deleted in the app: Desk → Profile → Delete My Account (shown when signed in).
 
-Alarms and Sleep Mode use local notifications (time-sensitive). Sleep Mode sends a bedtime reminder and up to three follow-ups per night.
+Alarms and Sleep Mode use local notifications. They are marked time-sensitive only so that an alarm the user set, and the bedtime reminder they scheduled, can sound through a Focus mode; nothing else uses them. Sleep Mode sends a bedtime reminder and up to three follow-ups per night.
 
 The AI and Craft tabs are "coming soon" information pages with no controls.
 
