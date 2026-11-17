@@ -47,7 +47,9 @@ In Xcode:
 2. The *Time Sensitive Notifications* capability comes from `ios/App/App/App.entitlements`. If
    signing complains about it, add the capability with the *+ Capability* button once; Xcode then
    enables it on the App ID.
-3. Plug in an iPhone (or pick a simulator), choose it as the run destination and press Run.
+3. Plug in an iPhone, choose it as the run destination and press Run. The simulator does not work: Google
+   ML Kit has no Apple-silicon simulator build, so the app only builds for Intel simulators, which iOS 27
+   simulators cannot run. Test on a real iPhone.
    First run on a device: on the phone, Settings → General → VPN & Device Management → trust the
    developer certificate.
 
@@ -128,7 +130,7 @@ Blocking before submission:
 Listing (reuse `docs/play-store-listing.md` for the copy):
 
 - Screenshots: 6.9" iPhone (1320 × 2868) are required; 6.5" (1284 × 2778) optional. iPhone only, so
-  no iPad screenshots. Take them from the device or simulator in both themes.
+  no iPad screenshots. Take them on a real iPhone in both themes (the simulator cannot run the app, see section 3).
 - App Privacy (nutrition labels): data collected and linked to the user, not used for tracking:
   Email Address, User ID, Other User Content (synced notes, alarms, settings), all for App
   Functionality. `ios/App/App/PrivacyInfo.xcprivacy` says the same.

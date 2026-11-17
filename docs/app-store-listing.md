@@ -140,5 +140,6 @@ version, so the microphone is never requested; the string is harmless and can st
 
 ## Screenshots
 
-6.9-inch iPhone, 1320 × 2868, taken in the iPhone simulator or on a device, not in a browser.
+6.9-inch iPhone (1320 × 2868) or 6.5-inch, taken on a real iPhone, not in a browser. The simulator cannot run
+the app (ML Kit, see `docs/ios-build.md` section 3).
 Suggested set: Home (dark), Hub (dark), Sleep Mode, Budget, Time Difference, Notes, Home (light), Hub (light).

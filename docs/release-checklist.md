@@ -71,8 +71,10 @@ Release notes (under 500 characters):
    - On the phone: Desk, Profile: "Sign in with Apple" is the first row. Sign in, check that a note syncs,
      sign out, then test Delete My Account.
 4. **Owner**: run the checks in `docs/ios-build.md`, section 4, on a real iPhone, in dark and light.
-5. Screenshots: take them in the iPhone simulator (6.9 inch, 1320 x 2868), not in a browser: some features
-   are hidden on iPhone, and the screenshots must show the iPhone app.
+5. Screenshots: take them on a real iPhone, not in a browser (some features are hidden on iPhone). The
+   iPhone simulator cannot run the app on an Apple-silicon Mac: Google ML Kit (the scanners) ships no
+   simulator build for Apple silicon, so the app builds for Intel simulators only and iOS 27 simulators
+   refuse it (found 17 Nov). App Store Connect wants 6.9-inch (1320 x 2868) or 6.5-inch screenshots.
 6. **Owner**: archive and upload to TestFlight (`docs/ios-build.md`, section 7), then fill in App Store
    Connect (section 8): listing text, App Privacy labels, age rating, review notes, privacy policy URL.
 7. **Owner**: submit for review.
