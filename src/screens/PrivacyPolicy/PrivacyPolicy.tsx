@@ -139,7 +139,7 @@ export function PrivacyPolicy() {
               <ul>
                 <li>
                   <strong>Internet / network access</strong> — required only for the optional Google Sign-In and cloud
-                  sync described above, and for Sleep Mode AI (see below). Unused unless you sign in.
+                  sync described above. Unused unless you sign in.
                 </li>
                 <li>
                   <strong>Notifications</strong> — used by <strong>Alarm</strong> and <strong>Sleep Mode</strong>, which
@@ -185,7 +185,7 @@ export function PrivacyPolicy() {
               </p>
               <ul>
                 <li>
-                  <strong>Internet / network access</strong> — required only for the optional Google Sign-In and cloud sync described above, and for Sleep Mode AI (see below). Unused unless you sign in. Omni Hub
+                  <strong>Internet / network access</strong> — required only for the optional Google Sign-In and cloud sync described above. Unused unless you sign in. Omni Hub
                   separately checks (but does not use to connect anywhere) whether you currently have
                   a Wi-Fi or mobile connection, to show connection status on the "My Phone" card and
                   Phone Health Check.
@@ -292,15 +292,7 @@ export function PrivacyPolicy() {
         <section className="pp__section">
           <h2>Sleep Mode AI</h2>
           <p>
-            Sleep Mode AI is available to anyone signed in, for the Gentle and Friendly
-            personalities. When it generates your reminders, it sends only your chosen
-            personality to Omni Hub's own Cloud Function (which requires your sign-in to call, so
-            usage can be rate-limited), and the Cloud Function forwards that to Google's Gemini
-            API to write the reminder text and a voice clip. Your name, work/school routine, and
-            interests are never sent — Sleep Mode's "Personal" mode uses those only to fill in
-            reminders on your own device, and they never leave it. Omni Hub stores nothing from the Cloud Function request beyond the generated reminders already described for Sleep Mode above and a count of how many times you've generated them today, kept with your account to enforce the daily limit; none of it is used to train any model. Every other Sleep
-            Mode personality, and Sleep Mode for anyone not signed in, runs entirely from
-            reminders bundled with the app — nothing about those is ever sent anywhere.
+            Sleep Mode AI is coming soon and is not available in this version. Nothing about Sleep Mode is sent anywhere: every personality runs entirely from reminders bundled with the app. This section will be updated before Sleep Mode AI arrives.
           </p>
         </section>
 
@@ -308,11 +300,10 @@ export function PrivacyPolicy() {
           <h2>Third-party services</h2>
           <p>
             Signing in and syncing uses Google's Firebase platform (Firebase Authentication and
-            Cloud Firestore). Sleep Mode AI (Gentle/Friendly, signed-in users — see above)
-            additionally uses a Cloud Function, also on Firebase, which calls Google's Gemini API.
+            Cloud Firestore).
             We set Firebase's own flag to disable its automatic background data collection by
             default, so these libraries only act when a feature here actually calls them (signing
-            in, syncing, or generating a Sleep Mode AI reminder) — never automatically. Google's own
+            in or syncing) — never automatically. Google's own
             privacy policy governs how Google handles data on their servers:{' '}
             <a
               href="https://policies.google.com/privacy"

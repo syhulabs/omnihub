@@ -70,9 +70,9 @@ mockup, or a deploy only the owner can do:
 - Desk copy that promises more than the screens hold, kept because it matches the Desk mockup: Profile
   "Your account, devices and personal settings.", About "Version, support and credits.", Data & Sync
   "Cloud sync…", Privacy & Security "Permissions, data controls and security options."
-- Sleep Mode AI tab: signed-in users see Teasing/Strict/Savage as unlocked but can only preview them, and the
-  perks list an "AI wake-up companion" and "Smart snooze reactions" that don't exist. Sleep Insights' Month
-  and Year tabs never change the view.
+- Sleep Mode AI is "coming soon" for everyone (owner's decision, Nov 17): no sign-in unlock, no AI reminders
+  generated, any old cached AI pool emptied once. The previews still play. The Cloud Function stays deployed
+  but unused. Sleep Insights' Month and Year tabs never change the view.
 - Compass: the red needle tip points up (your heading), not at north; the dial's N marks north.
 - Budget counts spending in categories that have no budget toward the ring, and keeps its own currency
   separate from Expense Tracker.

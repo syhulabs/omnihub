@@ -7,8 +7,6 @@ import { useBackHandler } from '../../app/useBackHandler';
 import { hapticSelect, hapticTap, hapticWarning } from '../../haptics';
 import { WheelTimePicker } from '../alarm/WheelTimePicker';
 import { SleepModePlugin, DEFAULT_SLEEP_MODE_CONFIG, type SleepModeConfig, type SleepModeStatus } from '../../sleep-mode/plugin';
-import { useAuth } from '../../cloud/AuthContext';
-import { generateSleepReminders, type SleepAiPersonality } from '../../cloud/generateSleepReminders';
 import { INTERVAL_OPTIONS_MIN, WIND_DOWN_ACTIONS } from './types';
 import { HomePersonalitySection } from './HomePersonalitySection';
 import { WindDownMode } from './WindDownMode';
@@ -34,16 +32,36 @@ type SubScreen = SleepTab | 'wind-down';
 
 const TAB_SCREENS = new Set<SubScreen>(['main', 'sleep-insights', 'sleep-sounds', 'ai']);
 
-const AI_ENABLED_PERSONALITIES = new Set<SleepAiPersonality>(['gentle', 'friendly']);
-const AI_POOL_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+/** Sleep Mode AI is "coming soon" (the owner's decision, 17 Nov 2026), so no AI reminders are
+ *  generated. Phones that signed in earlier may still hold an AI reminder pool from before; storing
+ *  an empty one makes both the Android and the iPhone code fall back to the hand-written reminders
+ *  (an empty pool reads back as "no pool"). Done once per install. */
+const AI_POOL_CLEARED_KEY = 'omnihub:sleepAiPoolCleared';
 
-function isAiPersonality(p: string): p is SleepAiPersonality {
-  return AI_ENABLED_PERSONALITIES.has(p as SleepAiPersonality);
+function clearCachedAiPools() {
+  try {
+    if (localStorage.getItem(AI_POOL_CLEARED_KEY)) return;
+  } catch {
+    return;
+  }
+  const empty = JSON.stringify({ tiers: [] });
+  Promise.all(
+    (['gentle', 'friendly'] as const).map((personality) => SleepModePlugin.setAiMessages({ personality, tiersJson: empty })),
+  )
+    .then(() => {
+      try {
+        localStorage.setItem(AI_POOL_CLEARED_KEY, '1');
+      } catch {
+        // try again on the next visit
+      }
+    })
+    .catch(() => {
+      // web preview or a native hiccup: try again on the next visit
+    });
 }
 
 export function SleepMode() {
   const { back } = useRouter();
-  const { user } = useAuth();
   const [config, setConfig] = useState<SleepModeStatus>({ ...DEFAULT_SLEEP_MODE_CONFIG, sessionStartMillis: 0, nagCount: 0, mutedUntilMillis: 0 });
   const [timeSheet, setTimeSheet] = useState<TimeField | null>(null);
   const [timeDraft, setTimeDraft] = useState<{ hour: number; minute: number } | null>(null);
@@ -62,6 +80,7 @@ export function SleepMode() {
   useBackHandler(() => setScreen('main'), screen !== 'main' && timeSheet === null);
 
   useEffect(() => {
+    clearCachedAiPools();
     SleepModePlugin.status()
       .then((status) => {
         setConfig(status);
@@ -90,26 +109,6 @@ export function SleepMode() {
       await SleepModePlugin.configure(next);
     } catch {
       // web fallback / unsupported platform — local state still reflects the change
-    }
-    void maybeRefreshAiReminders(next);
-  }
-
-  /** Best-effort background refresh of the cached AI reminder pool. Never surfaces an error or
-   *  blocks Sleep Mode — the hand-written MessageBank pool is always there as a fallback.
-   *  Requires sign-in (the Cloud Function needs an ID token and rate-limits per account) but no
-   *  longer requires Pro — Sleep Mode AI is available to anyone signed in. */
-  async function maybeRefreshAiReminders(next: SleepModeConfig) {
-    if (!user || !isAiPersonality(next.personality)) return;
-    try {
-      const info = await SleepModePlugin.getAiMessagesInfo({ personality: next.personality });
-      if (Date.now() - info.generatedAt < AI_POOL_MAX_AGE_MS) return;
-      const { tiersJson, audioClips } = await generateSleepReminders({ personality: next.personality });
-      await SleepModePlugin.setAiMessages({ personality: next.personality, tiersJson });
-      if (audioClips.length) {
-        await SleepModePlugin.setAiAudioClips({ personality: next.personality, clips: audioClips });
-      }
-    } catch {
-      // network hiccup, rate limit, or unsupported platform — fine, try again next edit
     }
   }
 

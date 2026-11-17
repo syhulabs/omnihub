@@ -40,7 +40,7 @@ After 5 wrong PIN attempts, Vault locks itself out with an escalating delay (30s
 
 Omni Hub does not access your contacts. It requests these permissions, all used only to make features work (or reserved for a locked feature not yet available to use), never to collect or transmit data beyond what's described above:
 
-- **Internet / network access** — required only for the optional Google Sign-In and cloud sync described above, and for Sleep Mode AI (see below). Unused unless you sign in. Omni Hub separately checks (but does not use to connect anywhere) whether you currently have a Wi-Fi or mobile connection, to show connection status on the "My Phone" card and Phone Health Check.
+- **Internet / network access** — required only for the optional Google Sign-In and cloud sync described above. Unused unless you sign in. Omni Hub separately checks (but does not use to connect anywhere) whether you currently have a Wi-Fi or mobile connection, to show connection status on the "My Phone" card and Phone Health Check.
 - **Vibrate** — haptic feedback (tap and completion vibrations).
 - **Alarms, notifications, and background wake permissions** (schedule alarms, post notifications, run in the foreground briefly while an alarm rings, keep the device awake for that, show the ringing screen over the lock screen, and restart alarms after the device reboots) — all used solely by the **Alarm** feature, so an alarm you set still rings even if Omni Hub is closed. None of this involves any network access.
 - **Biometrics** (optional, off by default) — used only by the **App Lock** and **Vault** "Biometric Unlock" settings, so you can unlock with your fingerprint or face instead of typing your PIN. Android's own system prompt does the matching; Omni Hub only learns whether it succeeded and never sees, stores, or transmits your fingerprint or face data.
@@ -61,11 +61,11 @@ Alarms you create are stored on your device (both in the app's own storage and, 
 
 ## Sleep Mode AI
 
-Sleep Mode AI is available to anyone signed in, for the Gentle and Friendly personalities. When it generates your reminders, it sends only your chosen personality to Omni Hub's own Cloud Function (which requires your sign-in to call, so usage can be rate-limited), and the Cloud Function forwards that to Google's Gemini API to write the reminder text and a voice clip. Your name, work/school routine, and interests are never sent — Sleep Mode's "Personal" mode uses those only to fill in reminders on your own device, and they never leave it. Nothing from the Cloud Function request is stored by Omni Hub beyond the generated reminders already described for Sleep Mode above; it isn't used to train any model. Every other Sleep Mode personality, and Sleep Mode for anyone not signed in, runs entirely from reminders bundled with the app — nothing about those is ever sent anywhere.
+Sleep Mode AI is coming soon and is not available in this version. Nothing about Sleep Mode is sent anywhere: every personality runs entirely from reminders bundled with the app. This section will be updated before Sleep Mode AI arrives.
 
 ## Third-party services
 
-Signing in and syncing uses Google's Firebase platform (Firebase Authentication and Cloud Firestore). Sleep Mode AI (Gentle/Friendly, signed-in users — see above) additionally uses a Cloud Function, also on Firebase, which calls Google's Gemini API. We set Firebase's own flag to disable its automatic background data collection by default, so these libraries only act when a feature here actually calls them (signing in, syncing, or generating a Sleep Mode AI reminder) — never automatically. Google's own privacy policy governs how Google handles data on their servers: <https://policies.google.com/privacy>.
+Signing in and syncing uses Google's Firebase platform (Firebase Authentication and Cloud Firestore). We set Firebase's own flag to disable its automatic background data collection by default, so these libraries only act when a feature here actually calls them (signing in or syncing) — never automatically. Google's own privacy policy governs how Google handles data on their servers: <https://policies.google.com/privacy>.
 
 ## Children's privacy
 

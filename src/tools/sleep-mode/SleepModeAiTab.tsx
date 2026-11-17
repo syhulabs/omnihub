@@ -2,17 +2,9 @@ import { useRef, useState, type CSSProperties, type TouchEvent, useEffect } from
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { Icon, type IconName } from '../../components/Icon';
 import { hapticTap, hapticSelect } from '../../haptics';
-import { useAuth } from '../../cloud/AuthContext';
 import { PERSONALITY_META } from './types';
 import { PREVIEW_SAMPLES, heroBanner, type PreviewPhase } from '../../assets/sleep-mode';
 import './SleepMode.css';
-
-/** Only these two actually get AI-generated lines/voice (see isAiPersonality in SleepMode.tsx
- *  and generateSleepReminders) — the rest stay hand-written-only even when signed in. */
-const AI_ENABLED = new Set(['gentle', 'friendly']);
-const AI_ENABLED_LABEL = PERSONALITY_META.filter((p) => AI_ENABLED.has(p.id))
-  .map((p) => p.label)
-  .join(' and ');
 
 const PHASE_LABEL: Record<PreviewPhase, string> = {
   bedtime: 'Bedtime',
@@ -33,9 +25,9 @@ interface SleepModeAiTabProps {
   onBack: () => void;
 }
 
+/** Sleep Mode AI is coming soon (the owner's decision, 17 Nov 2026): nothing here can be switched
+ *  on. The previews stay because they play real recordings bundled with the app. */
 export function SleepModeAiTab({ onBack }: SleepModeAiTabProps) {
-  const { user } = useAuth();
-  const isActive = !!user;
   const [activeId, setActiveId] = useState<string | null>(null);
   const [sampleIndex, setSampleIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -105,9 +97,9 @@ export function SleepModeAiTab({ onBack }: SleepModeAiTabProps) {
         subtitle="Your personal bedtime companion"
         onBack={onBack}
         action={
-          <span className={`sm__ai2-status-badge${isActive ? ' sm__ai2-status-badge--active' : ''}`}>
-            <Icon name={isActive ? 'check' : 'lock'} size={12} />
-            {isActive ? 'ACTIVE' : 'SIGN IN'}
+          <span className="sm__ai2-status-badge">
+            <Icon name="clock" size={12} />
+            SOON
           </span>
         }
       />
@@ -128,19 +120,15 @@ export function SleepModeAiTab({ onBack }: SleepModeAiTabProps) {
           <span className="sm__ai2-toggle-text">
             <span className="sm__ai2-toggle-title-row">
               <strong>Sleep Mode AI</strong>
-              {!isActive && (
-                <span className="sm__ai2-status-chip">
-                  <Icon name="lock" size={10} />
-                  SIGN IN TO ACTIVATE
-                </span>
-              )}
+              <span className="sm__ai2-status-chip">
+                <Icon name="clock" size={10} />
+                COMING SOON
+              </span>
             </span>
-            <span className="sm__ai2-toggle-desc">
-              {isActive ? `Active for your ${AI_ENABLED_LABEL} reminders.` : 'Sign in to activate your AI companion.'}
-            </span>
+            <span className="sm__ai2-toggle-desc">Your AI companion is on the way.</span>
           </span>
-          <span className={`sm__ai2-toggle-switch${isActive ? ' sm__ai2-toggle-switch--active' : ''}`}>
-            <Icon name={isActive ? 'check' : 'lock'} size={12} />
+          <span className="sm__ai2-toggle-switch">
+            <Icon name="lock" size={12} />
           </span>
         </div>
 
@@ -160,11 +148,9 @@ export function SleepModeAiTab({ onBack }: SleepModeAiTabProps) {
             >
               <span className="sm__ai2-avatar-img" style={{ '--emoji-color': p.color } as CSSProperties}>
                 {p.image ? <img src={p.image} alt="" /> : <Icon name={(p.icon ?? 'user') as IconName} size={20} />}
-                {!isActive && (
-                  <span className="sm__ai2-avatar-lock">
-                    <Icon name="lock" size={9} />
-                  </span>
-                )}
+                <span className="sm__ai2-avatar-lock">
+                  <Icon name="lock" size={9} />
+                </span>
               </span>
               <span className="sm__ai2-avatar-label">{p.label}</span>
             </button>
@@ -222,7 +208,7 @@ export function SleepModeAiTab({ onBack }: SleepModeAiTabProps) {
         )}
 
         <div className="sm__ai2-section-head">
-          <h2>{isActive ? 'What You Get' : "What You'll Get"}</h2>
+          <h2>What You&rsquo;ll Get</h2>
         </div>
 
         <div className="sm__ai2-perks-grid">
@@ -237,13 +223,11 @@ export function SleepModeAiTab({ onBack }: SleepModeAiTabProps) {
           ))}
         </div>
 
-        {!isActive && (
-          <div className="smp__coming-soon">
-            <Icon name="lock" size={28} className="smp__coming-soon-icon" />
-            <h3>Sign In Required</h3>
-            <p>Sleep Mode AI is ready to go — sign in from your Desk to turn it on.</p>
-          </div>
-        )}
+        <div className="smp__coming-soon">
+          <Icon name="clock" size={28} className="smp__coming-soon-icon" />
+          <h3>Coming Soon</h3>
+          <p>Sleep Mode AI is on the way. Until then, Gentle and Friendly keep reminding you with their own messages.</p>
+        </div>
       </div>
     </div>
   );
