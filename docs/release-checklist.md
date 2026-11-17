@@ -75,7 +75,8 @@ Release notes (under 500 characters):
    iPhone simulator cannot run the app on an Apple-silicon Mac: Google ML Kit (the scanners) ships no
    simulator build for Apple silicon, so the app builds for Intel simulators only and iOS 27 simulators
    refuse it (found 17 Nov). App Store Connect wants 6.9-inch (1320 x 2868) or 6.5-inch screenshots.
-   The owner's iPhone 16 Pro Max takes them at exactly 1320 x 2868 (6.9-inch), so its screenshots fit as is.
+   The owner's test phone is an iPhone 17 (6.3-inch, screenshots 1206 x 2622). That size is not one the App
+   Store requires, so its screenshots are scaled to 1320 x 2868 (the shapes are almost identical: 2.174 vs 2.173).
    The owner does not have a paid Apple Developer membership yet (17 Nov). Until they join:
    - The App Store, TestFlight and Sign in with Apple cannot work. Joining is the owner's step:
      developer.apple.com/programs/enroll (yearly fee; approval can take a day or more).

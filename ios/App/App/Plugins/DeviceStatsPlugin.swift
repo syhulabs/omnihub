@@ -180,12 +180,13 @@ public class DeviceStatsPlugin: CAPPlugin, CAPBridgedPlugin {
         return sysctlString("hw.machine")
     }
 
-    /// Marketing name for recent iPhones; falls back to the raw identifier, which is still
-    /// accurate, just less friendly.
+    /// Marketing name for recent iPhones. An identifier missing from the table falls back to plain
+    /// "iPhone": the raw identifier reads like a wrong model (an iPhone 17 reports "iPhone18,3",
+    /// which the owner's iPhone 17 showed as an "18" before the 17 family was added below).
     private static func deviceModelName() -> String {
         let id = hardwareIdentifier()
         if let name = marketingNames[id] { return name }
-        return id.isEmpty ? UIDevice.current.model : id
+        return UIDevice.current.model
     }
 
     private static let marketingNames: [String: String] = [
@@ -200,7 +201,9 @@ public class DeviceStatsPlugin: CAPPlugin, CAPBridgedPlugin {
         "iPhone15,4": "iPhone 15", "iPhone15,5": "iPhone 15 Plus", "iPhone16,1": "iPhone 15 Pro",
         "iPhone16,2": "iPhone 15 Pro Max",
         "iPhone17,3": "iPhone 16", "iPhone17,4": "iPhone 16 Plus", "iPhone17,1": "iPhone 16 Pro",
-        "iPhone17,2": "iPhone 16 Pro Max", "iPhone17,5": "iPhone 16e"
+        "iPhone17,2": "iPhone 16 Pro Max", "iPhone17,5": "iPhone 16e",
+        "iPhone18,3": "iPhone 17", "iPhone18,4": "iPhone Air", "iPhone18,1": "iPhone 17 Pro",
+        "iPhone18,2": "iPhone 17 Pro Max"
     ]
 
     /// IPv4 address of the given interface (en0 is Wi-Fi on every iPhone), or "" if none.
