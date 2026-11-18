@@ -11,9 +11,11 @@ interface PhoneStatusCardProps {
   onOpen: () => void;
 }
 
+/** A no-break space keeps the number and "GB" together: on the narrower iPhone 17 the storage
+ *  caption "Free / 238 GB" wrapped as "Free / 238" over a lone "GB". */
 function formatGb(bytes: number): string {
   if (!bytes) return '—';
-  return `${Math.round(bytes / 1024 ** 3)} GB`;
+  return `${Math.round(bytes / 1024 ** 3)}\u00a0GB`;
 }
 
 function statusFor(stats: DeviceStats | null): { tone: 'good' | 'warn'; text: string } {

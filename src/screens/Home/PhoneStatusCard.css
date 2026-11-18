@@ -178,6 +178,7 @@
   font-weight: 600;
   color: var(--text-tertiary);
   line-height: 1.3;
+  text-wrap: balance;
 }
 
 .phc__stat--battery svg {
