@@ -94,7 +94,13 @@ Release notes (under 500 characters):
    Connect (section 8): listing text, App Privacy labels, age rating, review notes, privacy policy URL.
 7. **Owner**: submit for review.
 
+## iPhone: live (19 Nov 2026)
+
+"Omni Hub: Everyday Tools" 1.0 (2) is live on the App Store: https://apps.apple.com/app/id6835903024
+(Apple ID 6835903024, 174 countries, China mainland excluded, free, 4+). The next iPhone upload needs build
+number 3 or higher.
+
 ## After both are live
 
-- Add the App Store link to the website (`docs/index.html`) next to the Play link.
+- Done (19 Nov): the website links to the App Store next to Google Play.
 - Tell the assistants the released version numbers so `CLAUDE.md` and `AGENTS.md` stay right.

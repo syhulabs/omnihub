@@ -10,8 +10,8 @@ checklist, alarm, Sleep Mode, Vault, scanners, compass, expense and budget tools
 Home, Hub, SYXDI AI, Craft, Desk. Vite + React 19 + TypeScript, wrapped with Capacitor 8.5.2.
 
 - Android: shipping. Package `com.syhuinc.omnihub`, in Google Play internal testing; the next Play upload is versionCode 175.
-- iOS: project in `ios/` (CocoaPods, iPhone only). First unsigned Xcode build succeeded on Nov 17; it has not
-  run on an iPhone yet.
+- iOS: project in `ios/` (CocoaPods, iPhone only). Live on the App Store since Nov 19 as "Omni Hub: Everyday
+  Tools" 1.0 (2), Apple ID 6835903024. The next upload needs build number 3 or higher.
 - Website: `docs/` is served by GitHub Pages at https://omnihub.syhu.net (landing page, privacy policy,
   delete-account page).
 - Cloud: Firebase Auth (Google; Apple on iPhone), Firestore sync, one Cloud Function in `functions/` for Sleep Mode AI.

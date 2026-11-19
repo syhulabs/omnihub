@@ -85,7 +85,7 @@ mockup, or a deploy only the owner can do:
 - Voice Changer (locked): imported audio has no length cap, so a long song freezes the effects screens.
 - Scientific calculator leaves a centred gap between the mode row and the keys on tall screens.
 
-## iOS (project scaffolded Nov 6; first unsigned Mac build succeeded Nov 17, not yet run on an iPhone)
+## iOS (live on the App Store since Nov 19, 1.0 build 2)
 `ios/` is a Capacitor CocoaPods project; `docs/ios-build.md` has the Mac steps. Open items before an App Store
 submission (TestFlight does not need them):
 - **Sign in with Apple** is required by App Store guideline 4.8 because the app offers Google Sign-In. Needs the

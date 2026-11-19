@@ -1,6 +1,7 @@
 # Omni Hub — working notes for Claude
 
-Offline all-in-one utility app for Android (shipping) and iOS (compiles on the Mac since Nov 17, unsigned; not yet run on an iPhone).
+Offline all-in-one utility app for Android (shipping) and iOS (live on the App Store since Nov 19 as
+"Omni Hub: Everyday Tools" 1.0 (2), Apple ID 6835903024; the next iPhone upload needs build number 3+).
 Vite + React + TypeScript, wrapped with Capacitor.
 Package `com.syhuinc.omnihub`, versionName 1.0, last shipped versionCode 168 (174 was the last test build; 175 is set for the next Play upload). Work directly on `main`.
 The owner tests on a Motorola Edge 60 Fusion and reviews every change visually, in dark and light theme.
