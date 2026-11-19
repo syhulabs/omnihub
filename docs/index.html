@@ -110,6 +110,8 @@
   .hero .sub { color: var(--text-secondary); font-size: 16.5px; max-width: 520px; margin-top: 14px; }
   .hero .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
   .hero .note { margin-top: 14px; font-size: 13px; color: var(--text-tertiary); }
+  .hero .note a { color: var(--text-secondary); text-decoration: underline; text-underline-offset: 3px; }
+  .hero .note a:hover { color: var(--text-primary); }
 
   .phone {
     position: relative; width: min(300px, 80vw); margin-inline: auto;
@@ -228,7 +230,7 @@
       <a href="#tools">Tools</a>
       <a href="#screens">Screens</a>
       <a href="privacy-policy.html">Privacy</a>
-      <a class="btn cta" href="https://play.google.com/store/apps/details?id=com.syhuinc.omnihub">Get the app</a>
+      <a class="btn cta" id="get-app" href="https://play.google.com/store/apps/details?id=com.syhuinc.omnihub">Get the app</a>
     </nav>
   </div>
 </header>
@@ -250,11 +252,10 @@
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
             Download on the App Store
           </a>
-          <a class="btn btn--ghost" href="#tools">See every tool</a>
         </div>
-        <p class="note">Free. No account needed. No ads, no tracking.</p>
+        <p class="note">Free. No account needed. No ads, no tracking. <a href="#tools">See every tool &rarr;</a></p>
       </div>
-      <div class="phone"><img src="site/shots/01-home.webp" alt="Omni Hub home screen showing phone status, pinned tools and search" width="540" height="1070" fetchpriority="high"></div>
+      <div class="phone"><img src="site/shots/iphone-01-home.webp" alt="Omni Hub home screen showing phone status, pinned tools and search" width="540" height="1174" fetchpriority="high"></div>
     </div>
   </section>
 
@@ -292,7 +293,7 @@
           <div class="tool"><img src="site/icons/unit-converter.webp" alt=""><strong>Unit Converter</strong><span>Length, weight, temperature, volume, speed, area, data.</span></div>
           <div class="tool"><img src="site/icons/timer.webp" alt=""><strong>Timer</strong><span>A simple countdown with an alert when time's up.</span></div>
           <div class="tool"><img src="site/icons/stopwatch.webp" alt=""><strong>Stopwatch</strong><span>With lap times.</span></div>
-          <div class="tool"><img src="site/icons/alarm.webp" alt=""><strong>Alarm</strong><span>Reliable alarms with backup re-rings, custom sounds and flash alerts.</span></div>
+          <div class="tool"><img src="site/icons/alarm.webp" alt=""><strong>Alarm</strong><span>Reliable alarms with backup re-rings. Custom sounds and flash alerts on Android.</span></div>
           <div class="tool"><img src="site/icons/sleep-mode.webp" alt=""><strong>Sleep Mode</strong><span>Nags you to put the phone down and get some sleep.</span></div>
         </div>
       </div>
@@ -301,7 +302,7 @@
         <h3>Utilities</h3>
         <div class="tools">
           <div class="tool"><img src="site/icons/compass.webp" alt=""><strong>Compass</strong><span>Heading, location, altitude and a level.</span></div>
-          <div class="tool"><img src="site/icons/flashlight.webp" alt=""><strong>Flashlight</strong><span>Your camera flash as a light, with optional flash alerts.</span></div>
+          <div class="tool"><img src="site/icons/flashlight.webp" alt=""><strong>Flashlight</strong><span>Your camera flash as a light. Flash alerts on Android.</span></div>
           <div class="tool"><img src="site/icons/qr-scanner.webp" alt=""><strong>QR Scanner</strong><span>Scan QR codes with your camera.</span></div>
           <div class="tool"><img src="site/icons/barcode-scanner.webp" alt=""><strong>Barcode Scanner</strong><span>Scan product and other barcodes.</span></div>
         </div>
@@ -346,16 +347,16 @@
       <div class="section-head">
         <span class="kicker">In the app</span>
         <h2>Clean, fast, app-like.</h2>
-        <p>Dark or light theme, pinned tools on the Home screen, and nothing to manage unless you want it.</p>
+        <p>Dark or light theme, pinned tools on the Home screen, and nothing to manage unless you want it. Shown here on iPhone; Android looks the same.</p>
       </div>
       <div class="screens">
         <div class="screens-row">
-          <img src="site/shots/01-home.webp" alt="Home screen" loading="lazy" width="540" height="1070">
-          <img src="site/shots/02-tools.webp" alt="Hub with every tool" loading="lazy" width="540" height="1070">
-          <img src="site/shots/03-sleep-mode.webp" alt="Sleep Mode" loading="lazy" width="540" height="1070">
-          <img src="site/shots/04-sleep-sounds.webp" alt="Sleep sounds" loading="lazy" width="540" height="1070">
-          <img src="site/shots/05-time-difference.webp" alt="Time Difference" loading="lazy" width="540" height="1070">
-          <img src="site/shots/06-reminder.webp" alt="Sleep Mode reminder" loading="lazy" width="540" height="736">
+          <img src="site/shots/iphone-01-home.webp" alt="Home screen" loading="lazy" width="540" height="1174">
+          <img src="site/shots/iphone-02-hub.webp" alt="Hub with every tool" loading="lazy" width="540" height="1174">
+          <img src="site/shots/iphone-03-sleep-mode.webp" alt="Sleep Mode" loading="lazy" width="540" height="1174">
+          <img src="site/shots/iphone-04-time-difference.webp" alt="Time Difference" loading="lazy" width="540" height="1174">
+          <img src="site/shots/iphone-05-subscriptions.webp" alt="Subscription Calculator" loading="lazy" width="540" height="1174">
+          <img src="site/shots/iphone-06-phone-center.webp" alt="Phone Center" loading="lazy" width="540" height="1174">
         </div>
       </div>
     </div>
@@ -376,7 +377,7 @@
         </div>
         <div class="privacy-links">
           <a class="plink" href="privacy-policy.html"><div><strong>Privacy Policy</strong><span>Exactly what each permission does and where data lives.</span></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a>
-          <a class="plink" href="delete-account.html"><div><strong>Delete your account</strong><span>How to remove your synced data and Google sign-in.</span></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a>
+          <a class="plink" href="delete-account.html"><div><strong>Delete your account</strong><span>How to remove your account and everything synced to it.</span></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a>
           <a class="plink" href="mailto:syhu.inc@gmail.com"><div><strong>Contact</strong><span>syhu.inc@gmail.com</span></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a>
         </div>
       </div>
@@ -396,6 +397,12 @@
     </nav>
   </div>
 </footer>
-<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+// "Get the app" opens the store for the visitor's phone: the App Store on iPhone and iPad, Google Play otherwise.
+if (/iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+  document.getElementById('get-app').href = 'https://apps.apple.com/app/id6835903024';
+}
+</script>
 </body>
 </html>
